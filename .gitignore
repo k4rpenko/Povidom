@@ -1,0 +1,15 @@
+
+/Server/obj
+/.vs
+/Server/bin
+/Server/obj
+*.xml
+/Server/.vs
+/Server/PGAdminDAL/bin
+/Server/PGAdminDAL/obj
+/Server/RedisDAL/bin
+/Server/RedisDAL/obj
+/Server/Server/bin
+/Server/Server/obj
+Server/Server/appsettings.Development.json
+Server/Server/appsettings.json
