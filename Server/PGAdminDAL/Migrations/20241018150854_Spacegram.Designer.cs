@@ -13,7 +13,7 @@ using PGAdminDAL;
 namespace PGAdminDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241015204246_Spacegram")]
+    [Migration("20241018150854_Spacegram")]
     partial class Spacegram
     {
         /// <inheritdoc />

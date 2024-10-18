@@ -89,8 +89,6 @@ namespace Server.Controllers
                     return BadRequest();
                 }
                 return Unauthorized();
-
-
             }
             catch (Exception ex)
             {
