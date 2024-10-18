@@ -6,10 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RedisDAL;
 using StackExchange.Redis;
+<<<<<<< HEAD
 using Microsoft.EntityFrameworkCore;
 
 
+=======
+using PGAdminDAL.Model;
+using Microsoft.EntityFrameworkCore;
+>>>>>>> 931bbafdd7a4930721c19131d50de09c66666db2
 namespace Server.Controllers
+
+
+
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -52,7 +60,11 @@ namespace Server.Controllers
         {
             try
             {
+<<<<<<< HEAD
                 if (Account.Password != null  && _jwt.ValidateToken(Account.Token, context))
+=======
+                if (Account.Password != null && _jwt.ValidateToken(Account.Token))
+>>>>>>> 931bbafdd7a4930721c19131d50de09c66666db2
                 {
                     var id = _jwt.GetUserIdFromToken(Account.Token);
                     var user = await context.Users.FindAsync(id);
@@ -76,5 +88,102 @@ namespace Server.Controllers
                 throw new Exception("", ex);
             }
         }
+
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserModel model)
+        {
+            try
+            {
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                // Оновлення полів, якщо вони присутні в моделі
+                if (!string.IsNullOrWhiteSpace(model.FirstName)) user.FirstName = model.FirstName;
+                if (!string.IsNullOrWhiteSpace(model.LastName)) user.LastName = model.LastName;
+                if (!string.IsNullOrWhiteSpace(model.Avatar)) user.Avatar = model.Avatar;
+                if (!string.IsNullOrWhiteSpace(model.Nickname)) user.UserName = model.Nickname;
+                if (!string.IsNullOrWhiteSpace(model.Title)) user.Title = model.Title;
+
+                await context.SaveChangesAsync();
+                return Ok(new { message = "User updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        // Доданий метод для отримання профілю користувача і подібних нікнеймів
+        [HttpGet("profile/{nickname}")]
+        public async Task<IActionResult> GetUserProfile(string nickname)
+        {
+            try
+            {
+                // Знаходимо основного користувача за нікнеймом
+                var mainUser = await context.Users
+                    .OfType<UserModel>() // Використовуємо UserModel
+                    .FirstOrDefaultAsync(u => u.UserName == nickname);
+                if (mainUser == null)
+                {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                // Генеруємо додаткові нікнейми
+                var additionalNicknames = GenerateAdditionalNicknames(nickname);
+
+                // Знаходимо користувачів за додатковими нікнеймами
+                var additionalUsers = await context.Users
+                    .OfType<UserModel>() // Використовуємо UserModel
+                    .Where(u => additionalNicknames.Contains(u.UserName))
+                    .ToListAsync();
+
+                // Повертаємо основного користувача і список користувачів з додатковими нікнеймами
+                return Ok(new
+                {
+                    mainUser = new
+                    {
+                        mainUser.UserName,
+                        mainUser.FirstName,
+                        mainUser.LastName,
+                        mainUser.Avatar,
+                        mainUser.Title
+                    },
+                    additionalUsers = additionalUsers.Select(user => new
+                    {
+                        user.UserName,
+                        user.FirstName,
+                        user.LastName,
+                        user.Avatar
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+
+
+        // Метод для генерації додаткових нікнеймів
+        private List<string> GenerateAdditionalNicknames(string nickname)
+        {
+            List<string> additionalNicknames = new List<string>();
+
+            // Додаємо варіанти з додатковими символами
+            additionalNicknames.Add(nickname + "1");
+            additionalNicknames.Add(nickname + "8");
+            additionalNicknames.Add(nickname + "_s");
+            additionalNicknames.Add(nickname + "qo7");
+            additionalNicknames.Add(nickname + "x");
+            additionalNicknames.Add(nickname + "_z");
+            additionalNicknames.Add(nickname + "_99");
+
+            return additionalNicknames;
+        }
+
     }
 }
