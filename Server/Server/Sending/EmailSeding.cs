@@ -49,5 +49,31 @@ namespace Server.Sending
                 throw new Exception("Не вдалося підключитися до SMTP", ex);
             }
         }
+
+        public async Task Writing(string EmailTo, string text)
+        {
+            try
+            {
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress(SenderEmail, "HomeBook"),
+                    Subject = "Support",
+                    Body = $"{text}",
+                    IsBodyHtml = true,
+                };
+                mailMessage.To.Add(EmailTo);
+
+                await smtpClient.SendMailAsync(mailMessage);
+            }
+            catch (SmtpException smtpEx)
+            {
+                throw new Exception($"SMTP помилка: {smtpEx.StatusCode}, {smtpEx.Message}, Додаткові дані: {smtpEx.InnerException?.Message}");
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Не вдалося підключитися до SMTP", ex);
+            }
+        }
     }
 }

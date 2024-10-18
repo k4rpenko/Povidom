@@ -2,7 +2,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.Tokens;
+using PGAdminDAL;
 
 namespace Server.Controllers
 {
@@ -44,23 +46,38 @@ namespace Server.Controllers
             return userIdClaim?.Value;
         }
 
-        public bool ValidateToken(string token)
+        public bool ValidateToken(string token, AppDbContext context)
         {
             var handler = new JwtSecurityTokenHandler();
             try
             {
                 var jwtToken = handler.ReadJwtToken(token);
                 var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub);
-
-                if (userIdClaim == null)
+                if (userIdClaim != null)
                 {
-                    return false;
-                }
+                    var user = context.User.FirstOrDefault(u => u.Id == userIdClaim.Value);
+                    if (user != null)
+                    {
+                        var key = Encoding.UTF8.GetBytes(user.ConcurrencyStamp);
+                        var validationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = false,
+                            ValidateAudience = false,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(key),
+                            ClockSkew = TimeSpan.Zero
+                        };
 
-                var expiration = jwtToken.ValidTo;
-                return expiration > DateTime.UtcNow;
+
+                        var principal = handler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+
+                        return validatedToken.ValidTo > DateTime.UtcNow;
+                    }
+                }
+                return false;
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }

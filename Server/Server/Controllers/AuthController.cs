@@ -86,9 +86,9 @@ namespace Server.Controllers
                 }
                 if (user.EmailConfirmed == false)
                 {
-                    return BadRequest(new { message = "Ваша електронна адреса не підтверджена." });
+                    return BadRequest();
                 }
-                return Unauthorized(new { message = "Цей користувач є в базі даних." });
+                return Unauthorized();
 
 
             }
@@ -105,16 +105,16 @@ namespace Server.Controllers
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
             if (redis.AuthRedisUser(ipAddress))
             {
-                if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password)) { return BadRequest(new { message = "Email and Password cannot be null or empty" }); }
+                if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password)) { return BadRequest(); }
                 try
                 {
                     var user = context.User.FirstOrDefault(u => u.Email == _user.Email);
                     var RoleUser = context.UserRoles.FirstOrDefault(u => u.UserId == user.Id);
                     if (user == null) { return NotFound(); }
-                    if (_HASH.Encrypt(_user.Password, user.ConcurrencyStamp) != user.PasswordHash) { return Unauthorized(new { message = "Invalid email or password" }); }
+                    if (_HASH.Encrypt(_user.Password, user.ConcurrencyStamp) != user.PasswordHash) { return Unauthorized(); }
                     if (user.EmailConfirmed == false)
                     {
-                        return BadRequest(new { message = "Ваша електронна адреса не підтверджена." });
+                        return BadRequest();
                     }
                     var accets = _jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, RoleUser.RoleId);
                     return Ok(new { token = accets });

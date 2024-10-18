@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using RedisDAL;
 using StackExchange.Redis;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Server.Controllers
@@ -25,7 +26,7 @@ namespace Server.Controllers
         {
             try
             {
-                if (Account.ConfirmationToken != null && _jwt.ValidateToken(Account.ConfirmationToken))
+                if (Account.ConfirmationToken != null && _jwt.ValidateToken(Account.ConfirmationToken, context))
                 {
                     var id = _jwt.GetUserIdFromToken(Account.ConfirmationToken);
                     var user = context.User.FirstOrDefault(u => u.Id == id);
@@ -38,7 +39,7 @@ namespace Server.Controllers
                     var accets = _jwt.GenerateJwtToken(id, user.ConcurrencyStamp, 1, userRole.RoleId);
                     return Ok(new { token = accets });
                 }
-                return NotFound(new { message = "Invalid Token" });
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -51,7 +52,7 @@ namespace Server.Controllers
         {
             try
             {
-                if (Account.Password != null  && _jwt.ValidateToken(Account.Token))
+                if (Account.Password != null  && _jwt.ValidateToken(Account.Token, context))
                 {
                     var id = _jwt.GetUserIdFromToken(Account.Token);
                     var user = await context.Users.FindAsync(id);
@@ -68,7 +69,7 @@ namespace Server.Controllers
                         return Unauthorized("Invalid credentials");
                     }
                 }
-                return NotFound(new { message = "Invalid Token" });
+                return NotFound();
             }
             catch (Exception ex)
             {

@@ -8,5 +8,8 @@ namespace PGAdminDAL.Model
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Avatar { get; set; }
+        public string? Title { get; set; }
+        public List<string>? Subscribers { get; set; }
+        public List<string>? Followers { get; set; }
     }
 }
