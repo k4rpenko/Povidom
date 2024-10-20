@@ -1,5 +1,6 @@
 using Server.Protection;
 using PGAdminDAL;
+using NoSQL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,13 +9,12 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Налаштування контексту бази даних
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetSection("Npgsql:ConnectionString").Value));
 
+builder.Services.AddSingleton<AppMongoContext>();
 builder.Services.AddSingleton<RedisConfigure>();
 
-// Налаштування CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
                           .AllowAnyMethod());
 });
 
-// Налаштування Identity
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddDefaultTokenProviders()
     .AddDefaultUI()
@@ -31,7 +31,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
-    // Налаштування паролів
+
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = false;
@@ -40,13 +40,22 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
 
 
-    // Налаштування користувачів
     options.User.AllowedUserNameCharacters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = false;
 
 
 });
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
 
 
 builder.Services.AddControllers();
@@ -97,5 +106,6 @@ app.UseCors("AllowSpecificOrigin");
 app.UseAuthorization();
 app.UseAuthentication();
 app.MapControllers();
+app.UseSession();
 
 app.Run();

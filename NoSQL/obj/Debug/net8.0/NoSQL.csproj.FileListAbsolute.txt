@@ -1,0 +1,13 @@
+D:\Work UA\Csh\Spacegram\NoSQL\bin\Debug\net8.0\NoSQL.deps.json
+D:\Work UA\Csh\Spacegram\NoSQL\bin\Debug\net8.0\NoSQL.dll
+D:\Work UA\Csh\Spacegram\NoSQL\bin\Debug\net8.0\NoSQL.pdb
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\NoSQL.csproj.AssemblyReference.cache
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\NoSQL.GeneratedMSBuildEditorConfig.editorconfig
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\NoSQL.AssemblyInfoInputs.cache
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\NoSQL.AssemblyInfo.cs
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\NoSQL.csproj.CoreCompileInputs.cache
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\NoSQL.sourcelink.json
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\NoSQL.dll
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\refint\NoSQL.dll
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\NoSQL.pdb
+D:\Work UA\Csh\Spacegram\NoSQL\obj\Debug\net8.0\ref\NoSQL.dll

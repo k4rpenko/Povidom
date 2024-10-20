@@ -1,6 +1,7 @@
 ﻿using Server.Models;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 
 namespace Server.Sending
 {
@@ -21,12 +22,13 @@ namespace Server.Sending
 
         public string GenerateOauthUrl(string scope, string redirectUrl, string codeChang)
         {
-            var OAuthEndPoint = "ttps://accounts.google.com/o/oauth2/v2/auth";
+            var OAuthEndPoint = "https://accounts.google.com/o/oauth2/v2/auth";
+
 
             var queryParams = new Dictionary<string, string>
             {
-                {"Client_id", ClientID},
-                {"redirect_url", redirectUrl},
+                {"client_id", ClientID},
+                {"redirect_uri", redirectUrl},
                 {"response_type", "code"},
                 {"scope", scope},
                 {"code_challenge", codeChang},
@@ -58,7 +60,6 @@ namespace Server.Sending
                     {"grant_type", "authorization_code"},
                     {"redirect_uri", redirectUrl}
                 };
-
                 var content = new FormUrlEncodedContent(authParams);
 
                 var response = await client.PostAsync(tokenEndPoint, content);
