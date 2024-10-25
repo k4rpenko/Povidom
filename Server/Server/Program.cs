@@ -56,11 +56,7 @@ builder.Services.AddSession(options =>
 });
 
 
-
-
 builder.Services.AddControllers();
-
-
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
@@ -103,9 +99,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowSpecificOrigin");
-app.UseAuthorization();
 app.UseAuthentication();
-app.MapControllers();
+app.UseAuthorization();
 app.UseSession();
+app.MapControllers();
 
-app.Run();
+await app.RunAsync();

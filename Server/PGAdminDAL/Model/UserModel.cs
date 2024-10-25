@@ -11,5 +11,7 @@ namespace PGAdminDAL.Model
         public string? Title { get; set; }
         public List<string>? Subscribers { get; set; }
         public List<string>? Followers { get; set; }
+        public Dictionary<string, string>? LikePost { get; set; }
+        public Dictionary<string, string>? CommentPost { get; set; }
     }
 }

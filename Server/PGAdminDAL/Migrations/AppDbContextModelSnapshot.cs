@@ -21,6 +21,7 @@ namespace PGAdminDAL.Migrations
                 .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "hstore");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -237,6 +238,9 @@ namespace PGAdminDAL.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
+                    b.Property<Dictionary<string, string>>("CommentPost")
+                        .HasColumnType("hstore");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -249,6 +253,9 @@ namespace PGAdminDAL.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<Dictionary<string, string>>("LikePost")
+                        .HasColumnType("hstore");
 
                     b.Property<List<string>>("Subscribers")
                         .HasColumnType("text[]");
