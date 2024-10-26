@@ -13,7 +13,7 @@ using PGAdminDAL;
 namespace PGAdminDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241025160454_Spacegram")]
+    [Migration("20241026083005_Spacegram")]
     partial class Spacegram
     {
         /// <inheritdoc />
@@ -242,6 +242,7 @@ namespace PGAdminDAL.Migrations
                         .HasColumnType("character varying(2000)");
 
                     b.Property<Dictionary<string, string>>("CommentPost")
+                        .IsRequired()
                         .HasColumnType("hstore");
 
                     b.Property<string>("FirstName")
@@ -250,6 +251,7 @@ namespace PGAdminDAL.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<List<string>>("Followers")
+                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<string>("LastName")
@@ -258,9 +260,11 @@ namespace PGAdminDAL.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<Dictionary<string, string>>("LikePost")
+                        .IsRequired()
                         .HasColumnType("hstore");
 
                     b.Property<List<string>>("Subscribers")
+                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<string>("Title")

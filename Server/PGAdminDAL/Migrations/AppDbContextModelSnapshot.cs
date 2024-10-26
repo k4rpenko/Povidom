@@ -239,6 +239,7 @@ namespace PGAdminDAL.Migrations
                         .HasColumnType("character varying(2000)");
 
                     b.Property<Dictionary<string, string>>("CommentPost")
+                        .IsRequired()
                         .HasColumnType("hstore");
 
                     b.Property<string>("FirstName")
@@ -247,6 +248,7 @@ namespace PGAdminDAL.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<List<string>>("Followers")
+                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<string>("LastName")
@@ -255,9 +257,11 @@ namespace PGAdminDAL.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<Dictionary<string, string>>("LikePost")
+                        .IsRequired()
                         .HasColumnType("hstore");
 
                     b.Property<List<string>>("Subscribers")
+                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<string>("Title")

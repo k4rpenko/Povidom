@@ -1,13 +1,10 @@
 ﻿using Amazon.Runtime.Internal.Transform;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using NoSQL;
 using PGAdminDAL;
 using Server.Models;
-using System.IO;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Server.Controllers
@@ -25,6 +22,8 @@ namespace Server.Controllers
         {
             try
             {
+                _data.CreatedAt = DateTime.UtcNow;
+                _data.UpdatedAt = DateTime.UtcNow;
                 await _customers.InsertOneAsync(_data);
                 return Ok();
                 
@@ -36,11 +35,12 @@ namespace Server.Controllers
         }
 
         [HttpPost("DeleytPost")]
-        public async Task<IActionResult> DeleytPost(SpacePostModel _data)
+        public async Task<IActionResult> DeleytPost(SpaceWorkModel _data)
         {
             try
             {
-                var deleteResult = await _customers.DeleteOneAsync(post => post.Id == _data.Id);
+                var objectId = ObjectId.Parse(_data.Id);
+                var deleteResult = await _customers.DeleteOneAsync(post => post.Id == objectId);
                 if (deleteResult.DeletedCount == 0)
                 {
                     return NotFound("Post not found.");
@@ -54,7 +54,7 @@ namespace Server.Controllers
         }
 
         [HttpPost("LikePost")]
-        public async Task<IActionResult> LikePost(SpacePostModel _data)
+        public async Task<IActionResult> LikePost(SpaceWorkModel _data)
         {
             try
             {
@@ -63,17 +63,18 @@ namespace Server.Controllers
                 {
                     return NotFound("User not found.");
                 }
-
-                var newLike = new Like
+                
+                var newLike = new Like()
                 {
-                    UserId = user.Id,
+                    UserId = _data.UserId,
                     CreatedAt = DateTime.UtcNow
                 };
 
+                var objectId = ObjectId.Parse(_data.Id);
 
                 var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.Like, newLike);
                 var updateResult = await _customers.UpdateOneAsync(
-                    post => post.Id == _data.Id,
+                    post => post.Id == objectId,
                     updateDefinition
                 );
 
@@ -82,7 +83,8 @@ namespace Server.Controllers
                     return NotFound("Post not found.");
                 }
 
-                user.LikePost.Add(_data.UserId, _data.Id.ToString());
+                user.LikePost.Add(_data.UserId, _data.Id);
+
                 await context.SaveChangesAsync();
 
                 return Ok("Post liked successfully.");

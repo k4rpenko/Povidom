@@ -6,58 +6,24 @@ namespace Server.Models
     public class Comment
     {
         [BsonElement("AuthorId")]
-        public string AuthorId { get; set; }
+        public string? AuthorId { get; set; }
 
         [BsonElement("Content")]
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         [BsonElement("CreatedAt")]
-        public DateTime CreatedAt { get; set; } 
+        public DateTime? CreatedAt { get; set; } 
     }
 
     public class Like
     {
         [BsonElement("UserId")]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         [BsonElement("CreatedAt")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 
-    public class Retweet
-    {
-
-        [BsonId]
-        [BsonElement("_id"), BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId Id { get; set; }
-
-        [BsonElement("UserId")]
-        public string UserId { get; set; }
-
-        [BsonElement("Content")]
-        public string Content { get; set; }
-
-        [BsonElement("CreatedAt")]
-        public DateTime CreatedAt { get; set; }
-
-        [BsonElement("UpdatedAt")]
-        public DateTime? UpdatedAt { get; set; }
-
-        [BsonElement("MediaUrls")]
-        public List<string>? MediaUrls { get; set; }
-
-        [BsonElement("Like")]
-        public List<Like>? Like { get; set; }
-
-        [BsonElement("Hashtags")]
-        public List<string>? Hashtags { get; set; }
-
-        [BsonElement("Mentions")]
-        public List<string>? Mentions { get; set; }
-
-        [BsonElement("Comments")]
-        public List<Comment>? Comments { get; set; }
-    }
 
     public class SpacePostModel
     {
@@ -69,31 +35,31 @@ namespace Server.Models
         public string UserId { get; set; }
 
         [BsonElement("Content")]
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         [BsonElement("CreatedAt")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         [BsonElement("UpdatedAt")]
         public DateTime? UpdatedAt { get; set; }
 
         [BsonElement("MediaUrls")]
-        public List<string>? MediaUrls { get; set; }
+        public List<string>? MediaUrls { get; set; } = new List<string>();
 
         [BsonElement("Like")]
-        public List<Like>? Like{ get; set; }
+        public List<Like>? Like { get; set; } = new List<Like>();
 
         [BsonElement("Retweet")]
-        public List<string>? Retweet { get; set; }
+        public List<string>? Retweet { get; set; } = new List<string>();
 
         [BsonElement("Hashtags")]
-        public List<string>? Hashtags { get; set; }
+        public List<string>? Hashtags { get; set; } = new List<string>();
 
         [BsonElement("Mentions")]
-        public List<string>? Mentions { get; set; }
+        public List<string>? Mentions { get; set; } = new List<string>();
 
         [BsonElement("Comments")]
-        public List<Comment>? Comments { get; set; }
+        public List<Comment>? Comments { get; set; } = new List<Comment>();
 
         [BsonElement("SPublished")]
         public bool SPublished { get; set; }
