@@ -13,9 +13,6 @@ namespace PGAdminDAL.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:PostgresExtension:hstore", ",,");
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -42,8 +39,10 @@ namespace PGAdminDAL.Migrations
                     Title = table.Column<string>(type: "text", nullable: true),
                     Subscribers = table.Column<List<string>>(type: "text[]", nullable: true),
                     Followers = table.Column<List<string>>(type: "text[]", nullable: true),
-                    LikePost = table.Column<Dictionary<string, string>>(type: "hstore", nullable: true),
-                    CommentPost = table.Column<Dictionary<string, string>>(type: "hstore", nullable: true),
+                    LikePostID = table.Column<List<string>>(type: "text[]", nullable: true),
+                    CommentPostID = table.Column<List<string>>(type: "text[]", nullable: true),
+                    RetweetPostID = table.Column<List<string>>(type: "text[]", nullable: true),
+                    PostID = table.Column<List<string>>(type: "text[]", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

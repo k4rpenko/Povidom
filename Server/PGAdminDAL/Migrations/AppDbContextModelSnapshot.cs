@@ -21,7 +21,6 @@ namespace PGAdminDAL.Migrations
                 .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "hstore");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -238,9 +237,9 @@ namespace PGAdminDAL.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.Property<Dictionary<string, string>>("CommentPost")
+                    b.Property<List<string>>("CommentPostID")
                         .IsRequired()
-                        .HasColumnType("hstore");
+                        .HasColumnType("text[]");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -256,9 +255,17 @@ namespace PGAdminDAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<Dictionary<string, string>>("LikePost")
+                    b.Property<List<string>>("LikePostID")
                         .IsRequired()
-                        .HasColumnType("hstore");
+                        .HasColumnType("text[]");
+
+                    b.Property<List<string>>("PostID")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<List<string>>("RetweetPostID")
+                        .IsRequired()
+                        .HasColumnType("text[]");
 
                     b.Property<List<string>>("Subscribers")
                         .IsRequired()

@@ -13,7 +13,9 @@ namespace PGAdminDAL.Model
 
         public List<string> Subscribers { get; set; } = new List<string>();
         public List<string> Followers { get; set; } = new List<string>();
-        public Dictionary<string, string> LikePost { get; set; } = new Dictionary<string, string>();
-        public Dictionary<string, string> CommentPost { get; set; } = new Dictionary<string, string>();
+        public List<string> LikePostID { get; set; } = new List< string>();
+        public List<string> CommentPostID { get; set; } = new List<string>();
+        public List<string> RetweetPostID { get; set; } = new List<string>();
+        public List<string> PostID { get; set; } = new List<string>();
     }
 }

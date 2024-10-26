@@ -52,6 +52,9 @@ namespace Server.Models
         [BsonElement("Retweet")]
         public List<string>? Retweet { get; set; } = new List<string>();
 
+        [BsonElement("InRetweet")]
+        public List<string>? InRetweet { get; set; } = new List<string>();
+
         [BsonElement("Hashtags")]
         public List<string>? Hashtags { get; set; } = new List<string>();
 

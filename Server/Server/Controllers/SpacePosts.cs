@@ -22,9 +22,19 @@ namespace Server.Controllers
         {
             try
             {
+                var user = context.User.FirstOrDefault(u => u.Id == _data.UserId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
                 _data.CreatedAt = DateTime.UtcNow;
                 _data.UpdatedAt = DateTime.UtcNow;
                 await _customers.InsertOneAsync(_data);
+
+                user.PostID.Add(_data.Id.ToString());
+                await context.SaveChangesAsync();
+
                 return Ok();
                 
             }
@@ -45,6 +55,7 @@ namespace Server.Controllers
                 {
                     return NotFound("Post not found.");
                 }
+
                 return Ok();
             }
             catch (Exception ex)
@@ -83,8 +94,64 @@ namespace Server.Controllers
                     return NotFound("Post not found.");
                 }
 
-                user.LikePost.Add(_data.UserId, _data.Id);
+                user.LikePostID.Add(_data.Id);
 
+                await context.SaveChangesAsync();
+
+                return Ok("Post liked successfully.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
+
+        [HttpPost("Retweet")]
+        public async Task<IActionResult> Retweet(SpaceWorkModel _data)
+        {
+            try
+            {
+                var user = context.User.FirstOrDefault(u => u.Id == _data.UserId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+
+                var objectId = ObjectId.Parse(_data.Id);
+                var SpacePostModel = new SpacePostModel()
+                {
+                    UserId = _data.UserId,
+                    Content = _data.Content,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    MediaUrls = _data.MediaUrls,
+                    Hashtags = _data.Hashtags,
+                    Mentions = _data.Mentions,
+                };
+                await _customers.InsertOneAsync(SpacePostModel);
+                var RetweetPost = SpacePostModel.Id;
+
+                //OriginalPost
+                var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.InRetweet, RetweetPost.ToString());
+                var updateResult = await _customers.UpdateOneAsync(
+                    post => post.Id == objectId,
+                    updateDefinition
+                );
+
+                //RetweetPost
+                var updateDefinitionRetweet = Builders<SpacePostModel>.Update.AddToSet(post => post.Retweet, objectId.ToString());
+                var updateResultRetweet = await _customers.UpdateOneAsync(
+                    post => post.Id == RetweetPost,
+                    updateDefinitionRetweet
+                );
+
+                if (updateResult.MatchedCount == 0)
+                {
+                    return NotFound("Post not found.");
+                }
+
+                user.RetweetPostID.Add(_data.Id);
                 await context.SaveChangesAsync();
 
                 return Ok("Post liked successfully.");
