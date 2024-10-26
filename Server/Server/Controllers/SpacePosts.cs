@@ -118,6 +118,11 @@ namespace Server.Controllers
                 {
                     return NotFound("Post not found");
                 }
+                var user = context.User.FirstOrDefault(u => u.Id == _data.UserId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
 
                 var newComment = new Comment
                 {
@@ -127,11 +132,18 @@ namespace Server.Controllers
                 };
 
                 post.Comments.Add(newComment);
+                var filter = Builders<SpacePostModel>.Filter.Eq(p => p.Id, post.Id);
 
-                var updateDefinition = Builders<SpacePostModel>.Update.Set(post => post.Comments, post.Comments);
-                await _customers.UpdateOneAsync(p => p.Id == objectId, updateDefinition);
+                user.CommentPostID.Add(post.Id.ToString());
+                
 
-                return Ok("Comment added successfully.");
+                //var updateDefinition = Builders<SpacePostModel>.Update.Set(post => post.Comments, post.Comments);
+                //await _customers.UpdateOneAsync(p => p.Id == objectId, updateDefinition);
+
+                await _customers.ReplaceOneAsync(filter, post);
+                await context.SaveChangesAsync();
+
+                return Ok();
             }
             catch (Exception ex)
             {
