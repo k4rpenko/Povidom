@@ -106,6 +106,13 @@ namespace Server.Controllers
             }
         }
 
+        [HttpPost("AddComment")]
+        public async Task<IActionResult> AddComment(SpaceWorkModel _data)
+        {
+            //Напиши будь ласка норм коментарі
+            return Ok();
+        }
+
         [HttpPost("Retweet")]
         public async Task<IActionResult> Retweet(SpaceWorkModel _data)
         {
