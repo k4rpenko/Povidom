@@ -109,9 +109,36 @@ namespace Server.Controllers
         [HttpPost("AddComment")]
         public async Task<IActionResult> AddComment(SpaceWorkModel _data)
         {
-            //Напиши будь ласка норм коментарі
-            return Ok();
+            try
+            {
+                var objectId = ObjectId.Parse(_data.Id);
+                var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
+
+                if (post == null)
+                {
+                    return NotFound("Post not found");
+                }
+
+                var newComment = new Comment
+                {
+                    AuthorId = _data.UserId,
+                    Content = _data.Content,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                post.Comments.Add(newComment);
+
+                var updateDefinition = Builders<SpacePostModel>.Update.Set(post => post.Comments, post.Comments);
+                await _customers.UpdateOneAsync(p => p.Id == objectId, updateDefinition);
+
+                return Ok("Comment added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
         }
+
 
         [HttpPost("Retweet")]
         public async Task<IActionResult> Retweet(SpaceWorkModel _data)
