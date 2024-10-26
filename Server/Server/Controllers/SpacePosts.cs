@@ -106,7 +106,7 @@ namespace Server.Controllers
             }
         }
 
-        [HttpPost("AddComment")]
+        [HttpPost("Comment")]
         public async Task<IActionResult> AddComment(SpaceWorkModel _data)
         {
             try
@@ -136,9 +136,6 @@ namespace Server.Controllers
 
                 user.CommentPostID.Add(post.Id.ToString());
                 
-
-                //var updateDefinition = Builders<SpacePostModel>.Update.Set(post => post.Comments, post.Comments);
-                //await _customers.UpdateOneAsync(p => p.Id == objectId, updateDefinition);
 
                 await _customers.ReplaceOneAsync(filter, post);
                 await context.SaveChangesAsync();
