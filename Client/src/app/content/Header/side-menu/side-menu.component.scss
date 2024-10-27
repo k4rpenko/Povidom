@@ -66,23 +66,14 @@ header {
   background-color: #198a84;
 }
 
-/* Адаптивні стилі для планшетів */
+/* Адаптивні стилі */
 @media (max-width: 1024px) {
   header {
-    width: 35%;
+    width: 25%;
   }
 
   .side-menu {
-    width: 60%;
-  }
-
-  .side-menu h2 {
-    font-size: 1.2em;
-  }
-
-  .menu-item {
-    font-size: 1em;
-    padding: 10px;
+    width: 100%;
   }
 
   .post-button {
@@ -90,7 +81,6 @@ header {
     padding-right: 80px;
   }
 }
-
 
 @media (max-width: 768px) {
   header {
@@ -101,23 +91,14 @@ header {
   }
 
   .side-menu {
-    width: 100%;
+    flex-direction: row;
     align-items: center;
-  }
-
-  .side-menu h2 {
-    font-size: 1.2em;
-    padding: 10px;
-  }
-
-  .menu-item {
-    font-size: 1em;
-    padding: 10px 20px;
+    justify-content: space-around;
   }
 
   .post-button {
+    padding-left: 30px;
+    padding-right: 30px;
     font-size: 1em;
-    padding: 10px 20px;
-    border-radius: 20px;
   }
 }
