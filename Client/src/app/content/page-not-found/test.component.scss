@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; 
-  height: 100vh; 
+  justify-content: center;
+  height: 100vh;
   text-align: center;
   padding: 40px 20px;
   font-family: 'Helvetica Neue', sans-serif;
@@ -15,15 +15,15 @@
   width: 50%;
   max-width: 400px;
   margin-bottom: 30px;
-  animation: bounce 1.5s infinite; 
+  animation: bounce 1.5s infinite;
 }
 
 .not-found-title {
-  font-size: 3em; 
+  font-size: 3em;
   font-weight: bold;
   color: #444;
   margin-bottom: 15px;
-  text-transform: uppercase; 
+  text-transform: uppercase;
 }
 
 .not-found-message {
@@ -37,13 +37,43 @@
   color: #fff;
   font-size: 1.1em;
   font-weight: 600;
-  padding: 15px 30px; 
+  padding: 15px 30px;
   border: none;
-  border-radius: 30px; 
+  border-radius: 30px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s; 
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .home-button:hover {
   background-color: #198a84;
+}
+
+/* Адаптивні стилі для планшетів */
+@media (max-width: 1024px) {
+  .not-found-title {
+    font-size: 2.5em;
+  }
+
+  .not-found-message {
+    font-size: 1.3em;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .not-found-container {
+    padding: 20px;
+  }
+
+  .not-found-title {
+    font-size: 2em;
+  }
+
+  .not-found-message {
+    font-size: 1.2em;
+  }
+
+  .not-found-image {
+    width: 80%;
+  }
 }

@@ -25,7 +25,7 @@ header {
   padding: 13px;
   font-size: 1.5em;
   margin-bottom: 20px;
-  color: #1FB0A8; 
+  color: #1FB0A8;
   text-align: center;
 }
 
@@ -33,7 +33,7 @@ header {
   max-width: 100%;
   font-size: 1.2em;
   color: #ffffff;
-  margin: 5px 0; 
+  margin: 5px 0;
   padding: 13px;
   border-radius: 100px;
   display: flex;
@@ -43,16 +43,16 @@ header {
 }
 
 .menu-item:hover {
-  background-color: #333; 
-  color: #fff; 
+  background-color: #333;
+  color: #fff;
 }
 
 .post-button {
-  min-height: 46px; 
+  min-height: 46px;
   max-width: 100%;
   margin: 20px 0;
-  background-color: #1FB0A8; 
-  color: #fff; 
+  background-color: #1FB0A8;
+  color: #fff;
   font-size: 1.2em;
   padding-left: 110px;
   padding-right: 110px;
@@ -63,6 +63,61 @@ header {
 }
 
 .post-button:hover {
-  background-color: #198a84; 
+  background-color: #198a84;
 }
-  
+
+/* Адаптивні стилі для планшетів */
+@media (max-width: 1024px) {
+  header {
+    width: 35%;
+  }
+
+  .side-menu {
+    width: 60%;
+  }
+
+  .side-menu h2 {
+    font-size: 1.2em;
+  }
+
+  .menu-item {
+    font-size: 1em;
+    padding: 10px;
+  }
+
+  .post-button {
+    padding-left: 80px;
+    padding-right: 80px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  header {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+  }
+
+  .side-menu {
+    width: 100%;
+    align-items: center;
+  }
+
+  .side-menu h2 {
+    font-size: 1.2em;
+    padding: 10px;
+  }
+
+  .menu-item {
+    font-size: 1em;
+    padding: 10px 20px;
+  }
+
+  .post-button {
+    font-size: 1em;
+    padding: 10px 20px;
+    border-radius: 20px;
+  }
+}
