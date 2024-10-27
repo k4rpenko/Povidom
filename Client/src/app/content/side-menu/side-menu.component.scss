@@ -4,8 +4,8 @@ body {
   
   .side-menu {
     width: 250px;
-    background-color: #1e1e1e; /* Чорний фон */
-    color: #fff; /* Білий текст */
+    background-color: #1e1e1e; 
+    color: #fff; 
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -19,13 +19,13 @@ body {
   .side-menu h2 {
     font-size: 1.5em;
     margin-bottom: 20px;
-    color: #7353af; /* Світло-фіолетовий колір для заголовка */
+    color: #7353af; 
     text-align: center;
   }
   
   .menu-item {
     font-size: 1.2em;
-    color: #ffffff; /* Світло-сірий текст для пунктів меню */
+    color: #ffffff; 
     padding: 10px 15px;
     margin: 10px 0;
     border-radius: 5px;
@@ -42,14 +42,14 @@ body {
   }
   
   .menu-item:hover {
-    background-color: #333; /* Темніша фоновий колір при наведенні */
-    color: #fff; /* Білий текст при наведенні */
+    background-color: #333; 
+    color: #fff; 
   }
   
   .post-button {
     margin: 20px 0;
-    background-color: #b39ddb; /* Світло-фіолетовий колір для кнопки */
-    color: #fff; /* Білий текст для кнопки */
+    background-color: #b39ddb; 
+    color: #fff; 
     font-size: 1.2em;
     padding: 12px;
     border: none;
@@ -59,7 +59,7 @@ body {
   }
   
   .post-button:hover {
-    background-color: #9575cd; /* Темніша кнопка при наведенні */
+    background-color: #9575cd; 
     transform: scale(1.05);
   }
   
