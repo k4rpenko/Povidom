@@ -1,0 +1,55 @@
+.side-menu {
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  width: 250px;
+  background-color: #1e1e1e; 
+  color: #fff; 
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin: 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.side-menu h2 {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  color: #1FB0A8; 
+  text-align: center;
+}
+
+.menu-item {
+  font-size: 1.2em;
+  color: #ffffff;
+  margin: 5px 0; 
+  padding: 13px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #333; 
+  color: #fff; 
+}
+
+.post-button {
+  margin: 20px 0;
+  background-color: #1FB0A8; 
+  color: #fff; 
+  font-size: 1.2em;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.post-button:hover {
+  background-color: #198a84; 
+}
+  
