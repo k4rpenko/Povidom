@@ -9,4 +9,12 @@ import { Component } from '@angular/core';
 })
 export class SideMenuComponent {
 
+  constructor() { }
+
+  createPost() {
+    // Логіку для створення нового посту
+    console.log('Create Post button clicked!');
+
+    //Можна перенаправити на сторінку або щоб відкривалось якесь вікно 
+  }
 }
