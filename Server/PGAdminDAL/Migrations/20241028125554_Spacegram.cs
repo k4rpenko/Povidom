@@ -13,6 +13,9 @@ namespace PGAdminDAL.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:hstore", ",,");
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -37,12 +40,17 @@ namespace PGAdminDAL.Migrations
                     LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     Avatar = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     Title = table.Column<string>(type: "text", nullable: true),
+                    Location = table.Column<string>(type: "text", nullable: true),
                     Subscribers = table.Column<List<string>>(type: "text[]", nullable: true),
                     Followers = table.Column<List<string>>(type: "text[]", nullable: true),
                     LikePostID = table.Column<List<string>>(type: "text[]", nullable: true),
                     CommentPostID = table.Column<List<string>>(type: "text[]", nullable: true),
                     RetweetPostID = table.Column<List<string>>(type: "text[]", nullable: true),
                     PostID = table.Column<List<string>>(type: "text[]", nullable: true),
+                    Appeal = table.Column<Dictionary<string, string>>(type: "hstore", nullable: true),
+                    LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsVerified = table.Column<bool>(type: "boolean", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

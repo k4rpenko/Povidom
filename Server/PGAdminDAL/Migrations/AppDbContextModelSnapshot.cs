@@ -21,6 +21,7 @@ namespace PGAdminDAL.Migrations
                 .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "hstore");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -232,6 +233,10 @@ namespace PGAdminDAL.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
+                    b.Property<Dictionary<string, string>>("Appeal")
+                        .IsRequired()
+                        .HasColumnType("hstore");
+
                     b.Property<string>("Avatar")
                         .IsRequired()
                         .HasMaxLength(2000)
@@ -240,6 +245,9 @@ namespace PGAdminDAL.Migrations
                     b.Property<List<string>>("CommentPostID")
                         .IsRequired()
                         .HasColumnType("text[]");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -250,6 +258,12 @@ namespace PGAdminDAL.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -258,6 +272,9 @@ namespace PGAdminDAL.Migrations
                     b.Property<List<string>>("LikePostID")
                         .IsRequired()
                         .HasColumnType("text[]");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
 
                     b.Property<List<string>>("PostID")
                         .IsRequired()
