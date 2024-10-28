@@ -7,20 +7,117 @@ main {
   top: 0;
   justify-content: flex-end;
   z-index: 2;
+  transition: width 0.3s ease;
 }
 
-/* Адаптивні стилі */
-@media (max-width: 1024px) {
+
+@media (max-width: 1397px) {
+  header {
+    width: 28%;
+  }
+
   main {
-    width: 75%;
+    width: 72%;
+  }
+
+  .post-button {
+    padding: 0 90px;
   }
 }
 
-@media (max-width: 768px) {
+
+@media (max-width: 1200px) {
+  header {
+    width: 25%;
+  }
+
   main {
+    width: 75%;
+  }
+
+  .side-menu h2 {
+    font-size: 1.3em;
+  }
+
+  .menu-item {
+    font-size: 1.1em;
+    padding: 10px;
+  }
+
+  .post-button {
+    padding: 0 70px;
+  }
+}
+
+
+@media (max-width: 1024px) {
+  header {
+    width: 20%;
+  }
+
+  main {
+    width: 80%;
+  }
+
+  .side-menu h2 {
+    font-size: 1.2em;
+  }
+
+  .menu-item {
+    font-size: 1em;
+    padding: 8px;
+  }
+
+  .post-button {
+    padding: 0 50px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  header {
     width: 100%;
     height: auto;
     position: relative;
-    margin-top: 80px;
+  }
+
+  main {
+    width: 100%;
+    position: relative;
+  }
+
+  .side-menu h2 {
+    font-size: 1.1em;
+  }
+
+  .menu-item {
+    font-size: 1em;
+  }
+
+  .post-button {
+    font-size: 1em;
+    padding: 0 30px;
+  }
+}
+
+
+@media (max-width: 480px) {
+  header {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .side-menu h2 {
+    font-size: 1em;
+  }
+
+  .menu-item {
+    font-size: 0.9em;
+    padding: 8px;
+  }
+
+  .post-button {
+    font-size: 0.9em;
+    padding: 0 20px;
   }
 }
