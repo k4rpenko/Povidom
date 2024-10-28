@@ -10,6 +10,15 @@ namespace Server.Models
         [BsonElement("UserId")]
         public string UserId { get; set; }
 
+        [BsonElement("UserName")]
+        public string UserName { get; set; }
+
+        [BsonElement("UserNickname")]
+        public string UserNickname { get; set; }
+
+        [BsonElement("UserAvatur")]
+        public string UserAvatar { get; set; }
+
         [BsonElement("Content")]
         public string? Content { get; set; }
 

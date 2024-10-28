@@ -44,7 +44,7 @@ namespace Server.Controllers
             }
         }
 
-        [HttpPost("DeleytPost")]
+        [HttpDelete("DeleytPost")]
         public async Task<IActionResult> DeleytPost(SpaceWorkModel _data)
         {
             try
@@ -64,7 +64,7 @@ namespace Server.Controllers
             }
         }
 
-        [HttpPost("LikePost")]
+        [HttpPut("LikePost")]
         public async Task<IActionResult> LikePost(SpaceWorkModel _data)
         {
             try
@@ -106,7 +106,7 @@ namespace Server.Controllers
             }
         }
 
-        [HttpPost("Comment")]
+        [HttpPut("Comment")]
         public async Task<IActionResult> AddComment(SpaceWorkModel _data)
         {
             try
@@ -149,7 +149,7 @@ namespace Server.Controllers
         }
 
 
-        [HttpPost("Retweet")]
+        [HttpPut("Retweet")]
         public async Task<IActionResult> Retweet(SpaceWorkModel _data)
         {
             try
