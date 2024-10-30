@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-
 namespace PGAdminDAL
 {
     public class AppDbContext : IdentityDbContext
@@ -16,6 +15,7 @@ namespace PGAdminDAL
             _configuration = configuration;
         }
 
+        public DbSet<Follow> Follows { get; set; }
         public DbSet<UserModel> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,6 +28,7 @@ namespace PGAdminDAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<UserModel>().Property(x => x.FirstName)
                 .HasMaxLength(100)
@@ -41,7 +42,19 @@ namespace PGAdminDAL
                 .HasMaxLength(2000)
                 .IsRequired();
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Follow>()
+                .HasKey(f => new { f.UserId, f.FollowerId });
+
+            modelBuilder.Entity<UserModel>()
+                .HasMany(u => u.Followers)
+                .WithOne()
+                .HasForeignKey(f => f.UserId);
+
+            modelBuilder.Entity<Follow>()
+                .HasOne(f => f.Follower)
+                .WithMany(u => u.Following)
+                .HasForeignKey(f => f.FollowerId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

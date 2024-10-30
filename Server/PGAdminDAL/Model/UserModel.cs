@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace PGAdminDAL.Model
 {
@@ -12,13 +11,13 @@ namespace PGAdminDAL.Model
         public string? Title { get; set; }
         public string? Location { get; set; }
 
-        public List<string> Subscribers { get; set; } = new List<string>();
-        public List<string> Followers { get; set; } = new List<string>();
-        public List<string> LikePostID { get; set; } = new List< string>();
+        public ICollection<Follow> Followers { get; set; } = new List<Follow>();
+        public ICollection<Follow> Subscribers { get; set; } = new List<Follow>();
+        public ICollection<Follow> Following { get; set; } = new List<Follow>();
+        public List<string> LikePostID { get; set; } = new List<string>();
         public List<string> CommentPostID { get; set; } = new List<string>();
         public List<string> RetweetPostID { get; set; } = new List<string>();
         public List<string> PostID { get; set; } = new List<string>();
-        
 
         public Dictionary<string, string> Appeal { get; set; } = new Dictionary<string, string>();
 
@@ -26,7 +25,5 @@ namespace PGAdminDAL.Model
         public DateTime? DateOfBirth { get; set; }
 
         public bool IsVerified { get; set; } = false;
-
-        
     }
 }

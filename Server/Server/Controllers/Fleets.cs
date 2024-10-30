@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PGAdminDAL;
+using PGAdminDAL.Model;
 using Server.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Server.Controllers
 {
@@ -11,14 +15,17 @@ namespace Server.Controllers
     public class Fleets : Controller
     {
         private readonly AppDbContext context;
-        public Fleets(AppDbContext _context) { context = _context;  }
+
+        public Fleets(AppDbContext _context)
+        {
+            context = _context;
+        }
 
         [HttpPost("FindPeople")]
         public async Task<IActionResult> FindPeople(string query)
         {
             try
             {
-
                 var users = await context.User
                     .Where(u => u.UserName.ToLower().Contains(query) ||
                                 u.FirstName.ToLower().Contains(query) ||
@@ -37,7 +44,10 @@ namespace Server.Controllers
 
                 return Ok(fleetsUsers);
             }
-            catch (Exception ex) { return StatusCode(500); }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpPost("")]
@@ -45,28 +55,31 @@ namespace Server.Controllers
         {
             try
             {
+                var user = await context.User
+                    .FirstOrDefaultAsync(u => u.UserName == Nick);
 
-                var user = context.User.Where(u => u.UserName == Nick).ToList();
-
-                if (user == null)
+                if (user != null)
                 {
-                    var fleetsUsers = user.Select(u => new FleetsUserFModel
+                    var fleetsUser = new FleetsUserFModel
                     {
-                        Id = u.Id,
-                        UserName = u.UserName,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        Avatar = u.Avatar,
-                        Title = u.Title,
-                        Subscribers = u.Subscribers,
-                        Followers = u.Followers,
-                        PostID = u.PostID
-                    }).ToList();
-                    return Ok(fleetsUsers);
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Avatar = user.Avatar,
+                        Title = user.Title,
+                        Subscribers = (List<string>)user.Subscribers,
+                        Followers = user.Followers.Select(f => f.FollowerId).ToList(), 
+                        PostID = user.PostID
+                    };
+                    return Ok(fleetsUser);
                 }
                 return NotFound();
             }
-            catch (Exception ex) { return StatusCode(500); }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpPut("Subscribers")]
@@ -74,20 +87,23 @@ namespace Server.Controllers
         {
             try
             {
-                var user = context.User.FirstOrDefault(u => u.UserName == Account.NickName);
-                var You = context.User.FirstOrDefault(u => u.Id == Account.Id);
+                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Account.NickName);
+                var You = await context.User.FirstOrDefaultAsync(u => u.Id == Account.Id);
 
-                if (user == null && You == null)
+                if (user != null && You != null)
                 {
-                    user.Followers.Add(Account.Id);
-                    You.Subscribers.Add(Account.NickName);
+                    user.Followers.Add(new Follow { FollowerId = Account.Id, UserId = user.Id });
+                    You.Subscribers.Add(new Follow { FollowerId = You.Id, UserId = user.Id });
 
                     await context.SaveChangesAsync();
                     return Ok();
                 }
                 return NotFound();
             }
-            catch (Exception ex) { return StatusCode(500); }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpDelete("Subscribers")]
@@ -95,39 +111,53 @@ namespace Server.Controllers
         {
             try
             {
-                var user = context.User.FirstOrDefault(u => u.UserName == Account.NickName);
-                var You = context.User.FirstOrDefault(u => u.Id == Account.Id);
+                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Account.NickName);
+                var You = await context.User.FirstOrDefaultAsync(u => u.Id == Account.Id);
 
-                if (user == null && You == null)
+                if (user != null && You != null)
                 {
-                    user.Followers.Remove(Account.Id);
-                    You.Subscribers.Remove(Account.NickName);
+                    var followerToRemove = user.Followers.FirstOrDefault(f => f.FollowerId == Account.Id);
+                    if (followerToRemove != null)
+                    {
+                        user.Followers.Remove(followerToRemove);
+                    }
+
+                    var subscriberToRemove = You.Subscribers.FirstOrDefault(f => f.UserId == user.Id);
+                    if (subscriberToRemove != null)
+                    {
+                        You.Subscribers.Remove(subscriberToRemove);
+                    }
 
                     await context.SaveChangesAsync();
                     return Ok();
                 }
                 return NotFound();
             }
-            catch (Exception ex) { return StatusCode(500); }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpPut("appeal")]
-        public async Task<IActionResult> appeal(AccountSettingsModel Account)
+        public async Task<IActionResult> Appeal(AccountSettingsModel Account)
         {
             try
             {
-                var user = context.User.FirstOrDefault(u => u.UserName == Account.NickName);
+                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Account.NickName);
 
-                if (user == null)
+                if (user != null)
                 {
-                    user.Appeal.Add(Account.Appeal, Account.Id);
-
+                    user.Appeal[Account.Appeal] = Account.Id; 
                     await context.SaveChangesAsync();
                     return Ok();
                 }
                 return NotFound();
             }
-            catch (Exception ex) { return StatusCode(500); }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
     }
 }

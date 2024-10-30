@@ -8,7 +8,7 @@ using PGAdminDAL;
 
 namespace Server.Controllers
 {
-    internal class JWT
+    public class JWT
     {
         private readonly byte[] Key;
 
