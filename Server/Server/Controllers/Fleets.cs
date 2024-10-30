@@ -15,13 +15,11 @@ namespace Server.Controllers
     public class Fleets : Controller
     {
         private readonly AppDbContext context;
+        private readonly JWT _jwt = new JWT();
 
-        public Fleets(AppDbContext _context)
-        {
-            context = _context;
-        }
+        public Fleets(AppDbContext _context) { context = _context; }
 
-        [HttpPost("FindPeople")]
+        [HttpGet("FindPeople")]
         public async Task<IActionResult> FindPeople(string query)
         {
             try
@@ -50,14 +48,12 @@ namespace Server.Controllers
             }
         }
 
-        [HttpPost("")]
+        [HttpGet("")]
         public async Task<IActionResult> UserGet(string Nick)
         {
             try
             {
-                var user = await context.User
-                    .FirstOrDefaultAsync(u => u.UserName == Nick);
-
+                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Nick);
                 if (user != null)
                 {
                     var fleetsUser = new FleetsUserFModel
@@ -68,10 +64,19 @@ namespace Server.Controllers
                         LastName = user.LastName,
                         Avatar = user.Avatar,
                         Title = user.Title,
-                        Subscribers = (List<string>)user.Subscribers,
-                        Followers = user.Followers.Select(f => f.FollowerId).ToList(), 
                         PostID = user.PostID
                     };
+
+                    if (Request.Cookies.TryGetValue("Token", out string cookieValue))
+                    {
+                        var id = new JWT().GetUserIdFromToken(cookieValue);
+                        if (id != null)
+                        {
+                            fleetsUser.SubscribersBool = user.Subscribers.Contains(id);
+                            fleetsUser.FollowersBool = user.Followers.Contains(id);
+                        }
+                    }
+
                     return Ok(fleetsUser);
                 }
                 return NotFound();
@@ -88,12 +93,13 @@ namespace Server.Controllers
             try
             {
                 var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Account.NickName);
-                var You = await context.User.FirstOrDefaultAsync(u => u.Id == Account.Id);
+                var id = _jwt.GetUserIdFromToken(Account.Token);
+                var You = await context.User.FindAsync(id);
 
                 if (user != null && You != null)
                 {
-                    user.Followers.Add(new Follow { FollowerId = Account.Id, UserId = user.Id });
-                    You.Subscribers.Add(new Follow { FollowerId = You.Id, UserId = user.Id });
+                    user.Followers.Add(Account.Id);
+                    You.Subscribers.Add(Account.NickName);
 
                     await context.SaveChangesAsync();
                     return Ok();
@@ -112,21 +118,13 @@ namespace Server.Controllers
             try
             {
                 var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Account.NickName);
-                var You = await context.User.FirstOrDefaultAsync(u => u.Id == Account.Id);
+                var id = _jwt.GetUserIdFromToken(Account.Token);
+                var You = await context.User.FindAsync(id);
 
                 if (user != null && You != null)
                 {
-                    var followerToRemove = user.Followers.FirstOrDefault(f => f.FollowerId == Account.Id);
-                    if (followerToRemove != null)
-                    {
-                        user.Followers.Remove(followerToRemove);
-                    }
-
-                    var subscriberToRemove = You.Subscribers.FirstOrDefault(f => f.UserId == user.Id);
-                    if (subscriberToRemove != null)
-                    {
-                        You.Subscribers.Remove(subscriberToRemove);
-                    }
+                    user.Followers.Remove(Account.Id);
+                    You.Subscribers.Remove(Account.NickName);
 
                     await context.SaveChangesAsync();
                     return Ok();
@@ -139,16 +137,18 @@ namespace Server.Controllers
             }
         }
 
+
         [HttpPut("appeal")]
         public async Task<IActionResult> Appeal(AccountSettingsModel Account)
         {
             try
             {
-                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Account.NickName);
+                var user = context.User.FirstOrDefault(u => u.UserName == Account.NickName);
 
                 if (user != null)
                 {
-                    user.Appeal[Account.Appeal] = Account.Id; 
+                    user.Appeal.Add(Account.Appeal, Account.Id);
+
                     await context.SaveChangesAsync();
                     return Ok();
                 }

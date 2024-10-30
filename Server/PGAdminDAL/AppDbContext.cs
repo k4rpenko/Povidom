@@ -15,7 +15,6 @@ namespace PGAdminDAL
             _configuration = configuration;
         }
 
-        public DbSet<Follow> Follows { get; set; }
         public DbSet<UserModel> User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -42,19 +41,10 @@ namespace PGAdminDAL
                 .HasMaxLength(2000)
                 .IsRequired();
 
-            modelBuilder.Entity<Follow>()
-                .HasKey(f => new { f.UserId, f.FollowerId });
-
             modelBuilder.Entity<UserModel>()
                 .HasMany(u => u.Followers)
                 .WithOne()
                 .HasForeignKey(f => f.UserId);
-
-            modelBuilder.Entity<Follow>()
-                .HasOne(f => f.Follower)
-                .WithMany(u => u.Following)
-                .HasForeignKey(f => f.FollowerId)
-                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

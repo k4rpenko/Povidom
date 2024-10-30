@@ -4,6 +4,5 @@ import { PostsComponent } from './content/Main/posts/posts.component';
 
 export const routes: Routes = [
     { path: '', component: PostsComponent },
-
     { path: '**', component: PageNotFoundComponent }
  ];

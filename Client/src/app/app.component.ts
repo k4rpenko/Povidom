@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, Type } from "@angular/core";
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { SideMenuComponent } from "./content/Header/side-menu/side-menu.component";
-import {CheckUser} from "./Сheck-User"
+import {CheckUser} from "./data/Сheck-User"
 import { updateAccetsToken } from "./data/HTTP/POST/updateAccetsToken.service";
 import { CookieService } from 'ngx-cookie-service';
 
@@ -9,8 +9,9 @@ import { CookieService } from 'ngx-cookie-service';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, SideMenuComponent],
+  providers: [CookieService],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrls: ['./app.component.scss'] 
 })
 export class AppComponent {
   title = 'Client';
@@ -32,7 +33,8 @@ export class AppComponent {
   }
 
   UpdateJWT(now: Date) {
-    if (!this.lastRequestTime || now.getTime() - this.lastRequestTime.getTime() > this.REQUEST_INTERVAL) {
+    if(this.cookieService.check('authToken')){
+      if (!this.lastRequestTime || now.getTime() - this.lastRequestTime.getTime() > this.REQUEST_INTERVAL) {
         this.token = this.cookieService.get('authToken');
         this.lastRequestTime = now;
         if (this.token !== '' && this.token !== null) {
@@ -52,6 +54,10 @@ export class AppComponent {
                 }
             });
         }
+      }
     }
-}
+    else{
+      //this.router.navigate([`${window.location.origin}/login`]);
+    }
+  }
 }

@@ -52,7 +52,7 @@ namespace Server.Controllers
                 if (Account.Password != null  && _jwt.ValidateToken(Account.Token, context))
                 {
                     var id = _jwt.GetUserIdFromToken(Account.Token);
-                    var user = await context.Users.FindAsync(id);
+                    var user = await context.User.FindAsync(id);
                     if (user != null)
                     {
                         string HashNewPassword = _HASH.Encrypt(Account.NewPassword, user.ConcurrencyStamp);
@@ -79,7 +79,8 @@ namespace Server.Controllers
         {
             try
             {
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == model.Id);
+                var id = _jwt.GetUserIdFromToken(model.Token);
+                var user = await context.User.FindAsync(id);
                 if (user == null)
                 {
                     return NotFound(new { message = "User not found" });

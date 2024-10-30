@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
 
 namespace PGAdminDAL.Model
 {
@@ -11,9 +10,8 @@ namespace PGAdminDAL.Model
         public string? Title { get; set; }
         public string? Location { get; set; }
 
-        public ICollection<Follow> Followers { get; set; } = new List<Follow>();
-        public ICollection<Follow> Subscribers { get; set; } = new List<Follow>();
-        public ICollection<Follow> Following { get; set; } = new List<Follow>();
+        public List<string> Subscribers { get; set; } = new List<string>();
+        public List<string> Followers { get; set; } = new List<string>();
         public List<string> LikePostID { get; set; } = new List<string>();
         public List<string> CommentPostID { get; set; } = new List<string>();
         public List<string> RetweetPostID { get; set; } = new List<string>();

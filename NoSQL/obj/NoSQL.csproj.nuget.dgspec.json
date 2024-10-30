@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "E:\\програмування\\Csh\\NONE\\NoSQL\\NoSQL.csproj": {}
+    "D:\\Work UA\\Csh\\Spacegram\\NoSQL\\NoSQL.csproj": {}
   },
   "projects": {
-    "E:\\програмування\\Csh\\NONE\\NoSQL\\NoSQL.csproj": {
+    "D:\\Work UA\\Csh\\Spacegram\\NoSQL\\NoSQL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\програмування\\Csh\\NONE\\NoSQL\\NoSQL.csproj",
+        "projectUniqueName": "D:\\Work UA\\Csh\\Spacegram\\NoSQL\\NoSQL.csproj",
         "projectName": "NoSQL",
-        "projectPath": "E:\\програмування\\Csh\\NONE\\NoSQL\\NoSQL.csproj",
-        "packagesPath": "C:\\Users\\Dima\\.nuget\\packages\\",
-        "outputPath": "E:\\програмування\\Csh\\NONE\\NoSQL\\obj\\",
+        "projectPath": "D:\\Work UA\\Csh\\Spacegram\\NoSQL\\NoSQL.csproj",
+        "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
+        "outputPath": "D:\\Work UA\\Csh\\Spacegram\\NoSQL\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Dima\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
