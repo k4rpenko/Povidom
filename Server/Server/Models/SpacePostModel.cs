@@ -5,8 +5,18 @@ namespace Server.Models
 {
     public class Comment
     {
-        [BsonElement("AuthorId")]
-        public string? AuthorId { get; set; }
+        [BsonElement("UserId")]
+        public string? UserId { get; set; }
+
+        [BsonElement("UserNickname")]
+        public string UserNickname { get; set; }
+
+        [BsonElement("UserName")]
+        public string UserName { get; set; }
+
+
+        [BsonElement("UserAvatur")]
+        public string UserAvatar { get; set; }
 
         [BsonElement("Content")]
         public string? Content { get; set; }
@@ -19,6 +29,16 @@ namespace Server.Models
     {
         [BsonElement("UserId")]
         public string? UserId { get; set; }
+
+        [BsonElement("UserNickname")]
+        public string UserNickname { get; set; }
+
+        [BsonElement("UserName")]
+        public string UserName { get; set; }
+
+
+        [BsonElement("UserAvatur")]
+        public string UserAvatar { get; set; }
 
         [BsonElement("CreatedAt")]
         public DateTime? CreatedAt { get; set; }
@@ -74,7 +94,11 @@ namespace Server.Models
         [BsonElement("Comments")]
         public List<Comment>? Comments { get; set; } = new List<Comment>();
 
+        [BsonElement("Views")]
+        public List<string>? Views { get; set; } = new List<string>();
+
         [BsonElement("SPublished")]
         public bool SPublished { get; set; }
+
     }
 }

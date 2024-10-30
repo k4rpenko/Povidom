@@ -8,16 +8,16 @@ namespace Server.Models
         public string? Id { get; set; }
 
         [BsonElement("UserId")]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         [BsonElement("UserName")]
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
 
         [BsonElement("UserNickname")]
-        public string UserNickname { get; set; }
+        public string? UserNickname { get; set; }
 
         [BsonElement("UserAvatur")]
-        public string UserAvatar { get; set; }
+        public string? UserAvatar { get; set; }
 
         [BsonElement("Content")]
         public string? Content { get; set; }

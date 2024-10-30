@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using NoSQL;
 using PGAdminDAL;
 using Server.Models;
+using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Server.Controllers
@@ -126,7 +127,7 @@ namespace Server.Controllers
 
                 var newComment = new Comment
                 {
-                    AuthorId = _data.UserId,
+                    UserId = _data.UserId,
                     Content = _data.Content,
                     CreatedAt = DateTime.UtcNow
                 };
@@ -204,5 +205,25 @@ namespace Server.Controllers
                 throw new Exception("", ex);
             }
         }
+
+        [HttpGet("Home")]
+        public async Task<IActionResult> Home()
+        {
+            //var filter = Builders<SpacePostModel>.Filter.ElemMatch(post => post.Views, Builders<string>.Filter.Ne(view => view, _data.Id.ToString()));
+            //var posts = await _customers.Find(filter).Limit(30).ToListAsync();
+            List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
+
+            return Ok(posts);
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> Home(string UserNick)
+        {
+            var filter = Builders<SpacePostModel>.Filter.Eq(post => post.UserNickname, UserNick);
+            List<SpacePostModel> posts = await _customers.Find(filter).Limit(30).ToListAsync();
+
+            return Ok(posts);
+        }
+
     }
 }
