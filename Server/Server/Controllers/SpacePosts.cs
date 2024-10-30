@@ -24,25 +24,20 @@ namespace Server.Controllers
         {
             try
             {
-                if (Request.Cookies.TryGetValue("Token", out string cookieValue))
+                var user = await context.User.FindAsync(_data.UserId);
+                if (user == null)
                 {
-                    var id = _jwt.GetUserIdFromToken(cookieValue);
-                    var user = await context.User.FindAsync(id);
-                    if (user == null)
-                    {
-                        return NotFound("User not found.");
-                    }
-
-                    _data.CreatedAt = DateTime.UtcNow;
-                    _data.UpdatedAt = DateTime.UtcNow;
-                    await _customers.InsertOneAsync(_data);
-
-                    user.PostID.Add(_data.Id.ToString());
-                    await context.SaveChangesAsync();
-
-                    return Ok();
+                    return NotFound("User not found.");
                 }
-                return BadRequest();
+
+                _data.CreatedAt = DateTime.UtcNow;
+                _data.UpdatedAt = DateTime.UtcNow;
+                await _customers.InsertOneAsync(_data);
+
+                user.PostID.Add(_data.Id.ToString());
+                await context.SaveChangesAsync();
+
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -55,18 +50,16 @@ namespace Server.Controllers
         {
             try
             {
-                if (Request.Cookies.TryGetValue("Token", out string cookieValue))
-                {
-                    var objectId = ObjectId.Parse(_data.Id);
-                    var deleteResult = await _customers.DeleteOneAsync(post => post.Id == objectId);
-                    if (deleteResult.DeletedCount == 0)
-                    {
-                        return NotFound("Post not found.");
-                    }
 
-                    return Ok();
+                var objectId = ObjectId.Parse(_data.Id);
+                var deleteResult = await _customers.DeleteOneAsync(post => post.Id == objectId);
+                if (deleteResult.DeletedCount == 0)
+                {
+                    return NotFound("Post not found.");
                 }
-                return BadRequest();
+
+                return Ok();
+
             }
             catch (Exception ex)
             {
@@ -79,38 +72,34 @@ namespace Server.Controllers
         {
             try
             {
-                if (Request.Cookies.TryGetValue("Token", out string cookieValue))
+                var user = await context.User.FindAsync(_data.UserId);
+
+
+                var newLike = new Like()
                 {
-                    var id = _jwt.GetUserIdFromToken(cookieValue);
-                    var user = await context.User.FindAsync(id);
+                    UserId = _data.UserId,
+                    CreatedAt = DateTime.UtcNow
+                };
 
+                var objectId = ObjectId.Parse(_data.Id);
 
-                    var newLike = new Like()
-                    {
-                        UserId = _data.UserId,
-                        CreatedAt = DateTime.UtcNow
-                    };
+                var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.Like, newLike);
+                var updateResult = await _customers.UpdateOneAsync(
+                    post => post.Id == objectId,
+                    updateDefinition
+                );
 
-                    var objectId = ObjectId.Parse(_data.Id);
-
-                    var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.Like, newLike);
-                    var updateResult = await _customers.UpdateOneAsync(
-                        post => post.Id == objectId,
-                        updateDefinition
-                    );
-
-                    if (updateResult.MatchedCount == 0)
-                    {
-                        return NotFound("Post not found.");
-                    }
-
-                    user.LikePostID.Add(_data.Id);
-
-                    await context.SaveChangesAsync();
-
-                    return Ok("Post liked successfully.");
+                if (updateResult.MatchedCount == 0)
+                {
+                    return NotFound("Post not found.");
                 }
-                return BadRequest();
+
+                user.LikePostID.Add(_data.Id);
+
+                await context.SaveChangesAsync();
+
+                return Ok("Post liked successfully.");
+
             }
             catch (Exception ex)
             {
@@ -123,38 +112,34 @@ namespace Server.Controllers
         {
             try
             {
-                if (Request.Cookies.TryGetValue("Token", out string cookieValue))
+                var user = await context.User.FindAsync(_data.UserId);
+                var objectId = ObjectId.Parse(_data.Id);
+                var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
+
+                if (post == null)
                 {
-                    var id = _jwt.GetUserIdFromToken(cookieValue);
-                    var user = await context.User.FindAsync(id);
-                    var objectId = ObjectId.Parse(_data.Id);
-                    var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
-
-                    if (post == null)
-                    {
-                        return NotFound("Post not found");
-                    }
-
-
-                    var newComment = new Comment
-                    {
-                        UserId = _data.UserId,
-                        Content = _data.Content,
-                        CreatedAt = DateTime.UtcNow
-                    };
-
-                    post.Comments.Add(newComment);
-                    var filter = Builders<SpacePostModel>.Filter.Eq(p => p.Id, post.Id);
-
-                    user.CommentPostID.Add(post.Id.ToString());
-
-
-                    await _customers.ReplaceOneAsync(filter, post);
-                    await context.SaveChangesAsync();
-
-                    return Ok();
+                    return NotFound("Post not found");
                 }
-                return BadRequest();
+
+
+                var newComment = new Comment
+                {
+                    UserId = _data.UserId,
+                    Content = _data.Content,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                post.Comments.Add(newComment);
+                var filter = Builders<SpacePostModel>.Filter.Eq(p => p.Id, post.Id);
+
+                user.CommentPostID.Add(post.Id.ToString());
+
+
+                await _customers.ReplaceOneAsync(filter, post);
+                await context.SaveChangesAsync();
+
+                return Ok();
+
             }
             catch (Exception ex)
             {
@@ -168,51 +153,47 @@ namespace Server.Controllers
         {
             try
             {
-                if (Request.Cookies.TryGetValue("Token", out string cookieValue))
+                var user = await context.User.FindAsync(_data.UserId);
+
+
+                var objectId = ObjectId.Parse(_data.Id);
+                var SpacePostModel = new SpacePostModel()
                 {
-                    var id = _jwt.GetUserIdFromToken(cookieValue);
-                    var user = await context.User.FindAsync(id);
+                    UserId = _data.UserId,
+                    Content = _data.Content,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    MediaUrls = _data.MediaUrls,
+                    Hashtags = _data.Hashtags,
+                    Mentions = _data.Mentions,
+                };
+                await _customers.InsertOneAsync(SpacePostModel);
+                var RetweetPost = SpacePostModel.Id;
 
+                //OriginalPost
+                var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.InRetweet, RetweetPost.ToString());
+                var updateResult = await _customers.UpdateOneAsync(
+                    post => post.Id == objectId,
+                    updateDefinition
+                );
 
-                    var objectId = ObjectId.Parse(_data.Id);
-                    var SpacePostModel = new SpacePostModel()
-                    {
-                        UserId = _data.UserId,
-                        Content = _data.Content,
-                        CreatedAt = DateTime.UtcNow,
-                        UpdatedAt = DateTime.UtcNow,
-                        MediaUrls = _data.MediaUrls,
-                        Hashtags = _data.Hashtags,
-                        Mentions = _data.Mentions,
-                    };
-                    await _customers.InsertOneAsync(SpacePostModel);
-                    var RetweetPost = SpacePostModel.Id;
+                //RetweetPost
+                var updateDefinitionRetweet = Builders<SpacePostModel>.Update.AddToSet(post => post.Retweet, objectId.ToString());
+                var updateResultRetweet = await _customers.UpdateOneAsync(
+                    post => post.Id == RetweetPost,
+                    updateDefinitionRetweet
+                );
 
-                    //OriginalPost
-                    var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.InRetweet, RetweetPost.ToString());
-                    var updateResult = await _customers.UpdateOneAsync(
-                        post => post.Id == objectId,
-                        updateDefinition
-                    );
-
-                    //RetweetPost
-                    var updateDefinitionRetweet = Builders<SpacePostModel>.Update.AddToSet(post => post.Retweet, objectId.ToString());
-                    var updateResultRetweet = await _customers.UpdateOneAsync(
-                        post => post.Id == RetweetPost,
-                        updateDefinitionRetweet
-                    );
-
-                    if (updateResult.MatchedCount == 0)
-                    {
-                        return NotFound("Post not found.");
-                    }
-
-                    user.RetweetPostID.Add(_data.Id);
-                    await context.SaveChangesAsync();
-
-                    return Ok("Post liked successfully.");
+                if (updateResult.MatchedCount == 0)
+                {
+                    return NotFound("Post not found.");
                 }
-                return BadRequest();
+
+                user.RetweetPostID.Add(_data.Id);
+                await context.SaveChangesAsync();
+
+                return Ok("Post liked successfully.");
+
             }
             catch (Exception ex)
             {
