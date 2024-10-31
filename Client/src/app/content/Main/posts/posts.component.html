@@ -1,4 +1,75 @@
 <main>
-    <div >
+    <div class="mainPost">
+        <div class="HeaderPosts">
+            <div class="HeaderPosts-ForU">
+                <a href="">
+                    <samp>For you</samp>
+                </a>
+            </div>
+            <div class="HeaderPosts-Following">
+                <a href="">
+                    <samp>Following</samp>
+                </a>
+            </div>
+        </div>
+        <div class="SendPostBox">
+            <div class="SendPost">
+                <div class="SendPostContext">
+                    <img src="https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg" alt="">
+                    <input type="text">
+                </div>
+                <div class="SendPostAddendum">
+                    <div style="position: relative; display: inline-block; fill: #1FB0A8; width: 20px; height: 20px;">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path></g>
+                        </svg>
+                    </div>
+                    <div style="position: relative; display: inline-block; fill: #1FB0A8; width: 20px; height: 20px;">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" ><g><path d="M3 5.5C3 4.119 4.12 3 5.5 3h13C19.88 3 21 4.119 21 5.5v13c0 1.381-1.12 2.5-2.5 2.5h-13C4.12 21 3 19.881 3 18.5v-13zM5.5 5c-.28 0-.5.224-.5.5v13c0 .276.22.5.5.5h13c.28 0 .5-.224.5-.5v-13c0-.276-.22-.5-.5-.5h-13zM18 10.711V9.25h-3.74v5.5h1.44v-1.719h1.7V11.57h-1.7v-.859H18zM11.79 9.25h1.44v5.5h-1.44v-5.5zm-3.07 1.375c.34 0 .77.172 1.02.43l1.03-.86c-.51-.601-1.28-.945-2.05-.945C7.19 9.25 6 10.453 6 12s1.19 2.75 2.72 2.75c.85 0 1.54-.344 2.05-.945v-2.149H8.38v1.032H9.4v.515c-.17.086-.42.172-.68.172-.76 0-1.36-.602-1.36-1.375 0-.688.6-1.375 1.36-1.375z"></path></g>
+                          <use href="#icon-id"></use> 
+                        </svg>
+                    </div>
+                    <button>Post</button>
+                </div>
+            </div>
+        </div>
+        <div class="Post-Box">
+            <div *ngFor="let Post of post" class="Post-For">
+                <div class="Post-item">
+                    <img src="{{Post.UserAvatar}}" alt="">
+                    <div class="Post-FUser">
+                        <span>{{Post.UserName}}</span>
+                        <span>{{Post.UserNickname}}</span>
+                    </div>
+                    <div style="text-overflow: unset;" ></div>
+                    <div *ngIf="!Retwit; else Retwit" class="Post-Context">
+                        <samp>{{Post.Content}}</samp>
+                        <img src="{{Post.Video}}" alt="">
+                    </div>
+                    <ng-template #Retwit>
+                        <div class="Retwit">
+        
+                        </div>
+                    </ng-template>
+                    <div class="Post-Mad">
+                        <div class="Post-Comments"><a href="">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1xvli5t r-1hdv0qi"><g><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path></g></svg>
+                            {{Post.Comments}}
+                        </a></div>
+                        <div class="Post-Retpost"><a href="">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1xvli5t r-1hdv0qi"><g><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path></g></svg>
+                            {{Post.Retpost}}
+                        </a></div>
+                        <div class="Post-Likes"><a href="">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1xvli5t r-1hdv0qi"><g><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></g></svg>
+                            {{Post.Likes}}
+                        </a></div>
+                        <div class="Post-View"><a href="">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1xvli5t r-1hdv0qi"><g><path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path></g></svg>
+                            {{Post.Views}}
+                        </a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </main>

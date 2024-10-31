@@ -60,7 +60,6 @@ namespace Server.Models
         [BsonElement("UserName")]
         public string UserName { get; set; }
 
-
         [BsonElement("UserAvatur")]
         public string UserAvatar { get; set; }
 
@@ -79,11 +78,11 @@ namespace Server.Models
         [BsonElement("Like")]
         public List<Like>? Like { get; set; } = new List<Like>();
 
-        [BsonElement("Retweet")]
-        public List<string>? Retweet { get; set; } = new List<string>();
+        [BsonElement("Retpost")]
+        public List<string>? Retpost { get; set; } = new List<string>();
 
-        [BsonElement("InRetweet")]
-        public List<string>? InRetweet { get; set; } = new List<string>();
+        [BsonElement("InRetpost")]
+        public List<string>? InRetpost { get; set; } = new List<string>();
 
         [BsonElement("Hashtags")]
         public List<string>? Hashtags { get; set; } = new List<string>();

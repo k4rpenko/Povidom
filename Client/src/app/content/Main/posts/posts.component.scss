@@ -10,114 +10,162 @@ main {
   transition: width 0.3s ease;
 }
 
+main{
+  color: #E7E9EA;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
 
-@media (max-width: 1397px) {
-  header {
-    width: 28%;
-  }
+main a{
+  text-decoration: none;
+  color: inherit;
+}
 
-  main {
-    width: 72%;
-  }
+samp{
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 700;
+}
 
-  .post-button {
-    padding: 0 90px;
-  }
+.mainPost {
+  max-width: 600px;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid #2F3336;
+  overflow: hidden;
+}
+
+.HeaderPosts {
+  height: auto;
+  width: 100%;
+  border-bottom: 1px solid #2F3336;
+  display: flex;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  justify-content: center;
+}
+
+.HeaderPosts-ForU, .HeaderPosts-Following{
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+.HeaderPosts-ForU{
+  border-right: 1px solid #2F3336;
 }
 
 
-@media (max-width: 1200px) {
-  header {
-    width: 25%;
-  }
+.HeaderPosts-Following{
+  color: #71767B;
+  font-size: 15px;
+}
 
-  main {
-    width: 75%;
-  }
+.SendPost{
+  display: flex;
+  padding: 20px;
+  height: auto;
+  width: auto;
+  border-bottom: 1px solid #2F3336;
+  flex-direction: column;
+}
 
-  .side-menu h2 {
-    font-size: 1.3em;
-  }
+.SendPostContext{
+  display: flex;
+  align-items: center;
+}
 
-  .menu-item {
-    font-size: 1.1em;
-    padding: 10px;
-  }
+.SendPostContext input{
+  width: auto;
+  height: 100%;
+  max-height: 40px;
+  border: none;
+  background-color: transparent;
+  color: #2F3336;
+}
 
-  .post-button {
-    padding: 0 70px;
-  }
+.SendPostContext img{
+  border-radius: 50%;
+  max-width: 40px;
+  width: 100%;
 }
 
 
-@media (max-width: 1024px) {
-  header {
-    width: 20%;
-  }
-
-  main {
-    width: 80%;
-  }
-
-  .side-menu h2 {
-    font-size: 1.2em;
-  }
-
-  .menu-item {
-    font-size: 1em;
-    padding: 8px;
-  }
-
-  .post-button {
-    padding: 0 50px;
-  }
+.Post-Box {
+  width: auto;
 }
 
-
-@media (max-width: 768px) {
-  header {
-    width: 100%;
-    height: auto;
-    position: relative;
-  }
-
-  main {
-    width: 100%;
-    position: relative;
-  }
-
-  .side-menu h2 {
-    font-size: 1.1em;
-  }
-
-  .menu-item {
-    font-size: 1em;
-  }
-
-  .post-button {
-    font-size: 1em;
-    padding: 0 30px;
-  }
+.Post-item {
+  padding: 15px;
+  width: auto;
+  border-bottom: 1px solid #2F3336;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: background-color 0.3s ease;
 }
 
+.Post-FUser {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #E7E9EA;
+}
 
-@media (max-width: 480px) {
-  header {
-    width: 100%;
-    justify-content: center;
-  }
+.Post-FUser img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
 
-  .side-menu h2 {
-    font-size: 1em;
-  }
+.Post-FUser span {
+  display: inline-block;
+  margin-right: 5px;
+}
 
-  .menu-item {
-    font-size: 0.9em;
-    padding: 8px;
-  }
+.Post-FUser .UserNickname {
+  color: #71767B;
+  font-size: 13px;
+}
 
-  .post-button {
-    font-size: 0.9em;
-    padding: 0 20px;
-  }
+.Post-Context {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #E7E9EA;
+}
+
+.Post-Context img {
+  margin-top: 10px;
+  border-radius: 12px;
+  max-width: 100%;
+  height: auto;
+}
+
+.Post-Mad {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-top: 5px;
+  color: #71767B;
+  font-size: 13px;
+}
+
+.Post-Mad a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #71767B;
+}
+
+.Post-Mad svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transition: fill 0.2s ease;
+}
+
+.Post-Mad a:hover svg {
+  fill: #1FB0A8;
 }

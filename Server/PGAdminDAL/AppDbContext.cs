@@ -40,11 +40,6 @@ namespace PGAdminDAL
             modelBuilder.Entity<UserModel>().Property(x => x.Avatar)
                 .HasMaxLength(2000)
                 .IsRequired();
-
-            modelBuilder.Entity<UserModel>()
-                .HasMany(u => u.Followers)
-                .WithOne()
-                .HasForeignKey(f => f.UserId);
         }
     }
 }

@@ -1,4 +1,5 @@
 import { openDB, IDBPDatabase } from 'idb';
+import { Post, post } from './interface/Post/Post.interface';
 
 export class PostCache{
     private db: IDBPDatabase | undefined;
@@ -22,14 +23,14 @@ export class PostCache{
         if (!this.db) {
             throw new Error("Database is not initialized.");
         }
-        post.hashtags = post.hashtags || [];
-        if (!post.hashtags.includes(group)) {
-            post.hashtags.push(group);
+        post.Hashtags = post.Hashtags || [];
+        if (!post.Hashtags.includes(group)) {
+            post.Hashtags.push(group);
         }
         await this.db.add('posts', post);
     }
 
-    public async getPostsByGroup(group: string): Promise<Post[]> {
+    public async getPostsByGroup(group: string): Promise<post[]> {
         if (!this.db) {
             throw new Error("Database is not initialized.");
         }

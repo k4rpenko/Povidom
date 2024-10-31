@@ -148,13 +148,12 @@ namespace Server.Controllers
         }
 
 
-        [HttpPut("Retweet")]
+        [HttpPut("Retpost")]
         public async Task<IActionResult> Retweet(SpaceWorkModel _data)
         {
             try
             {
                 var user = await context.User.FindAsync(_data.UserId);
-
 
                 var objectId = ObjectId.Parse(_data.Id);
                 var SpacePostModel = new SpacePostModel()
@@ -171,14 +170,14 @@ namespace Server.Controllers
                 var RetweetPost = SpacePostModel.Id;
 
                 //OriginalPost
-                var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.InRetweet, RetweetPost.ToString());
+                var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.InRetpost, RetweetPost.ToString());
                 var updateResult = await _customers.UpdateOneAsync(
                     post => post.Id == objectId,
                     updateDefinition
                 );
 
                 //RetweetPost
-                var updateDefinitionRetweet = Builders<SpacePostModel>.Update.AddToSet(post => post.Retweet, objectId.ToString());
+                var updateDefinitionRetweet = Builders<SpacePostModel>.Update.AddToSet(post => post.Retpost, objectId.ToString());
                 var updateResultRetweet = await _customers.UpdateOneAsync(
                     post => post.Id == RetweetPost,
                     updateDefinitionRetweet
@@ -208,16 +207,59 @@ namespace Server.Controllers
             //var posts = await _customers.Find(filter).Limit(30).ToListAsync();
             List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
 
-            return Ok(posts);
+            List<PostHome> postHomeList = posts.Select(post => new PostHome
+            {
+                Id = post.Id,
+                UserId = post.UserId,
+                UserNickname = post.UserNickname,
+                UserName = post.UserName,
+                UserAvatar = post.UserAvatar,
+                Content = post.Content,
+                CreatedAt = post.CreatedAt,
+                UpdatedAt = post.UpdatedAt,
+                MediaUrls = post.MediaUrls?.Count ?? 0,
+                Like = post.Like?.Count ?? 0,
+                Retpost = post.Retpost?.Count ?? 0,
+                InRetpost = post.InRetpost?.Count ?? 0,
+                Hashtags = post.Hashtags?.Count ?? 0,
+                Mentions = post.Mentions?.Count ?? 0,
+                Comments = post.Comments?.Count ?? 0,
+                Views = post.Views?.Count ?? 0,
+                SPublished = post.SPublished
+            }).ToList();
+
+            return Ok(new { Post = postHomeList });
+
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Home(string UserNick)
         {
             var filter = Builders<SpacePostModel>.Filter.Eq(post => post.UserNickname, UserNick);
-            List<SpacePostModel> posts = await _customers.Find(filter).Limit(30).ToListAsync();
+            List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
 
-            return Ok(posts);
+            List<PostHome> postHomeList = posts.Select(post => new PostHome
+            {
+                Id = post.Id,
+                UserId = post.UserId,
+                UserNickname = post.UserNickname,
+                UserName = post.UserName,
+                UserAvatar = post.UserAvatar,
+                Content = post.Content,
+                CreatedAt = post.CreatedAt,
+                UpdatedAt = post.UpdatedAt,
+                MediaUrls = post.MediaUrls?.Count ?? 0,
+                Like = post.Like?.Count ?? 0,
+                Retpost = post.Retpost?.Count ?? 0,
+                InRetpost = post.InRetpost?.Count ?? 0,
+                Hashtags = post.Hashtags?.Count ?? 0,
+                Mentions = post.Mentions?.Count ?? 0,
+                Comments = post.Comments?.Count ?? 0,
+                Views = post.Views?.Count ?? 0,
+                SPublished = post.SPublished
+            }).ToList();
+
+            return Ok(new { Post = postHomeList });
         }
     }
 }

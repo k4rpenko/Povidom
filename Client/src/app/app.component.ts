@@ -13,8 +13,9 @@ import { CookieService } from 'ngx-cookie-service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'] 
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   title = 'Client';
+
   private lastRequestTime: Date | null = null;
   profileService = inject(updateAccetsToken);
   private readonly REQUEST_INTERVAL = 1500000;
