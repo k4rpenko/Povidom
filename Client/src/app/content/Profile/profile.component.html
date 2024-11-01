@@ -1,0 +1,35 @@
+
+
+<div class="profile-container">
+    <div class="profile-header">
+      <h2>Your Profile</h2>
+    </div>
+    <form (submit)="onSubmit()">
+      <div class="avatar-section">
+        <img [src]="user.avatar" alt="User Avatar" class="avatar-img" />
+        <input type="file" (change)="onAvatarChange($event)" accept="image/*" />
+      </div>
+  
+      <div class="form-group">
+        <label>Nickname</label>
+        <input type="text" [(ngModel)]="user.nickname" name="nickname" required />
+      </div>
+  
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" [(ngModel)]="user.firstName" name="firstName" required />
+      </div>
+  
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" [(ngModel)]="user.lastName" name="lastName" required />
+      </div>
+  
+      <div class="form-group">
+        <label>About Me</label>
+        <textarea [(ngModel)]="user.bio" name="bio"></textarea>
+      </div>
+  
+      <button type="submit" class="save-button">Save Changes</button>
+    </form>
+  </div>
