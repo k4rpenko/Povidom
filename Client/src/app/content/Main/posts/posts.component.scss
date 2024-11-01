@@ -22,11 +22,6 @@ main a{
   color: inherit;
 }
 
-samp{
-  font-family: "CeraRoundPro-Medium", sans-serif;
-  font-weight: 700;
-}
-
 .mainPost {
   max-width: 600px;
   width: 100%;
@@ -36,6 +31,8 @@ samp{
 }
 
 .HeaderPosts {
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 700;
   height: auto;
   width: 100%;
   border-bottom: 1px solid #2F3336;
@@ -93,11 +90,13 @@ samp{
 
 
 .Post-Box {
-  width: auto;
+  height: auto;
+  font-weight: 600;
 }
 
 .Post-item {
-  padding: 15px;
+  height: auto;
+  padding: 20px;
   width: auto;
   border-bottom: 1px solid #2F3336;
   display: flex;
@@ -114,12 +113,6 @@ samp{
   color: #E7E9EA;
 }
 
-.Post-FUser img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-}
-
 .Post-FUser span {
   display: inline-block;
   margin-right: 5px;
@@ -131,9 +124,17 @@ samp{
 }
 
 .Post-Context {
+  margin-top: 6px;
   font-size: 15px;
   line-height: 1.5;
   color: #E7E9EA;
+}
+
+.Post-Context samp{
+  text-overflow: unset;
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .Post-Context img {
@@ -168,4 +169,33 @@ samp{
 
 .Post-Mad a:hover svg {
   fill: #1FB0A8;
+}
+
+.postUserAvatar {
+  border-radius: 50%;
+  max-width: 40px;
+}
+
+.Post-item-user {
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.Post-item-user-Text {
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.Post-FUser {
+  font-size: 15px;
+  display: flex;
+}
+
+.Post-FUser-nick {
+  color: #4b5257;
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 500;
 }

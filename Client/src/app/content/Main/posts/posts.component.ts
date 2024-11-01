@@ -1,26 +1,28 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Post, post } from '../../../data/interface/Post/Post.interface'
+import { Post } from '../../../data/interface/Post/Post.interface'
 import { SpacePosts } from '../../../data/HTTP/GetPosts/Home/SpacePosts.service'
 
 @Component({
   selector: 'app-posts',
   standalone: true,
-  imports: [ CommonModule ],
+  imports: [CommonModule],
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.scss'
 })
 export class PostsComponent {
-  post: Post[] = [];
-  profileService = inject(SpacePosts);
+  posts: Post[] = [];
+  spacePostsService = inject(SpacePosts);
 
-  constructor(){ this.loadPosts() }
+  constructor() {
+    this.loadPosts();
+  }
 
   loadPosts() {
-    this.profileService.Posts().subscribe(response => {
-      this.post = response.post;
+    this.spacePostsService.getPosts().subscribe(response  => {
+      this.posts = response.post;
+      console.log(this.posts);
+      
     });
-    console.log(this.post);
-    
   }
 }

@@ -1,26 +1,26 @@
 export interface Post {
-    Id: string; 
-    UserId: string; 
-    UserNickname: string; 
-    UserName: string;
-    UserAvatar: string; 
-    Video: string; 
-    Content?: string | null; 
-    CreatedAt?: Date | null; 
-    UpdatedAt?: Date | null; 
-    MediaUrls?: string[]; 
-    Likes?: number;
-    Retpost?: string[];
-    InRetpost?: string[]; 
-    Hashtags?: string[]; 
-    Mentions?: string[];
-    Comments?: number; 
-    Views?: number;
-    IsPublished: boolean;
-}
-
-export interface post {
-    [x: string]: any;
-    post: Array<Post>;
+    id: {
+      timestamp: number;
+      creationTime: string;
+    };
+    userId: string;
+    userNickname: string;
+    userName: string;
+    userAvatar: string;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+    mediaUrls: number;
+    like: number;
+    retpost: number;
+    inRetpost: number;
+    hashtags: number;
+    mentions: number;
+    comments: number;
+    views: number;
+    sPublished: boolean;
 }
   
+export interface PostArray{
+    post: Array<Post>
+}
