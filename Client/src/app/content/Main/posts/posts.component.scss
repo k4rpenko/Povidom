@@ -31,8 +31,7 @@ main a{
 }
 
 .HeaderPosts {
-  font-family: "CeraRoundPro-Medium", sans-serif;
-  font-weight: 700;
+
   height: auto;
   width: 100%;
   border-bottom: 1px solid #2F3336;
@@ -43,14 +42,24 @@ main a{
   justify-content: center;
 }
 
+.HeaderPost samp{
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 700;
+}
+
 .HeaderPosts-ForU, .HeaderPosts-Following{
   width: 100%;
   padding: 20px;
   text-align: center;
 }
 
-.HeaderPosts-ForU{
+.HeaderPosts-ForU {
   border-right: 1px solid #2F3336;
+}
+
+.HeaderPosts-ForU samp{
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 600;
 }
 
 
@@ -65,7 +74,20 @@ main a{
   height: auto;
   width: auto;
   border-bottom: 1px solid #2F3336;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 10px; 
+}
+
+.SendPost img{
+  border-radius: 50%;
+  width: 40px;
+  height: 40px; 
+  object-fit: cover; 
+}
+
+.SendPostBox{
+  max-height: 100%;
+  height: auto;
 }
 
 .SendPostContext{
@@ -73,14 +95,18 @@ main a{
   align-items: center;
 }
 
-.SendPostContext input{
-  width: auto;
-  height: 100%;
-  max-height: 40px;
+.SendPost-textarea{
+  font-family: "CeraRoundPro-Medium", sans-serif;
   border: none;
+  outline: none;
+  height: auto;
+  overflow-y: hidden; 
+  resize: none;
   background-color: transparent;
-  color: #2F3336;
+  color: white;
+  border-bottom: 1px solid #2f3336;
 }
+
 
 .SendPostContext img{
   border-radius: 50%;
@@ -88,6 +114,42 @@ main a{
   width: 100%;
 }
 
+.SendPostAddendum{
+  gap: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.SendPostAddendum div{
+  display: flex;
+  justify-content: space-between;
+}
+
+.SendPostAddendum div button{
+  color: #fff;
+  background-color: #1FB0A8;
+  min-height: 35px;
+  padding-left: 16px;
+  padding-right: 16px;
+  max-width: 100%;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.SendPostAddendum-SVG{
+  width: auto;
+  display: flex;
+}
+
+.SendPostAddendum-SVG svg{
+  position: relative; 
+  display: inline-block; 
+  fill: #1FB0A8; 
+  width: 20px;
+  height: 20px;
+}
 
 .Post-Box {
   height: auto;
@@ -115,7 +177,6 @@ main a{
 
 .Post-FUser span {
   display: inline-block;
-  margin-right: 5px;
 }
 
 .Post-FUser .UserNickname {

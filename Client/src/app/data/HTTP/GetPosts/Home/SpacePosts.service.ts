@@ -12,7 +12,7 @@ export class SpacePosts {
   constructor() { }
 
   getPosts(): Observable<PostArray> {
-    return this.http.get<PostArray>(/*`${window.location.origin}/api/AccountSettings/ConfirmationAccount`*/ "https://localhost:56270/api/SpacePosts/Home");
+    return this.http.get<PostArray>(/*`${window.location.origin}/api/AccountSettings/ConfirmationAccount`*/ "https://localhost:55225/api/SpacePosts/Home");
   }
 }
 
