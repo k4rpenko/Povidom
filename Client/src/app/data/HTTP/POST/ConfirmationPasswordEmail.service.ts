@@ -1,19 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { CheckUser } from '../../../Global';
+import { CheckUser } from '../../Global';
 
 @Injectable({
   providedIn: 'root'
 })
-export class EmailValid {
+export class ConfirmationEmail {
   http = inject(HttpClient)
   constructor() { }
 
-  PostValidToken(data: String) {
+  _ConfirmationEmail(email: String) {
     const json = {
-      jwt: data
+      "email": email,
     };
-    return this.http.post(`${CheckUser.url}/api/SpacePosts/${null}`, json, {
+    return this.http.post(`${CheckUser.url}/api/AccountSettings/ConfirmationEmail`, json, {
       headers: { 'Content-Type': 'application/json' }
   });
   }

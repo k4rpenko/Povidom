@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PGAdminDAL;
 using PGAdminDAL.Model;
 using Server.Models;
+using Server.utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,11 @@ namespace Server.Controllers
                     .Take(7)
                     .ToListAsync();
 
+                if(users == null)
+                {
+                    return NotFound();
+                }
+
                 var fleetsUsers = users.Select(u => new FleetsUserFModel
                 {
                     Id = u.Id,
@@ -48,7 +54,7 @@ namespace Server.Controllers
             }
         }
 
-        [HttpGet("")]
+        [HttpGet("{Nick}")]
         public async Task<IActionResult> UserGet(string Nick)
         {
             try
@@ -77,7 +83,135 @@ namespace Server.Controllers
                         }
                     }
 
-                    return Ok(fleetsUser);
+                    return Ok(new { User = fleetsUser});
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> UserGetToken()
+        {
+            try
+            {
+                if (Request.Cookies.TryGetValue("authToken", out string cookieValue))
+                {
+                    var id = new JWT().GetUserIdFromToken(cookieValue);
+                    var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                    if (user != null)
+                    {
+                        var fleetsUser = new FleetsUserFModel
+                        {
+                            Id = user.Id,
+                            UserName = user.UserName,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            Avatar = user.Avatar,
+                            Title = user.Title,
+                            PostID = user.PostID
+                        };
+
+                        
+                        if (id != null)
+                        {
+                            fleetsUser.SubscribersBool = user.Subscribers.Contains(id);
+                            fleetsUser.FollowersBool = user.Followers.Contains(id);
+                        }
+                        return Ok(new { User = fleetsUser });
+                    }                    
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("Subscribers/{Nick}")]
+        public async Task<IActionResult> Subscribers(string Nick, int size)
+        {
+            try
+            {
+                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Nick);
+                if (user != null)
+                {
+                    List<FleetsUserFModel> UsersSubscribers = new List<FleetsUserFModel>();
+
+                    var subscribers = user.Subscribers
+                        .Skip(size)
+                        .Take(10)
+                        .ToList();
+
+                    foreach (var followerId in subscribers)
+                    {
+                        var userF = await context.User.FirstOrDefaultAsync(u => u.Id == followerId);
+
+                        if (userF != null)
+                        {
+                            UsersSubscribers.Add(new FleetsUserFModel
+                            {
+                                Id = userF.Id,
+                                UserName = userF.UserName,
+                                FirstName = userF.FirstName,
+                                LastName = userF.LastName,
+                                Avatar = userF.Avatar,
+                                Title = userF.Title,
+                                PostID = userF.PostID
+                            });
+                        }
+                    }
+
+                    return Ok(new { UsersSubscribers = UsersSubscribers });
+                }
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("Followers/{Nick}")]
+        public async Task<IActionResult> Followers(string Nick, int size)
+        {
+            try
+            {
+                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Nick);
+                if (user != null)
+                {
+                    List<FleetsUserFModel> UsersFollowers = new List<FleetsUserFModel>();
+
+                    var Followers = user.Followers
+                        .Skip(size)
+                        .Take(10)
+                        .ToList();
+
+                    foreach (var followerId in Followers)
+                    {
+                        var userF = await context.User.FirstOrDefaultAsync(u => u.Id == followerId);
+
+                        if (userF != null) 
+                        {
+                            UsersFollowers.Add(new FleetsUserFModel
+                            {
+                                Id = userF.Id,
+                                UserName = userF.UserName,
+                                FirstName = userF.FirstName,
+                                LastName = userF.LastName,
+                                Avatar = userF.Avatar,
+                                Title = userF.Title,
+                                PostID = userF.PostID
+                            });
+                        }
+                    }
+
+                    return Ok(new { UsersFollowers = UsersFollowers });
+
                 }
                 return NotFound();
             }

@@ -53,6 +53,7 @@ namespace Server.Controllers
 
                 var objectId = ObjectId.Parse(_data.Id);
                 var deleteResult = await _customers.DeleteOneAsync(post => post.Id == objectId);
+
                 if (deleteResult.DeletedCount == 0)
                 {
                     return NotFound("Post not found.");

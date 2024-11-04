@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { CheckUser } from '../../Global';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,10 @@ export class updateAccetsToken {
 
   updateAccetsToken(data: String) {
     const json = {
-      jwt: data
+      accessToken: data
     };
     
-    return this.http.put<{ token	: string }>(`${window.location.origin}/api/Verification/TokenUpdate`, json, {
+    return this.http.put<{ token	: string }>(`${CheckUser.url}/api/AccountSettings/TokenUpdate`, json, {
       headers: { 'Content-Type': 'application/json' }
     });
   }

@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedisDAL", "RedisDAL\RedisD
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1DE51001-4F70-4DF3-9383-B5AEAE7B8CB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoSQL", "..\NoSQL\NoSQL.csproj", "{8DBB9EFD-D39F-42FB-9A98-E64E65C14EDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoSQL", "..\NoSQL\NoSQL.csproj", "{8DBB9EFD-D39F-42FB-9A98-E64E65C14EDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

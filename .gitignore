@@ -17,3 +17,8 @@ Server/Server/appsettings.json
 /NoSQL/bin
 /NoSQL/obj
 /Client/.vscode
+/NoSQL/obj
+/NoSQL/obj
+NoSQL/obj/Debug/net8.0/NoSQL.AssemblyInfo.cs
+NoSQL/obj/Debug/net8.0/NoSQL.AssemblyInfoInputs.cache
+/SignalR/obj

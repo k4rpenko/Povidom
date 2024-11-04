@@ -44,6 +44,30 @@ namespace Server.Controllers
             }
         }
 
+        [HttpPut("TokenUpdate")]
+        public async Task<IActionResult> AccessToken(TokenModel _tokenM)
+        {
+            try
+            {
+                var id = _jwt.GetUserIdFromToken(_tokenM.AccessToken);
+                var user = context.User.FirstOrDefault(u => u.Id == id);
+                var userRoles = context.UserRoles.FirstOrDefault(u => u.UserId == id);
+                var refreshToke = context.UserTokens.FirstOrDefault(t => t.UserId == id);
+                if (_jwt.ValidateToken(refreshToke.Value, context) == false)
+                {
+                    refreshToke.Value = null;
+                    await context.SaveChangesAsync();
+                    return Unauthorized();
+                }
+                var accessToken = _jwt.GenerateJwtToken(id, user.ConcurrencyStamp, 1, userRoles.RoleId);
+                return Ok(new { token = accessToken });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         [HttpPut("ChangePassword")]
         public async Task<IActionResult> CheckingPassword(AccountSettingsModel Account)
         {
