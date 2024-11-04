@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PGAdminDAL;
 using PGAdminDAL.Model;
-using Server.Models;
+using Server.Models.Users;
 using Server.utils;
 using System;
 using System.Collections.Generic;

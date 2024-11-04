@@ -4,7 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using NoSQL;
 using PGAdminDAL;
-using Server.Models;
+using Server.Models.Post;
 using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 

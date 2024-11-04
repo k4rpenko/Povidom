@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace Server.Models
+namespace Server.Models.MessageChat
 {
     public class Message
     {
@@ -14,10 +14,10 @@ namespace Server.Models
         public string Text { get; set; }
 
         [BsonElement("Img")]
-        public string Img { get; set; }
+        public string? Img { get; set; }
 
         [BsonElement("AnswerText")]
-        public string? IdText { get; set; }
+        public string? IdAnswer { get; set; }
 
         [BsonElement("CreatedAt")]
         public DateTime? CreatedAt { get; set; }

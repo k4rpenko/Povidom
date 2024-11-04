@@ -36,6 +36,7 @@ export interface User{
     lockoutEnd?: Date;
     lockoutEnabled?: boolean;
     accessFailedCount?: number;
+    privateKey?: string;
 }
 
 export interface user {

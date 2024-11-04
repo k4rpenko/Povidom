@@ -11,7 +11,7 @@ import { User } from '../../data/interface/User.interface';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './posts.component.html',
-  styleUrls: ['./posts.component.scss'] // Виправлено з styleUrl на styleUrls
+  styleUrls: ['./posts.component.scss']
 })
 export class PostsComponent implements OnInit {
   posts: Post[] = [];
@@ -24,12 +24,6 @@ export class PostsComponent implements OnInit {
   async ngOnInit() {
     this.loadPosts();
     await this.loadUserData();
-    if (this.UserData) {
-      console.log(this.UserData);
-      console.log(this.UserData.avatar);
-    } else {
-      console.log('UserData is undefined');
-    }
   }
   
 
@@ -56,7 +50,6 @@ export class PostsComponent implements OnInit {
   private AddCacheUser() {
     return this.GetUserData.GetUserData().subscribe(response => {
       this.UserData = response.user; 
-      console.log(this.UserData);
       this.cache.setItem("User", this.UserData);
     });
   }

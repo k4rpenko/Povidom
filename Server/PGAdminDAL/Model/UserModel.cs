@@ -9,7 +9,11 @@ namespace PGAdminDAL.Model
         public string? Avatar { get; set; }
         public string? Title { get; set; }
         public string? Location { get; set; }
+        public string? PublicKey { get; set; }
+        public string? PrivateKey { get; set; }
 
+        public List<string> StoriesId { get; set; } = new List<string>();
+        public List<string> ChatId { get; set; } = new List<string>();
         public List<string> Subscribers { get; set; } = new List<string>();
         public List<string> Followers { get; set; } = new List<string>();
         public List<string> LikePostID { get; set; } = new List<string>();
@@ -23,5 +27,6 @@ namespace PGAdminDAL.Model
         public DateTime? DateOfBirth { get; set; }
 
         public bool IsVerified { get; set; } = false;
+        public bool Status { get; set; } = true;
     }
 }

@@ -13,7 +13,7 @@ using PGAdminDAL;
 namespace PGAdminDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241028125554_Spacegram")]
+    [Migration("20241104131058_Spacegram")]
     partial class Spacegram
     {
         /// <inheritdoc />
@@ -245,6 +245,10 @@ namespace PGAdminDAL.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
+                    b.Property<List<string>>("ChatId")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
                     b.Property<List<string>>("CommentPostID")
                         .IsRequired()
                         .HasColumnType("text[]");
@@ -283,7 +287,20 @@ namespace PGAdminDAL.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.Property<string>("PrivateKey")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PublicKey")
+                        .HasColumnType("text");
+
                     b.Property<List<string>>("RetweetPostID")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean");
+
+                    b.Property<List<string>>("StoriesId")
                         .IsRequired()
                         .HasColumnType("text[]");
 

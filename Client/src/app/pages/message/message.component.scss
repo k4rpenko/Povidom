@@ -1,0 +1,106 @@
+main {
+    display: flex;
+    height: 100%;
+    width: 70%;
+    position: fixed;
+    right: 0;
+    top: 0;
+    justify-content: flex-end;
+    z-index: 2;
+    transition: width 0.3s ease;
+}
+  
+main{
+    color: #E7E9EA;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+
+.HeaderUserChats{
+    display: flex;
+    padding: 10px;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #2F3336;
+}
+
+.HeaderUserChatsMenu{
+    display: flex;
+    gap: 5px;
+}
+
+.HeaderUserChatsMenu svg{
+    width: 20px;
+}
+
+.HeaderUserChatsMenu a{
+    display: flex;
+    height: auto;
+    width: auto;
+    padding: 5px;
+}
+
+.HeaderUserChatsMenu a:hover{
+    border-radius: 50%;
+    background-color: #212325;
+}
+
+.UserChats{
+    height: 100%;
+    width: 35%;
+    min-width: 450px;
+    border-right: 1px solid #2F3336;
+}
+
+.IdChat{
+    gap: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+    width: auto;
+    display: flex;
+    padding-bottom: 16px;
+    padding-top: 16px;
+}
+
+.IdChat img{
+    border-radius: 50%;
+    height: 40px;
+}
+
+.ChatText{
+    margin-left: 10px;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.ChatUser{
+    display: flex;
+    width: 100%;
+    gap: 6px;
+}
+
+.ChatUser samp{
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.ChatUserData{
+    color: #71767B;
+}
+
+.ChatUserMesage{
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.Messages{
+    height: 100%;
+    width: 40%;
+    min-width: 600px;
+    border-right: 1px solid #2F3336;
+}

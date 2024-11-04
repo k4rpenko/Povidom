@@ -1,10 +1,11 @@
 ﻿using Server.Hash;
-using Server.Models;
 using Server.Sending;
 using PGAdminDAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.utils;
+using Server.Models.Users;
+using Server.Models.Tokens;
 namespace Server.Controllers
 {
     [ApiController]

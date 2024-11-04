@@ -1,10 +1,10 @@
-﻿namespace Server.Models
+﻿namespace Server.Models.Users
 {
     public class AccountSettingsModel
     {
         public string? Token { get; set; }
         public string? Id { get; set; }
-        public string? Email {  get; set; }
+        public string? Email { get; set; }
         public string? OriginPassword { get; set; }
         public string? NewPassword { get; set; }
         public string? Password { get; set; }

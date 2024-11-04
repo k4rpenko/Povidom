@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace Server.Models
+namespace Server.Models.MessageChat
 {
     public class ChatModel
     {
@@ -12,6 +12,7 @@ namespace Server.Models
         public string? Img { get; set; }
         public string? Answer { get; set; }
 
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

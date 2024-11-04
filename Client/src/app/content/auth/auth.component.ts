@@ -74,7 +74,6 @@ export class AuthComponent {
           this.router.navigate(['/home']);
         },
         error: (error) => {
-          console.log(error.status); 
           if (error.status === 401) {
             this.passwordError = 'Не вірний пароль, або електронна адреса';
           } else if (error.status === 400) {
@@ -83,8 +82,6 @@ export class AuthComponent {
           } else if (error.status === 429) {
             this.passwordError = 'Ви перевищили ліміт запитів';
           } else {
-            console.log(error);
-            
             this.passwordError = 'Сталася помилка, спробуйте ще раз';
           }
         }
