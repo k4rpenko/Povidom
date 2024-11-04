@@ -2,12 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using PGAdminDAL;
 using PGAdminDAL.Model;
+using Server.Models.MessageChat;
 using Server.Models.Users;
 using Server.utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Server.Controllers
 {
@@ -53,6 +55,51 @@ namespace Server.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet("chat/{nick}")]
+        public async Task<IActionResult> GetUsers(string nick)
+        {
+            try
+            {
+                if (!Request.Cookies.TryGetValue("authToken", out string cookieValue))
+                {
+                    return Unauthorized();
+                }
+                    
+
+                var id = new JWT().GetUserIdFromToken(cookieValue);
+                if (id == null) { return Unauthorized(); }
+
+
+                var users = await context.User
+                    .Where(u => u.UserName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.FirstName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.LastName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.UserName.ToLower().Contains(nick) || u.FirstName.ToLower().Contains(nick) || u.LastName.ToLower().Contains(nick))
+                    .Take(7)
+                    .ToListAsync();
+
+                if (users == null)
+                {
+                    return NotFound();
+                }
+
+                var fleetsUsers = users.Select(u => new UserFind
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Avatar = u.Avatar,
+                    Title = u.Title,
+                    PublicKey = u.PublicKey,
+                }).ToList();
+
+                return Ok(new { user = fleetsUsers});
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
+
 
         [HttpGet("{Nick}")]
         public async Task<IActionResult> UserGet(string Nick)

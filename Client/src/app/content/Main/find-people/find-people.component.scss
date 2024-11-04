@@ -62,3 +62,47 @@
     outline: none; 
     border: none; 
 }
+
+.IdUser{
+    gap: 5px;
+    padding: 15px;
+    width: auto;
+    display: flex;
+    border-bottom: 1px solid #2F3336;
+    transition: 0.2s;
+}
+
+.IdUser:hover{
+    transition: 0.2s;
+    background-color: rgb(20, 21, 22);
+}
+
+.IdUser img{
+    border-radius: 50%;
+    height: 40px;
+}
+
+
+.IdUserName{
+    display: flex;
+    width: 100%;
+    gap: 6px;
+}
+
+.IdUserName samp{
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.ChatUserData{
+    color: #71767B;
+}
+
+.IdUserText{
+    margin-left: 10px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
