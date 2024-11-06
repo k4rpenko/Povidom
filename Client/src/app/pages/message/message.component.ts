@@ -1,59 +1,44 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import * as signalR from "@microsoft/signalr";
-import { CheckUser } from "../../data/Global";
+import { CookieService } from "ngx-cookie-service";
+import { WebSocketService } from "../../data/HTTP/WEB/WebSocket.service";
 import { MatDialog } from "@angular/material/dialog";
+import { Chats } from "../../data/interface/Chats/User.interface";
+import { CommonModule } from "@angular/common";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FindPeopleComponent } from "../../content/Main/find-people/find-people.component";
 
 @Component({
   selector: 'app-message',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './message.component.html',
-  styleUrl: './message.component.scss'
+  styleUrls: ['./message.component.scss']
 })
-export class MessageComponent implements OnInit, OnDestroy{
-  private hubConnection: signalR.HubConnection | undefined;
+export class MessageComponent implements OnInit, OnDestroy {
+  public userStatus: { [userId: string]: boolean } = WebSocketService.userStatus;
+  public Chats: Chats[] = WebSocketService.Chats;
+  private id: string;
 
-  constructor(public dialog: MatDialog) {
-    
-  }
-  
-
-
-  ngOnInit(): void {
-    this.startConnection();
-  }
-
-  ngOnDestroy(): void {
-    this.stopConnection();
+  constructor(
+    public dialog: MatDialog,
+    private cookieService: CookieService,
+    private WS: WebSocketService
+  ) {
+    this.id = this.cookieService.get('authToken');
   }
 
-  private startConnection() {
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${CheckUser.url}/message`)
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
-
-
-    this.hubConnection
-      .start()
-      .then(() => {
-        console.log('Connection started');
-        this.hubConnection?.invoke('Connect', '').then(result => {
-          console.log('Connect result:', result);
-      });
-      })
-      .catch(err => console.log('Error while starting connection: ' + err));
-  }
-
-  private stopConnection() {
-    if (this.hubConnection) {
-      this.hubConnection.stop()
-        .then(() => console.log('Connection stopped'))
-        .catch(err => console.log('Error while stopping connection: ' + err));
+  async ngOnInit(): Promise<void> {
+    try {
+      await this.WS.startConnection();
+      this.WS.addListeners();
+      await this.WS.GetChats(this.id);
+    } catch (error) {
+      console.error('Error during initialization:', error);
     }
   }
 
+  ngOnDestroy(): void {
+    this.WS.stopConnection();
+  }
 
   openFindPeopleComponent(): void {
     this.dialog.open(FindPeopleComponent, {});

@@ -8,18 +8,18 @@
             </div>
         </div>
         
-        <div class="IdChat">
-            <img src="https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg" alt="">
+        <a *ngFor="let chat of Chats" class="IdChat">
+            <img src="{{chat.avatar}}" alt="">
             <div class="ChatText">
                 <div class="ChatUser">
-                    <samp>UserNick</samp>
-                    <samp class="ChatUserData">data</samp>
+                    <samp>{{chat.nickName}}</samp>
+                    <samp class="ChatUserData">{{chat.createdAt}}</samp>
                 </div>
                 <div class="ChatUserMesage">
-                    <samp>text</samp>
+                    <samp>{{chat.LastMessage}}</samp>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="Messages">
 

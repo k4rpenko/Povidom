@@ -61,11 +61,17 @@ main{
     display: flex;
     padding-bottom: 16px;
     padding-top: 16px;
+    transition: 0.2s;
 }
 
 .IdChat img{
     border-radius: 50%;
     height: 40px;
+}
+
+.IdChat:hover{
+    transition: 0.2s;
+    background-color: rgb(20, 21, 22);
 }
 
 .ChatText{

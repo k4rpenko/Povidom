@@ -72,14 +72,14 @@ namespace Server.Controllers
 
 
                 var users = await context.User
-                    .Where(u => u.UserName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.FirstName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.LastName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.UserName.ToLower().Contains(nick) || u.FirstName.ToLower().Contains(nick) || u.LastName.ToLower().Contains(nick))
+                    .Where(u => (u.UserName.ToLower().Contains(nick) && u.Followers.Contains(id)  || u.FirstName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.LastName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.UserName.ToLower().Contains(nick) || u.FirstName.ToLower().Contains(nick) || u.LastName.ToLower().Contains(nick)) && u.Id != id)
                     .Take(7)
                     .ToListAsync();
 
                 if (users == null)
                 {
                     return NotFound();
-                }
+                } 
 
                 var fleetsUsers = users.Select(u => new UserFind
                 {

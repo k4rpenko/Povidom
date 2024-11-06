@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime.Internal;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +9,7 @@ using NoSQL;
 using PGAdminDAL;
 using Server.Controllers;
 using Server.Models.MessageChat;
+using Server.Protection;
 using System;
 using System.Diagnostics.Metrics;
 using System.Linq;
@@ -26,28 +28,72 @@ namespace Server.Hubs
         }
 
 
-        public async Task<string> CreateChat(ChatModel _chat)
+        public async Task<GetChats> CreateChat(ChatModel _chat)
         {
+            if (_chat == null || _chat.AddUsersIdChat == null || _chat.AddUsersIdChat.Count < 2)
+            {
+                throw new ArgumentException("Invalid chat model or user IDs.");
+            }
+
+            var id = new JWT().GetUserIdFromToken(_chat.AddUsersIdChat[0]);
+
             var filter = Builders<ChatModelMongoDB>.Filter.And(
-                Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], _chat.AddUsersIdChat[0]),
-                Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], _chat.AddUsersIdChat[1])
+                Builders<ChatModelMongoDB>.Filter.Or(
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], id),
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], _chat.AddUsersIdChat[1])
+                ),
+                Builders<ChatModelMongoDB>.Filter.Or(
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], id),
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], _chat.AddUsersIdChat[1])
+                )
             );
+
+            var You = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+            var People = await context.User.FirstOrDefaultAsync(u => u.Id == _chat.AddUsersIdChat[1]);
+
+            if (You == null || People == null)
+            {
+                throw new Exception("One or both users not found.");
+            }
+
+            var PeopleInfo = new GetChats
+            {
+                LastMessage = "",
+                Avatar = People.Avatar,
+                NickName = People.FirstName
+            };
 
             var existingChat = await _customers.Find(filter).FirstOrDefaultAsync();
 
             if (existingChat != null)
             {
-                return existingChat.Id.ToString();
+                PeopleInfo.ChatId = existingChat.Id.ToString();
+                return PeopleInfo;
             }
 
+            _chat.AddUsersIdChat[0] = id;
             var newChat = new ChatModelMongoDB
             {
                 UsersID = _chat.AddUsersIdChat,
                 Timestamp = DateTime.UtcNow
             };
 
+            var YouInfo = new GetChats
+            {
+                ChatId = newChat.UsersID.ToString(),
+                LastMessage = "",
+                Avatar = You.Avatar,
+                NickName = You.FirstName
+            };
+
+            foreach (var userId in newChat.UsersID)
+            {
+                await Clients.User(userId).SendAsync("CreatChat", YouInfo);
+            }
+
             await _customers.InsertOneAsync(newChat);
-            return newChat.Id.ToString();
+            PeopleInfo.ChatId = newChat.Id.ToString();
+            return PeopleInfo;
         }
 
         public async Task<bool> SendMessage(ChatModel _chat)
@@ -65,6 +111,7 @@ namespace Server.Hubs
                     return false;
                 }
 
+                var id = new JWT().GetUserIdFromToken(_chat.CreatorId);
 
                 var lastMessageId = chatModel.Chat?.Count > 0
                     ? chatModel.Chat.OrderByDescending(m => m.CreatedAt).FirstOrDefault()?.Id ?? 0
@@ -73,11 +120,13 @@ namespace Server.Hubs
                 var newMessage = new Message
                 {
                     Id = lastMessageId + 1,
-                    IdUser = _chat.CreatorId,
+                    IdUser = id,
                     Text = _chat.Text,
                     Img = string.IsNullOrEmpty(_chat.Img?.ToString()) ? null : _chat.Img.ToString(),
                     IdAnswer = string.IsNullOrEmpty(_chat.Answer?.ToString()) ? null : _chat.Img.ToString(),
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    View = false,
+                    Send = true
                 };
 
                 var update = Builders<ChatModelMongoDB>.Update
@@ -91,9 +140,14 @@ namespace Server.Hubs
                     return false;
                 }
 
+                var Return = new GetChats
+                {
+                    Send = true
+                };
+
                 foreach (var userId in chatModel.UsersID)
                 {
-                    if (userId != _chat.CreatorId)
+                    if (userId != id)
                     {
                         await Clients.User(userId).SendAsync("ReceiveMessage", newMessage);
                     }
@@ -127,7 +181,7 @@ namespace Server.Hubs
                             {
                                 if (userId != id)
                                 {
-                                    await Clients.User(userId).SendAsync("Status", true);
+                                    await Clients.User(userId).SendAsync(id.ToString(), true);
 
                                     var Ac = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
 
@@ -138,6 +192,7 @@ namespace Server.Hubs
                                         Avatar = Ac.Avatar,
                                         NickName = Ac.UserName
                                     };
+                                    ChatsData.Add(chatInfo);
                                 }
                             }
                         }

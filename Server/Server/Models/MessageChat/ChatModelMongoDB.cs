@@ -19,6 +19,12 @@ namespace Server.Models.MessageChat
         [BsonElement("AnswerText")]
         public string? IdAnswer { get; set; }
 
+        [BsonElement("View")]
+        public bool? View { get; set; }
+
+        [BsonElement("Send")]
+        public bool? Send { get; set; }
+
         [BsonElement("CreatedAt")]
         public DateTime? CreatedAt { get; set; }
 
