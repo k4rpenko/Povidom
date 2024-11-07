@@ -1,3 +1,4 @@
+/* Контейнер бокового меню */
 header {
   border-right: 1px solid #2F3336;
   z-index: 3;
@@ -8,9 +9,10 @@ header {
   left: 0;
   top: 0;
   justify-content: flex-end;
-  transition: width 0.3s ease;
+  transition: width 0.3s ease-in-out;
 }
 
+/* Основне меню */
 .side-menu {
   margin-right: 10px;
   height: 100%;
@@ -19,57 +21,94 @@ header {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  transition: width 0.3s ease;
+  transition: all 0.3s ease-in-out;
 }
 
+/* Заголовок меню */
 .side-menu h2 {
   padding: 13px;
-  font-size: 1.5em;
-  margin-bottom: 20px;
+  font-size: 1.8em;
+  margin-bottom: 30px;
   color: #1FB0A8;
   text-align: center;
+  animation: fadeIn 0.8s ease forwards;
+  opacity: 0;
 }
 
-.side-menu svg{
+/* Стиль іконок */
+.side-menu svg {
   padding-right: 10px;
   height: 1.75rem;
   fill: white;
+  transition: fill 0.3s ease;
 }
 
+/* Елементи меню */
 .menu-item {
   max-width: 100%;
-  font-size: 1.2em;
+  font-size: 1.3em;
   color: #ffffff;
-  margin: 5px 0;
-  padding: 13px;
+  margin: 8px 0;
+  padding: 15px;
   border-radius: 100px;
   display: flex;
   align-items: center;
   transition: background-color 0.3s, transform 0.3s ease;
   cursor: pointer;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: slideIn 0.5s forwards ease-in-out;
 }
 
+.menu-item:nth-child(1) { animation-delay: 0.1s; }
+.menu-item:nth-child(2) { animation-delay: 0.2s; }
+.menu-item:nth-child(3) { animation-delay: 0.3s; }
+.menu-item:nth-child(4) { animation-delay: 0.4s; }
+.menu-item:nth-child(5) { animation-delay: 0.5s; }
+
+/* Ефект при наведенні */
 .menu-item:hover {
   background-color: #333;
-  color: #fff;
+  color: #1FB0A8;
+  transform: scale(1.05);
 }
 
+/* Кнопка для створення постів */
 .side-menu-post-button {
-  min-height: 46px;
+  min-height: 50px;
   max-width: 100%;
-  margin: 20px 0;
+  margin: 30px 0;
   background-color: #1FB0A8;
   color: #fff;
   font-size: 1.2em;
-  padding: 0 110px;
+  padding: 0 120px;
   border: none;
-  border-radius: 25px;
+  border-radius: 30px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s ease;
 }
 
 .side-menu-post-button:hover {
   background-color: #198a84;
 }
 
+/* Анімації */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,62 @@
+.non-existent-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: #E7E9EA;
+  text-align: center;
+  padding: 20px;
+  background-color: #18191A; /* Темний фон для контрасту */
+  animation: fadeIn 0.6s ease; /* Анімація появи */
+}
+
+.non-existent-user h1 {
+  font-size: 28px; /* Збільшений розмір заголовка */
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 700;
+  color: #1FB0A8; /* Колір заголовка */
+  margin-bottom: 10px;
+  animation: fadeIn 0.6s ease; /* Анімація появи заголовка */
+}
+
+.non-existent-user p {
+  font-size: 18px; /* Збільшений розмір тексту */
+  margin: 10px 0 20px;
+  color: #AAB8C2;
+  opacity: 0; /* Спочатку прихований */
+  animation: fadeIn 0.6s ease 0.4s forwards; /* Анімація появи для тексту */
+}
+
+.non-existent-user button {
+  background-color: #1FB0A8;
+  color: #fff;
+  padding: 12px 24px; /* Збільшене відступи */
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px; /* Збільшений розмір шрифту */
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  transition: background-color 0.3s ease, opacity 0.3s ease; /* Плавна зміна кольору фону та прозорості */
+  opacity: 0; /* Спочатку прихований */
+  animation: fadeIn 0.6s ease 0.8s forwards; /* Анімація появи для кнопки */
+  box-shadow: 0 4px 20px rgba(31, 176, 168, 0.3); /* Тінь для кнопки */
+}
+
+.non-existent-user button:hover {
+  background-color: #17a398;
+  transform: scale(1.03); /* Легке збільшення при наведенні */
+  box-shadow: 0 6px 30px rgba(31, 176, 168, 0.5); /* Збільшення тіні при наведенні */
+}
+
+/* Анімації */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px); /* Злегка зсунути вниз при появі */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* В кінці повертається на місце */
+  }
+}
