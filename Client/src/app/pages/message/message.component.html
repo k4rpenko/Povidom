@@ -8,7 +8,7 @@
             </div>
         </div>
         
-        <a *ngFor="let chat of Chats" class="IdChat">
+        <a (click)="OpenMessage()" *ngFor="let chat of Chats" class="IdChat">
             <img src="{{chat.avatar}}" alt="">
             <div class="ChatText">
                 <div class="ChatUser">
@@ -21,7 +21,33 @@
             </div>
         </a>
     </div>
-    <div class="Messages">
+    <div class="Messages" *ngIf="open else close">
+        <div class="MessagesProfile">
+            <img src="https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg" alt="">
+            <div class="MessagesdataAndStatus">
+                <div class="MessagesdataforUser">
+                    <samp>Nick</samp>
+                    <samp class="ChatUserData">name</samp>
+                </div>
+                <div class="ChatUserLastStatus" *ngIf="!status else close"><samp > був недавно </samp></div>
+                <ng-template class="ChatUserLastStatusTrue" #close><samp > В мережі </samp></ng-template>
+            </div>
+        </div>
+        <div class="MessageText"><h1>MessageText</h1></div>
+        <div class="SandMessages">
+            <form class="SandMessagesInput">
+                <textarea name="" id="" placeholder="Send a new message"></textarea>
+                <div class="SandMessagesSVG"> <a > <svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M2.504 21.866l.526-2.108C3.04 19.719 4 15.823 4 12s-.96-7.719-.97-7.757l-.527-2.109L22.236 12 2.504 21.866zM5.981 13c-.072 1.962-.34 3.833-.583 5.183L17.764 12 5.398 5.818c.242 1.349.51 3.221.583 5.183H10v2H5.981z"></path></g></svg> </a>  </div>
+            </form>
 
+        </div>
     </div>
+    <ng-template  #close>
+        <div class="ChatUserclose">
+            <h1>Select a message</h1>
+            <h3>Choose from your existing conversations, start a new one, or just keep swimming.</h3>
+        </div>
+
+    </ng-template>
+         
 </main>

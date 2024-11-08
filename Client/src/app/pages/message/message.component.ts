@@ -19,6 +19,8 @@ export class MessageComponent implements OnInit, OnDestroy {
   public userStatus: StatusModel = WebSocketService.userStatus;
   public Chats: Chats[] = WebSocketService.Chats;
   private id: string;
+  open: boolean = true;
+  status: boolean = true;
 
   constructor(
     public dialog: MatDialog,
@@ -54,5 +56,12 @@ export class MessageComponent implements OnInit, OnDestroy {
 
   openFindPeopleComponent(): void {
     this.dialog.open(FindPeopleComponent, {});
+  }
+
+
+
+
+  OpenMessage(){
+    this.open = true;
   }
 }
