@@ -3,14 +3,16 @@ import * as signalR from '@microsoft/signalr';
 import { Chats } from '../../interface/Chats/User.interface';
 import { CheckUser } from '../../Global';
 import { ChatModel } from '../../interface/Chats/ChatModel';
+import { StatusModel } from '../../interface/Chats/StatusModel.interface';
+import { TokenModel } from '../../interface/Chats/TokenModel';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebSocketService {
   private hubConnection: signalR.HubConnection | undefined;
-  public static Chats: Chats[] = [];
-  public static userStatus: { [userId: string]: boolean } = {};
+  public static Chats: Chats[];
+  public static userStatus: StatusModel;
 
   public async startConnection(): Promise<void> {
     console.log("start");
@@ -24,10 +26,16 @@ export class WebSocketService {
 
 
   public async CreatChat(chatModel: ChatModel) {
+    console.log(chatModel);
+    
     if (this.hubConnection) {
       try {
         const response = await this.hubConnection.invoke('CreateChat', chatModel);
-        WebSocketService.Chats.push(response);
+        if (WebSocketService.Chats) {
+          WebSocketService.Chats.push(response);
+        } else {
+          WebSocketService.Chats = [response];
+        }
       } catch (err) {
         console.error('Error invoking CreateChat:', err);
       }
@@ -36,29 +44,27 @@ export class WebSocketService {
     }
   }
   
-  public GetChats(id: string) {
+  
+  public GetChats(tokenModel: TokenModel) {
+
     if (this.hubConnection) {
       this.hubConnection
         .start()
-        .then(() => {
-          return this.hubConnection?.invoke("Connect", id);
+        .then(async () => {
+          return await this.hubConnection!.invoke("GetChats", tokenModel);
         })
         .then(result => {
-          WebSocketService.Chats = result;
+            console.log(result);
+            WebSocketService.Chats = result;
         })
         .catch(err => {
           console.error('Error while starting connection or invoking Connect:', err);
         });
+    } else {
+      console.error('Hub connection is not established.');
     }
   }
-
-  public addListeners() {
-    this.hubConnection?.on('Connect', (userId: string, status: boolean) => {
-      WebSocketService.userStatus[userId] = status;
-    });
-  }
-
-
+  
 
   public stopConnection() {
     if (this.hubConnection) {

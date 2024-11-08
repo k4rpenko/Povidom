@@ -242,7 +242,7 @@ namespace PGAdminDAL.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.Property<List<string>>("ChatId")
+                    b.Property<List<string>>("ChatsID")
                         .IsRequired()
                         .HasColumnType("text[]");
 
@@ -261,6 +261,9 @@ namespace PGAdminDAL.Migrations
                     b.Property<List<string>>("Followers")
                         .IsRequired()
                         .HasColumnType("text[]");
+
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsVerified")
                         .HasColumnType("boolean");
@@ -293,9 +296,6 @@ namespace PGAdminDAL.Migrations
                     b.Property<List<string>>("RetweetPostID")
                         .IsRequired()
                         .HasColumnType("text[]");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("boolean");
 
                     b.Property<List<string>>("StoriesId")
                         .IsRequired()

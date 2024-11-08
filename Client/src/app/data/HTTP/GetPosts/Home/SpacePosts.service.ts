@@ -13,7 +13,7 @@ export class SpacePosts {
   constructor() { }
 
   getPosts(): Observable<PostArray> {
-    return this.http.get<PostArray>(`${CheckUser.url}/api/SpacePosts/Home`);
+    return this.http.get<PostArray>(`${CheckUser.url}/api/SpacePosts/Home`, { withCredentials: true});
   }
 }
 

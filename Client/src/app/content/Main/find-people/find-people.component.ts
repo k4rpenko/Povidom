@@ -1,4 +1,3 @@
-// FindPeopleComponent
 import { Component, inject, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FindUserData } from '../../../data/HTTP/GetPosts/User/FindUserData.service';
@@ -6,7 +5,6 @@ import { User } from '../../../data/interface/Users/User.interface';
 import { CommonModule } from '@angular/common';
 import { CookieService } from 'ngx-cookie-service';
 import { WebSocketService } from '../../../data/HTTP/WEB/WebSocket.service';
-import { MessageComponent } from '../../../pages/message/message.component';
 import { ChatModel } from '../../../data/interface/Chats/ChatModel';
 
 @Component({

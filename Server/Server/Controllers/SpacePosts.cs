@@ -1,10 +1,13 @@
 ﻿using Amazon.Runtime.Internal.Transform;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using NoSQL;
 using PGAdminDAL;
 using Server.Models.Post;
+using Server.Protection;
+using System.Linq;
 using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -24,7 +27,8 @@ namespace Server.Controllers
         {
             try
             {
-                var user = await context.User.FindAsync(_data.UserId);
+                var id = new JWT().GetUserIdFromToken(_data.UserId);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null)
                 {
                     return NotFound("User not found.");
@@ -73,9 +77,14 @@ namespace Server.Controllers
         {
             try
             {
-                var user = await context.User.FindAsync(_data.UserId);
+                var id = new JWT().GetUserIdFromToken(_data.UserId);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
 
-
+                if (user.LikePostID.Contains(_data.Id))
+                {
+                    return NotFound();
+                }
+                
                 var newLike = new Like()
                 {
                     UserId = _data.UserId,
@@ -94,6 +103,7 @@ namespace Server.Controllers
                 {
                     return NotFound("Post not found.");
                 }
+                
 
                 user.LikePostID.Add(_data.Id);
 
@@ -206,7 +216,27 @@ namespace Server.Controllers
         {
             //var filter = Builders<SpacePostModel>.Filter.ElemMatch(post => post.Views, Builders<string>.Filter.Ne(view => view, _data.Id.ToString()));
             //var posts = await _customers.Find(filter).Limit(30).ToListAsync();
+
             List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
+
+            if (!Request.Cookies.TryGetValue("authToken", out string cookieValue))
+            {
+                return Unauthorized();
+            }
+            var id = new JWT().GetUserIdFromToken(cookieValue);
+
+            foreach (var item in posts)
+            {
+                if (!item.Views.Contains(id))
+                {
+                    item.Views.Add(id);
+                    await _customers.ReplaceOneAsync(
+                        filter => filter.Id == item.Id,
+                        item 
+                    );
+                }
+
+            }
 
             List<PostHome> postHomeList = posts.Select(post => new PostHome
             {

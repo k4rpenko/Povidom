@@ -93,6 +93,11 @@ namespace Server.Hubs
 
             await _customers.InsertOneAsync(newChat);
             PeopleInfo.ChatId = newChat.Id.ToString();
+
+            You.ChatsID.Add(newChat.Id.ToString());
+            People.ChatsID.Add(newChat.Id.ToString());
+
+            await context.SaveChangesAsync();
             return PeopleInfo;
         }
 
@@ -167,37 +172,10 @@ namespace Server.Hubs
             {
                 var id = new JWT().GetUserIdFromToken(token);
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-                if (user != null) {
-                    if (user.Status)
-                    {
-                        List<GetChats> ChatsData = new List<GetChats>();
-                        foreach (var chatId in user.ChatId)
-                        {
-                            var objectId = ObjectId.Parse(chatId.ToString());
-                            var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
-                            var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
-
-                            foreach (var userId in chatModel.UsersID)
-                            {
-                                if (userId != id)
-                                {
-                                    await Clients.User(userId).SendAsync(id.ToString(), true);
-
-                                    var Ac = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
-
-                                    var chatInfo = new GetChats
-                                    {
-                                        ChatId = chatModel.Id.ToString(),
-                                        LastMessage = chatModel.Chat[chatModel.Chat.Count - 1].Text,
-                                        Avatar = Ac.Avatar,
-                                        NickName = Ac.UserName
-                                    };
-                                    ChatsData.Add(chatInfo);
-                                }
-                            }
-                        }
-                        return ChatsData;
-                    }
+                if (user != null)
+                {
+                    user.IsOnline = true;
+                    await context.SaveChangesAsync();
                 }
                 return null;
             }
@@ -207,5 +185,128 @@ namespace Server.Hubs
                 return null;
             }
         }
+
+        public async Task<List<GetChats>> StopConnect(string token)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(token);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                if (user != null)
+                {
+                    user.IsOnline = false;
+                    await context.SaveChangesAsync();
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<List<GetChats>> GetChats(TokenModel token)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(token.token);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                if (user != null)
+                {
+                    if (user.ChatsID != null && user.ChatsID.Count > 0)
+                    {
+                        Console.WriteLine("user.ChatsID.Count: " + user.ChatsID.Count);
+                        var ChatsData = new List<GetChats>();
+                        foreach (var item in user.ChatsID)
+                        {
+                            Console.WriteLine(item);
+                        }
+                        foreach (var GetChatID in user.ChatsID)
+                        {
+                            var objectIds = user.ChatsID.Select(chatId => ObjectId.Parse(GetChatID.ToString())).ToList();
+                            var filter = Builders<ChatModelMongoDB>.Filter.In(chat => chat.Id, objectIds);
+
+                            var chatModels = await _customers.Find(filter).ToListAsync();
+
+
+                            foreach (var chatModel in chatModels)
+                            {
+                                foreach (var userId in chatModel.UsersID)
+                                {
+                                    if (userId != id)
+                                    {
+                                        var Ac = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
+                                        var chatInfo = new GetChats
+                                        {
+                                            ChatId = chatModel.Id.ToString(),
+                                            LastMessage = chatModel.Chat.Count > 0 ? chatModel.Chat[chatModel.Chat.Count - 1].Text : "",
+                                            Avatar = Ac?.Avatar,
+                                            NickName = Ac?.UserName
+                                        };
+
+                                        ChatsData.Add(chatInfo);
+                                    }
+                                }
+                            }
+                        }
+                        return ChatsData;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return null;
+            }
+
+        }
+
+        public async Task<List<StatusModel>> GetStatus(string token)
+        {
+            var id = new JWT().GetUserIdFromToken(token);
+            var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+            if (user != null)
+            {
+                List<StatusModel> status = new List<StatusModel>(); 
+                foreach (var chatId in user.ChatsID)
+                {
+                    var objectId = ObjectId.Parse(chatId.ToString());
+                    var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
+                    var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
+
+                    if (chatModel != null) 
+                    {
+                        foreach (var userId in chatModel.UsersID)
+                        {
+                            if (userId != id) 
+                            {
+                                var Status = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
+                                if (Status != null)
+                                {
+                                    var statuss = new StatusModel
+                                    {
+                                        UserId = userId,
+                                        IsOnline = Status.IsOnline
+                                    };
+                                    status.Add(statuss);
+                                }
+                            }
+                        }
+                    }
+                }
+                return status;
+            }
+            return null;
+        }
+
     }
 }

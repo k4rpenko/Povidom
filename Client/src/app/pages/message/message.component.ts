@@ -5,6 +5,8 @@ import { Chats } from "../../data/interface/Chats/User.interface";
 import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FindPeopleComponent } from "../../content/Main/find-people/find-people.component";
+import { StatusModel } from "../../data/interface/Chats/StatusModel.interface";
+import { TokenModel } from "../../data/interface/Chats/TokenModel";
 
 @Component({
   selector: 'app-message',
@@ -14,7 +16,7 @@ import { FindPeopleComponent } from "../../content/Main/find-people/find-people.
   styleUrls: ['./message.component.scss']
 })
 export class MessageComponent implements OnInit, OnDestroy {
-  public userStatus: { [userId: string]: boolean } = WebSocketService.userStatus;
+  public userStatus: StatusModel = WebSocketService.userStatus;
   public Chats: Chats[] = WebSocketService.Chats;
   private id: string;
 
@@ -26,11 +28,21 @@ export class MessageComponent implements OnInit, OnDestroy {
     this.id = this.cookieService.get('authToken');
   }
 
-  async ngOnInit(): Promise<void> {
+  async ngDoCheck() {
+    if (WebSocketService.Chats !== this.Chats || WebSocketService.userStatus !== this.userStatus) {
+      this.Chats = WebSocketService.Chats;
+      this.userStatus = WebSocketService.userStatus;
+    }
+  }
+
+  async ngOnInit() {
     try {
       await this.WS.startConnection();
-      this.WS.addListeners();
-      await this.WS.GetChats(this.id);
+      const tokenModel: TokenModel = {
+        token: this.id
+      }
+      await this.WS.GetChats(tokenModel);
+
     } catch (error) {
       console.error('Error during initialization:', error);
     }
