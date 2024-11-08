@@ -1,5 +1,4 @@
 ﻿using Server.Hash;
-using Server.Models;
 using Server.Sending;
 using PGAdminDAL;
 using PGAdminDAL.Model;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RedisDAL;
+using Server.Models.Users;
 
 namespace Server.Controllers
 {
@@ -19,6 +19,8 @@ namespace Server.Controllers
         private readonly RedisConfigure redis;
         private readonly JWT _jwt = new JWT();
         HASH _HASH = new HASH();
+        RSAHash _rsa = new RSAHash();
+
         public AuthController(AppDbContext _context, RedisConfigure _redis) { context = _context; redis = _redis; }
 
 
@@ -43,7 +45,10 @@ namespace Server.Controllers
                         PasswordHash = _HASH.Encrypt(_user.Password, KeyG),
                         UserName = $"User{nextUserNumber}",
                         FirstName = "User",
-                        Avatar = "https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg"
+                        Avatar = "https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg",
+                        PublicKey = _rsa.GeneratePublicKeys(), 
+                        PrivateKey = _rsa.GeneratePrivateKeys()
+
                     };  
 
                     context.User.Add(newUser);

@@ -1,7 +1,7 @@
-﻿using Server.Models;
-using Microsoft.AspNetCore.WebUtilities;
+﻿using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
+using Server.Models.Tokens;
 
 namespace Server.Sending
 {

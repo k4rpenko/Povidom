@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Post, PostArray } from '../../../interface/Post/Post.interface';
 import { Observable } from 'rxjs';
+import { CheckUser } from '../../../Global';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class SpacePosts {
   constructor() { }
 
   getPosts(): Observable<PostArray> {
-    return this.http.get<PostArray>(/*`${window.location.origin}/api/AccountSettings/ConfirmationAccount`*/ "https://localhost:55225/api/SpacePosts/Home");
+    return this.http.get<PostArray>(`${CheckUser.url}/api/SpacePosts/Home`, { withCredentials: true});
   }
 }
 

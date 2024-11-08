@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace Server.Models
+namespace Server.Models.Post
 {
     public class Comment
     {
@@ -22,7 +22,7 @@ namespace Server.Models
         public string? Content { get; set; }
 
         [BsonElement("CreatedAt")]
-        public DateTime? CreatedAt { get; set; } 
+        public DateTime? CreatedAt { get; set; }
     }
 
     public class Like

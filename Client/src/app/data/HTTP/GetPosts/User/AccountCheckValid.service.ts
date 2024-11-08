@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { CheckUser } from '../../../Global';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class EmailValid {
     const json = {
       jwt: data
     };
-    return this.http.post(`${window.location.origin}/api/AccountSettings/ConfirmationAccount`, json, {
+    return this.http.post(`${CheckUser.url}/api/SpacePosts/${null}`, json, {
       headers: { 'Content-Type': 'application/json' }
   });
   }

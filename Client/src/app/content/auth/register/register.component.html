@@ -1,0 +1,40 @@
+<div class="auth_main">
+    <div class="auth-container">
+        <div class="auth_text">
+            <h2> Створення акаунту </h2>
+            <p>Щоб спілкуватись з своїми друзями</p>
+            <p>та поділитись незабутніми емоціями</p>
+        </div>
+        <span data-v-12a599d3="" class="auth_delimiter">  або  </span>
+        <div class="auth_form">
+            <form (ngSubmit)="onSubmit()">
+                <div class="auth_form_email">
+                  <label for="emailF">Eлектронна пошта</label>
+                  <input id="emailF" [(ngModel)]="emailR" type="email" name="emailF" maxlength="120" placeholder="Введите email" required>
+                  <div *ngIf="emailError" class="error">{{ emailError }}</div> 
+                </div>
+              
+                <div class="auth_form_password">
+                  <div class="auth_form_password_text">
+                    <label for="pass1F">Пароль</label>
+                  </div>
+                  <input id="pass1F" [(ngModel)]="pass1R" type="password" name="pass1F" placeholder="Введите пароль" required>
+                  
+                  <div class="auth_form_password_text">
+                    <label for="pass2F">Підтвердження паролю</label>
+                  </div>
+                  <input id="pass2F" [(ngModel)]="pass2R" type="password" name="pass2F" placeholder="Введите пароль" required>
+                  
+                  <div *ngIf="passwordError" class="error">{{ passwordError }}</div> 
+                </div>
+                
+                <button type="submit">Зарегеструватись</button>
+            </form>              
+        </div>
+        <div class="auth_forgot">
+            <span>Є акаунт?</span>
+            <a (click)="LoginForm()">Увійти</a>
+        </div>
+    </div>
+</div>
+

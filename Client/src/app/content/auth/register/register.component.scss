@@ -1,0 +1,136 @@
+.auth_main{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(30, 31, 32);
+    width: 600px;
+    height: 700px;
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    display: flex;
+    overflow: auto;
+    border-radius: 20px;
+    color: #fff;
+}
+
+.auth-container{
+    max-width: 360px;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+}
+
+.auth_text{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.auth_delimiter{
+    margin: 40px 0px;
+    display: block;
+    overflow: hidden;
+    text-align: center;
+}
+
+.auth_delimiter::before{
+    right: 19px;
+    margin-left: -50%;
+    background-color: #EAEAEA;
+    content: "";
+    display: inline-block;
+    height: 1px;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+}
+
+.auth_delimiter::after{
+    left: 19px;
+    margin-right: -50%;
+    background-color: #EAEAEA;
+    content: "";
+    display: inline-block;
+    height: 1px;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+}
+
+.auth_form form{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-column-gap: 0;
+    grid-row-gap: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth_form input{
+    border: none;
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    font-size: 15px;
+    min-height: 30px;
+    border: 1px solid #ddd;
+    background-color: #f4f6f8;
+    padding: 12px 16px;
+    border-radius: 7px;
+}
+
+.auth_form button{
+    color: #fff;
+    border: none;
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    font-size: 15px;
+    min-height: 30px;
+    background-color: #1FB0A8;
+    padding: 12px 16px;
+    border-radius: 7px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.auth_form_email{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-column-gap: 0;
+    grid-row-gap: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth_form_password{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-column-gap: 0;
+    grid-row-gap: 12px;
+}
+
+.auth_form_password_text{
+    display: flex;
+    justify-content: space-between;
+}
+
+.auth_form_password_text a{
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+
+.auth_forgot{
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.auth_forgot a{
+   text-decoration: none;
+   color: inherit;
+   cursor: pointer;
+}
+
+
+.error{
+    color: rgb(233, 106, 106);
+}

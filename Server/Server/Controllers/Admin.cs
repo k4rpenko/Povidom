@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PGAdminDAL;
 using Server.Hash;
-using Server.Models;
+using Server.Models.Admin;
 using Server.Sending;
 
 namespace Server.Controllers

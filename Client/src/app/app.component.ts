@@ -1,14 +1,17 @@
 import { Component, inject, OnInit, Type } from "@angular/core";
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { SideMenuComponent } from "./content/Header/side-menu/side-menu.component";
-import {CheckUser} from "./data/Сheck-User"
+import {CheckUser} from "./data/Global"
 import { updateAccetsToken } from "./data/HTTP/POST/updateAccetsToken.service";
 import { CookieService } from 'ngx-cookie-service';
+import { CommonModule } from "@angular/common";
+import { MemoryCacheService } from "./content/Cache/MemoryCacheService";
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SideMenuComponent],
+  imports: [RouterOutlet, SideMenuComponent, CommonModule],
   providers: [CookieService],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'] 
@@ -20,17 +23,23 @@ export class AppComponent implements OnInit{
   profileService = inject(updateAccetsToken);
   private readonly REQUEST_INTERVAL = 1500000;
   token!: string;
+  showMainContent: boolean = true;
 
-  constructor(private route: ActivatedRoute, private router: Router, private cookieService: CookieService){
+  constructor(private route: ActivatedRoute, private router: Router, private cookieService: CookieService, private cache: MemoryCacheService){
     if(this.cookieService.check('authToken')){
       const now = new Date();
       this.UpdateJWT(now);
     }
+    else{
+      this.router.navigate(['']);
+    }
   }
-
   ngOnInit(): void {
     const now = new Date();
     this.UpdateJWT(now);
+    this.router.events.subscribe(() => {
+      this.showMainContent = this.router.url !== '/'; // Замість '/' вкажіть свій "звичайний" маршрут
+    });
   }
 
   UpdateJWT(now: Date) {
@@ -44,14 +53,14 @@ export class AppComponent implements OnInit{
                     const token = response.token;
                     CheckUser.Valid = true
                     this.cookieService.set('authToken', token);
-                    this.router.navigate(['/']);
                 },
                 error: (error) => {
-                    const cookies = document.cookie.split(";");
-                    for (let cookie of cookies) {
-                        const cookieName = cookie.split("=")[0].trim(); 
-                        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
-                    }
+                  const cookies = document.cookie.split(";");
+                  for (let cookie of cookies) {
+                      const cookieName = cookie.split("=")[0].trim(); 
+                      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+                      this.cache.clearItem("User")
+                  }
                 }
             });
         }

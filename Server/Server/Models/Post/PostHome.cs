@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Server.Models
+namespace Server.Models.Post
 {
     public class PostHome
     {

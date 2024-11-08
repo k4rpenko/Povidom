@@ -1,7 +1,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace Server.Models
+namespace Server.Models.Post
 {
     public class SpaceWorkModel
     {

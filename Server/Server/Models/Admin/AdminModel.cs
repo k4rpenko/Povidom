@@ -1,4 +1,4 @@
-﻿namespace Server.Models
+﻿namespace Server.Models.Admin
 {
     public class AdminModel
     {

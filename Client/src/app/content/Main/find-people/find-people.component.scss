@@ -1,0 +1,108 @@
+.FindPeopleChat{
+    width: 600px;
+    height: 650px;
+    background-color: rgb(24,25,26);
+    color: white;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 15px;
+    overflow: auto;
+}
+
+.FindPeopleChatHeader{
+    padding: 10px;
+    display: flex;
+    height: 53px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.FindPeopleChatHeader a{
+    display: flex;
+    padding: 5px;
+}
+
+.FindPeopleChatHeader a:hover{
+    border-radius: 50%;
+    background-color: #2F3336;
+}
+
+.FindPeopleChatHeader button{
+    color: #fff;
+    background-color: #1FB0A8;
+    min-height: 35px;
+    padding-left: 16px;
+    padding-right: 16px;
+    max-width: 100%;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.FindPeopleEnter{
+    gap: 5px;
+    padding: 7px;
+    border-bottom: 1px solid #2F3336;
+    display: flex;
+    align-items: center;
+}
+
+.FindPeopleEnter input{
+    color: white;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    width: 100%;
+    font-size: 16px;
+}
+
+.FindPeopleEnter input:focus {
+    outline: none; 
+    border: none; 
+}
+
+.IdUser{
+    gap: 5px;
+    padding: 15px;
+    width: auto;
+    display: flex;
+    border-bottom: 1px solid #2F3336;
+    transition: 0.2s;
+}
+
+.IdUser:hover{
+    transition: 0.2s;
+    background-color: rgb(20, 21, 22);
+}
+
+.IdUser img{
+    border-radius: 50%;
+    height: 40px;
+}
+
+
+.IdUserName{
+    display: flex;
+    width: 100%;
+    gap: 6px;
+}
+
+.IdUserName samp{
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.ChatUserData{
+    color: #71767B;
+}
+
+.IdUserText{
+    margin-left: 10px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
