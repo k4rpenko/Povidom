@@ -1,4 +1,3 @@
-/* Контейнер бокового меню */
 header {
   border-right: 1px solid #2F3336;
   z-index: 3;
@@ -12,7 +11,6 @@ header {
   transition: width 0.3s ease-in-out;
 }
 
-/* Основне меню */
 .side-menu {
   margin-right: 10px;
   height: 100%;
@@ -24,7 +22,6 @@ header {
   transition: all 0.3s ease-in-out;
 }
 
-/* Заголовок меню */
 .side-menu h2 {
   padding: 13px;
   font-size: 1.8em;
@@ -35,7 +32,6 @@ header {
   opacity: 0;
 }
 
-/* Стиль іконок */
 .side-menu svg {
   padding-right: 10px;
   height: 1.75rem;
@@ -43,7 +39,6 @@ header {
   transition: fill 0.3s ease;
 }
 
-/* Елементи меню */
 .menu-item {
   max-width: 100%;
   font-size: 1.3em;
@@ -66,14 +61,12 @@ header {
 .menu-item:nth-child(4) { animation-delay: 0.4s; }
 .menu-item:nth-child(5) { animation-delay: 0.5s; }
 
-/* Ефект при наведенні */
 .menu-item:hover {
   background-color: #333;
   color: #1FB0A8;
   transform: scale(1.05);
 }
 
-/* Кнопка для створення постів */
 .side-menu-post-button {
   min-height: 50px;
   max-width: 100%;
@@ -92,7 +85,6 @@ header {
   background-color: #198a84;
 }
 
-/* Анімації */
 @keyframes slideIn {
   from {
     opacity: 0;
