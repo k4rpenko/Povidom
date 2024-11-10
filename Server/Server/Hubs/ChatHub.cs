@@ -1,18 +1,11 @@
-﻿using Amazon.Runtime.Internal;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using NoSQL;
 using PGAdminDAL;
 using Server.Controllers;
 using Server.Models.MessageChat;
-using Server.Protection;
-using System;
-using System.Diagnostics.Metrics;
-using System.Linq;
 
 namespace Server.Hubs
 {
@@ -105,18 +98,19 @@ namespace Server.Hubs
         {
             try
             {
-
+                var id = new JWT().GetUserIdFromToken(_chat.CreatorId);
                 var objectId = ObjectId.Parse(_chat.IdChat.ToString());
                 var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
                 var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
 
-                if (!chatModel.UsersID.Contains(_chat.CreatorId))
+
+                if (!chatModel.UsersID.Contains(id))
                 {
                     Console.WriteLine("Chat ID not found in user IDs.");
                     return false;
                 }
 
-                var id = new JWT().GetUserIdFromToken(_chat.CreatorId);
+                
 
                 var lastMessageId = chatModel.Chat?.Count > 0
                     ? chatModel.Chat.OrderByDescending(m => m.CreatedAt).FirstOrDefault()?.Id ?? 0
@@ -196,6 +190,57 @@ namespace Server.Hubs
                 {
                     user.IsOnline = false;
                     await context.SaveChangesAsync();
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<string> GetId(string token)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(token);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                if (user != null)
+                {
+                    return id;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<List<Message>> GetMessage(ChatModel _get)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(_get.CreatorId);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                Console.WriteLine(user);
+                if(user != null)
+                {   
+                    var objectId = ObjectId.Parse(_get.IdChat.ToString());
+                    var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
+                    var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
+                    Console.WriteLine(objectId);
+                    
+
+                    if (!chatModel.UsersID.Contains(id))
+                    {
+                        Console.WriteLine("Chat ID not found in user IDs.");
+                        return null;
+                    }
+
+                    return chatModel.Chat;
                 }
                 return null;
             }

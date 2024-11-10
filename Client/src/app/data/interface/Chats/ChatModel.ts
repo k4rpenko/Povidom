@@ -1,6 +1,6 @@
 export interface ChatModel{
     IdChat?: string;
-    CreatorId?: Date; 
+    CreatorId?: string; 
     AddUsersIdChat?: Array<string>;
     Text?: string;
     Img?: string;

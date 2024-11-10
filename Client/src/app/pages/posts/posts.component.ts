@@ -73,6 +73,8 @@ export class PostsComponent implements OnInit {
   }
 
   LikePost(postId: Post){  
+    console.log(postId.id);
+    
     const postlike: Post = {
       id: postId.id,
       userId: this.cookieService.get('authToken')

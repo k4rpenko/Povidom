@@ -30,6 +30,7 @@ export class FindPeopleComponent {
 
   CreatChat(Id: string) {
     const AddUsersIdChat: Array<string> = [this.id, Id];
+    
     const ChatModel: ChatModel = {
       AddUsersIdChat: AddUsersIdChat
     }

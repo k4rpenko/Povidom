@@ -5,7 +5,7 @@ namespace Server.Models.Post
 {
     public class PostHome
     {
-        public ObjectId Id { get; set; }
+        public string Id { get; set; }
         public string UserId { get; set; }
         public string UserNickname { get; set; }
         public string UserName { get; set; }

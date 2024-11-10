@@ -1,9 +1,10 @@
 export interface Chats{
     avatar: string;
     nickName: string;
+    lastName: string;
     createdAt: Date; 
-    ChatId: string;
-    LastMessage: string;
+    chatId: string;
+    lastMessage: string;
 }
 
 export interface chatData {

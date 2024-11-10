@@ -11,7 +11,7 @@ export class LikePost {
   constructor() { }
 
   Like(post: Post) {
-    return this.http.post(`${CheckUser.url}/api/SpacePosts/LikePost`, post, {
+    return this.http.put(`${CheckUser.url}/api/SpacePosts/LikePost`, post, {
       headers: { 'Content-Type': 'application/json' }
   });
   }

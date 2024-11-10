@@ -38,6 +38,6 @@ namespace Server.Models.Post
         public List<string>? Mentions { get; set; }
 
         [BsonElement("SPublished")]
-        public bool SPublished { get; set; }
+        public bool? SPublished { get; set; }
     }
 }

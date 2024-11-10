@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [],
   templateUrl: './non-existent-user.component.html',
-  styleUrls: ['./non-existent-user.component.scss'] // виправлено 'styleUrl' на 'styleUrls'
+  styleUrls: ['./non-existent-user.component.scss'] 
 })
 export class NonExistentUserComponent {
   constructor(private router: Router) {}

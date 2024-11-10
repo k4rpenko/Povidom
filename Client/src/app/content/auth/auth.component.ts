@@ -32,7 +32,7 @@ export class AuthComponent {
   }
 
   SendEmailConfirmation(){
-    this.ConfirmationEmail._ConfirmationEmail(this.emailL).subscribe({});
+    this.ConfirmationEmail._ConfirmationEmail(this.emailL).subscribe();
   }
 
   RegisterForm(){

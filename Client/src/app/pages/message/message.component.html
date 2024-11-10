@@ -8,40 +8,64 @@
             </div>
         </div>
         
-        <a (click)="OpenMessage()" *ngFor="let chat of Chats" class="IdChat">
-            <img src="{{chat.avatar}}" alt="">
+        <a (click)="OpenMessage(chat)" *ngFor="let chat of Chats" class="IdChat">
+            <img [src]="chat.avatar || 'default-avatar.jpg'" alt="Chat Avatar">
             <div class="ChatText">
                 <div class="ChatUser">
-                    <samp>{{chat.nickName}}</samp>
-                    <samp class="ChatUserData">{{chat.createdAt}}</samp>
+                    <samp>{{chat.nickName || 'Anonymous'}}</samp>
+                    <samp class="ChatUserData">{{ chat.createdAt | date: 'short' }}</samp>
                 </div>
-                <div class="ChatUserMesage">
-                    <samp>{{chat.LastMessage}}</samp>
+                <div class="ChatUserMessage">
+                    <samp>{{ chat.lastMessage || 'No messages yet' }}</samp>
                 </div>
             </div>
-        </a>
+        </a>        
     </div>
-    <div class="Messages" *ngIf="open else close">
-        <div class="MessagesProfile">
-            <img src="https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg" alt="">
-            <div class="MessagesdataAndStatus">
-                <div class="MessagesdataforUser">
-                    <samp>Nick</samp>
-                    <samp class="ChatUserData">name</samp>
+    <div *ngIf="open else close">
+        <div class="Messages">
+            <div class="MessagesProfile">
+                <img src="{{OpenChat.avatar}}" alt="">
+                <div class="MessagesdataAndStatus">
+                    <div class="MessagesdataforUser">
+                        <samp>{{OpenChat.nickName}}</samp>
+                        <samp class="ChatUserData">{{OpenChat.lastName}}</samp>
+                    </div>
+                    <div class="ChatUserLastStatus" *ngIf="!status else close"><samp> був недавно </samp></div>
+                    <ng-template class="ChatUserLastStatusTrue" #close><samp> В мережі </samp></ng-template>
                 </div>
-                <div class="ChatUserLastStatus" *ngIf="!status else close"><samp > був недавно </samp></div>
-                <ng-template class="ChatUserLastStatusTrue" #close><samp > В мережі </samp></ng-template>
+            </div>
+            <div class="MessageText">
+                <div class="MessageTextList">
+                    <div class="MessageTextArray" *ngFor="let message of OpenChat.message">
+                        <div 
+                            [ngClass]="{
+                                'message-sender': message.idUser === YouID, 
+                                'message-receiver': message.idUser !== YouID
+                            }"
+                            class="Message"
+                        >
+                            <p>{{ message.text }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="SandMessages">
+                <form class="SandMessagesInput">
+                    <textarea [(ngModel)]="message" name="message" id="message" placeholder="Send a new message"></textarea>
+                    <div class="SandMessagesSVG">
+                      <a (click)="sendMessage()" type="submit">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <g>
+                            <path d="M2.504 21.866l.526-2.108C3.04 19.719 4 15.823 4 12s-.96-7.719-.97-7.757l-.527-2.109L22.236 12 2.504 21.866zM5.981 13c-.072 1.962-.34 3.833-.583 5.183L17.764 12 5.398 5.818c.242 1.349.51 3.221.583 5.183H10v2H5.981z"></path>
+                          </g>
+                        </svg>
+                      </a>
+                    </div>
+                  </form>                  
             </div>
         </div>
-        <div class="MessageText"><h1>MessageText</h1></div>
-        <div class="SandMessages">
-            <form class="SandMessagesInput">
-                <textarea name="" id="" placeholder="Send a new message"></textarea>
-                <div class="SandMessagesSVG"> <a > <svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M2.504 21.866l.526-2.108C3.04 19.719 4 15.823 4 12s-.96-7.719-.97-7.757l-.527-2.109L22.236 12 2.504 21.866zM5.981 13c-.072 1.962-.34 3.833-.583 5.183L17.764 12 5.398 5.818c.242 1.349.51 3.221.583 5.183H10v2H5.981z"></path></g></svg> </a>  </div>
-            </form>
-
-        </div>
     </div>
+    
     <ng-template  #close>
         <div class="ChatUserclose">
             <h1>Select a message</h1>

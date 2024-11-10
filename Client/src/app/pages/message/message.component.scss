@@ -194,7 +194,55 @@ main{
     display: flex;
 }
 
-.ChatUserclose{
+
+.MessageText{
+    overflow-y: auto;
+    width: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.MessageTextList{
+    display: flex;
+    flex-direction: column;
+}
+
+.MessageTextArray{
+    display: flex;
+}
+
+.message-sender {
+    background-color: #f0f0f0; 
+    color: black;
+    align-self: flex-end; 
+    border-radius: 15px;
+    padding: 10px;
+    max-width: 70%;
+    margin: 10px;
+}
+
+.message-receiver {
+    background-color: #007bff; 
+    color: white;
+    align-self: flex-start;
+    border-radius: 15px;
+    padding: 10px;
+
+    margin: 10px;
+}
+
+
+.Message {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: auto;
+    max-width: 70%;
+}
+
+
+.ChatUserclose {
     margin-left: 6%;
     display: flex;
     flex-direction: column;

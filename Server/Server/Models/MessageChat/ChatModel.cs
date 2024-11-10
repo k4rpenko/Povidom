@@ -4,8 +4,9 @@ namespace Server.Models.MessageChat
 {
     public class ChatModel
     {
-        public int? IdChat { get; set; }
+        public string? IdChat { get; set; }
         public string? CreatorId { get; set; }
+
         public List<string>? AddUsersIdChat { get; set; }
 
         public string? Text { get; set; }

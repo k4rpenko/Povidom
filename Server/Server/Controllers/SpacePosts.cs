@@ -1,6 +1,7 @@
 ﻿using Amazon.Runtime.Internal.Transform;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using NoSQL;
@@ -80,6 +81,8 @@ namespace Server.Controllers
                 var id = new JWT().GetUserIdFromToken(_data.UserId);
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
 
+                Console.WriteLine(id);
+
                 if (user.LikePostID.Contains(_data.Id))
                 {
                     return NotFound();
@@ -90,7 +93,7 @@ namespace Server.Controllers
                     UserId = _data.UserId,
                     CreatedAt = DateTime.UtcNow
                 };
-
+                Console.WriteLine(newLike);
                 var objectId = ObjectId.Parse(_data.Id);
 
                 var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.Like, newLike);
@@ -123,7 +126,8 @@ namespace Server.Controllers
         {
             try
             {
-                var user = await context.User.FindAsync(_data.UserId);
+                var id = new JWT().GetUserIdFromToken(_data.UserId);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
                 var objectId = ObjectId.Parse(_data.Id);
                 var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
 
@@ -164,12 +168,14 @@ namespace Server.Controllers
         {
             try
             {
-                var user = await context.User.FindAsync(_data.UserId);
+                var id = new JWT().GetUserIdFromToken(_data.UserId);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id); ;
 
                 var objectId = ObjectId.Parse(_data.Id);
+
                 var SpacePostModel = new SpacePostModel()
                 {
-                    UserId = _data.UserId,
+                    UserId = id,
                     Content = _data.Content,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
@@ -235,12 +241,11 @@ namespace Server.Controllers
                         item 
                     );
                 }
-
             }
 
             List<PostHome> postHomeList = posts.Select(post => new PostHome
             {
-                Id = post.Id,
+                Id = post.Id.ToString().ToString(),
                 UserId = post.UserId,
                 UserNickname = post.UserNickname,
                 UserName = post.UserName,
@@ -271,7 +276,7 @@ namespace Server.Controllers
 
             List<PostHome> postHomeList = posts.Select(post => new PostHome
             {
-                Id = post.Id,
+                Id = post.Id.ToString().ToString(),
                 UserId = post.UserId,
                 UserNickname = post.UserNickname,
                 UserName = post.UserName,

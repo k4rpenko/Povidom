@@ -31,6 +31,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddDefaultUI()
     .AddEntityFrameworkStores<AppDbContext>();
 
+
 builder.Services.AddSignalR();
 
 
@@ -58,7 +59,11 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
+
+
 
 
 builder.Services.AddControllers();
@@ -105,9 +110,9 @@ if (app.Environment.IsDevelopment())
 
 app.MapHub<ChatHub>("/message");
 app.UseCors("AllowSpecificOrigin");
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 app.MapControllers();
 
 await app.RunAsync();
