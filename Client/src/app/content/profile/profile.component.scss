@@ -1,0 +1,92 @@
+.ProfileContainer {
+    width: 600px;
+    min-height: 700px;
+    background-color: rgb(24,25,26);
+    color: white;
+    margin: auto;
+    border-radius: 15px;
+    overflow: auto;
+}
+
+.ProfileHeader {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ProfileHeader button {
+    color: #fff;
+    background-color: #1FB0A8;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.ProfileHeader button:hover {
+    background-color: #17a099;
+}
+
+.ProfileBanner {
+    height: 200px;
+    background-color: #333;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    position: relative;
+}
+
+.ProfileAvatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid rgb(24,25,26);
+    position: absolute;
+    bottom: -60px;
+    left: 20px;
+}
+
+.ProfileInfo {
+    margin-top: 80px;
+    padding: 0 20px;
+}
+
+.ProfileName {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.ProfileUsername {
+    color: #71767B;
+    font-size: 16px;
+}
+
+.ProfileBio {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #cfd1d3;
+}
+
+.ProfileTabs {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    border-bottom: 1px solid #2F3336;
+}
+
+.ProfileTab {
+    padding: 10px 0;
+    color: #71767B;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.ProfileTab:hover {
+    color: #1FB0A8;
+}
+
+.ProfileTabActive {
+    color: #1FB0A8;
+    font-weight: bold;
+    border-bottom: 3px solid #1FB0A8;
+}

@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './side-menu.component.html',
-  styleUrls: ['./side-menu.component.scss'] // Виправлено на styleUrls
+  styleUrls: ['./side-menu.component.scss'] 
 })
 export class SideMenuComponent {
   currentUrl: string = '';
