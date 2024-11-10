@@ -72,6 +72,10 @@ export class PostsComponent implements OnInit {
     }
   }
 
+  OpenComments(postId: Post){
+    
+  }
+
   LikePost(postId: Post){  
     console.log(postId.id);
     
