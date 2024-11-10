@@ -27,7 +27,7 @@ export class PostsComponent implements OnInit {
   UserData!: User;
   postContent: string = '';
 
-  constructor(private cache: MemoryCacheService,  private cookieService: CookieService,) { }
+  constructor(private cache: MemoryCacheService,  private cookieService: CookieService) { }
 
   async ngOnInit() {
     this.loadPosts();

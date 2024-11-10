@@ -18,7 +18,7 @@
     position: relative;
     display: flex;
     justify-content: center;
-    align-items: flex-end;  /* Ensures the avatar stays at the bottom */
+    align-items: flex-end;  
 }
 
 .ProfileAvatar {
@@ -38,7 +38,7 @@
     align-items: center;
     justify-content: space-between;
     position: relative;
-    margin-top: 60px;  /* Adds space below the avatar */
+    margin-top: 60px;  
 }
 
 .ProfileHeader button {
@@ -77,7 +77,7 @@
 
 .ProfileTabs {
     display: flex;
-    justify-content: space-between;  /* Ensures tabs are spread across evenly */
+    justify-content: space-between;  
     margin-top: 20px;
     border-bottom: 1px solid #2F3336;
 }
@@ -88,7 +88,7 @@
     cursor: pointer;
     font-size: 16px;
     text-align: center;
-    flex-grow: 1;  /* Ensures equal width for each tab */
+    flex-grow: 1; 
 }
 
 .ProfileTab:hover {
@@ -99,4 +99,111 @@
     color: #1FB0A8;
     font-weight: bold;
     border-bottom: 3px solid #1FB0A8;
+}
+
+
+.Post-item {
+    height: auto;
+    padding: 20px;
+    width: auto;
+    border-bottom: 1px solid #2F3336;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.Post-FUser {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #E7E9EA;
+}
+
+.Post-FUser span {
+    display: inline-block;
+}
+
+.Post-FUser .UserNickname {
+    color: #71767B;
+    font-size: 13px;
+}
+
+.Post-Context {
+    margin-top: 6px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #E7E9EA;
+}
+
+.Post-Context samp{
+    text-overflow: unset;
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.Post-Context img {
+    margin-top: 10px;
+    border-radius: 12px;
+    max-width: 100%;
+    height: auto;
+}
+
+.Post-Mad {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 5px;
+    color: #71767B;
+    font-size: 13px;
+}
+
+.Post-Mad a {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #71767B;
+}
+
+.Post-Mad svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    transition: fill 0.2s ease;
+}
+
+.Post-Mad a:hover svg {
+    fill: #1FB0A8;
+}
+
+.postUserAvatar {
+    border-radius: 50%;
+    max-width: 40px;
+}
+
+.Post-item-user {
+    height: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.Post-item-user-Text {
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.Post-FUser {
+    font-size: 15px;
+    display: flex;
+}
+
+.Post-FUser-nick {
+    color: #4b5257;
+    font-family: "CeraRoundPro-Medium", sans-serif;
+    font-weight: 500;
 }
