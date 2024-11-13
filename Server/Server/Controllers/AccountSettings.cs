@@ -12,11 +12,11 @@ namespace Server.Controllers
     [Route("api/[controller]")]
     public class AccountSettings : Controller
     {
-        UserName _untilUser = new UserName();
+        private UserName _untilUser = new UserName();
         private readonly EmailSeding _emailSend = new EmailSeding();
         private readonly AppDbContext context;
-        HASH _HASH = new HASH();
-        private readonly JWT _jwt = new JWT();
+        private HASH _HASH = new HASH();
+        private JWT _jwt = new JWT();
         public AccountSettings(AppDbContext _context) { context = _context; }
 
         [HttpPost("ConfirmationAccount")]

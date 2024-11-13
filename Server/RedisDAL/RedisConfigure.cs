@@ -17,7 +17,7 @@ namespace RedisDAL
         }
 
 
-        void Connect()
+        public void Connect()
         {
             string connectionString = _configuration.GetSection("Redis:ConnectionString").Value;
             try

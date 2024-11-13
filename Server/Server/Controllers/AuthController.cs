@@ -21,8 +21,7 @@ namespace Server.Controllers
         HASH _HASH = new HASH();
         RSAHash _rsa = new RSAHash();
 
-        public AuthController(AppDbContext _context, RedisConfigure _redis) { context = _context; redis = _redis; }
-
+        public AuthController(AppDbContext _context)  { context = _context; }
 
 
         [HttpPost("registration")]
@@ -101,33 +100,27 @@ namespace Server.Controllers
             }
         }
 
-
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(UserAuth _user)
         {
-            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            if (redis.AuthRedisUser(ipAddress))
+            if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password)) { return BadRequest(); }
+            try
             {
-                if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password)) { return BadRequest(); }
-                try
+                var user = context.User.FirstOrDefault(u => u.Email == _user.Email);
+                var RoleUser = context.UserRoles.FirstOrDefault(u => u.UserId == user.Id);
+                if (user == null) { return NotFound(); }
+                if (_HASH.Encrypt(_user.Password, user.ConcurrencyStamp) != user.PasswordHash) { return Unauthorized(); }
+                if (user.EmailConfirmed == false)
                 {
-                    var user = context.User.FirstOrDefault(u => u.Email == _user.Email);
-                    var RoleUser = context.UserRoles.FirstOrDefault(u => u.UserId == user.Id);
-                    if (user == null) { return NotFound(); }
-                    if (_HASH.Encrypt(_user.Password, user.ConcurrencyStamp) != user.PasswordHash) { return Unauthorized(); }
-                    if (user.EmailConfirmed == false)
-                    {
-                        return BadRequest();
-                    }
-                    var accets = _jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, RoleUser.RoleId);
-                    return Ok(new { token = accets });
+                    return BadRequest();
                 }
-                catch (Exception ex)
-                {
-                    throw new Exception("", ex);
-                }
+                var accets = _jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, RoleUser.RoleId);
+                return Ok(new { token = accets });
             }
-            return StatusCode(StatusCodes.Status429TooManyRequests, new { message = "Too many requests from this IP address" });
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
         }
     }
 }

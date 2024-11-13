@@ -22,3 +22,6 @@ Server/Server/appsettings.json
 NoSQL/obj/Debug/net8.0/NoSQL.AssemblyInfo.cs
 NoSQL/obj/Debug/net8.0/NoSQL.AssemblyInfoInputs.cache
 /SignalR/obj
+/Test/bin
+/Test/obj
+/NoSQL/obj

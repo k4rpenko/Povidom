@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Server.Hash
 {
-    internal class HASH
+    public class HASH
     {
         public byte[] GenerateKey()
         {

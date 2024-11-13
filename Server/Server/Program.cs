@@ -71,6 +71,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseMiddleware<IpLoggingMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
 
 
