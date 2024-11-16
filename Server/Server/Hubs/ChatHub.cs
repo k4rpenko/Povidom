@@ -11,6 +11,7 @@ namespace Server.Hubs
 {
     public class ChatHub : Hub
     {
+        Dictionary<string, string> Users = new Dictionary<string, string>();
         private readonly IMongoCollection<ChatModelMongoDB> _customers;
         private readonly AppDbContext context;
 
@@ -19,6 +20,50 @@ namespace Server.Hubs
             _customers = _Mongo.Database?.GetCollection<ChatModelMongoDB>(_configuration.GetSection("MongoDB:MongoDbDatabaseChat").Value);
             context = _context;
         }
+
+
+        public async Task<List<GetChats>> Connect(string token)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(token);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                Users.Add(id, Context.ConnectionId);
+                if (user != null)
+                {
+                    user.IsOnline = true;
+                    await context.SaveChangesAsync();
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return null;
+            }
+        }
+        
+        public async Task<List<GetChats>> disconnection(string token)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(token);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                Users.Remove(id);
+                if (user != null)
+                {
+                    user.IsOnline = true;
+                    await context.SaveChangesAsync();
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return null;
+            }
+        }
+
 
 
         public async Task<GetChats> CreateChat(ChatModel _chat)
@@ -81,7 +126,12 @@ namespace Server.Hubs
 
             foreach (var userId in newChat.UsersID)
             {
-                await Clients.User(userId).SendAsync("CreatChat", YouInfo);
+                if (Users.ContainsKey(userId))
+                {
+                    Users.TryGetValue(userId, out string value);
+                    await Clients.User(value).SendAsync("CreatChat", YouInfo);
+                }
+                
             }
 
             await _customers.InsertOneAsync(newChat);
@@ -103,7 +153,7 @@ namespace Server.Hubs
                 var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
                 var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
 
-
+                
                 if (!chatModel.UsersID.Contains(id))
                 {
                     Console.WriteLine("Chat ID not found in user IDs.");
@@ -148,7 +198,8 @@ namespace Server.Hubs
                 {
                     if (userId != id)
                     {
-                        await Clients.User(userId).SendAsync("ReceiveMessage", newMessage);
+                        Users.TryGetValue(userId, out string value);
+                        await Clients.User(value).SendAsync("ReceiveMessage", newMessage);
                     }
                 }
                 return true;
@@ -160,25 +211,6 @@ namespace Server.Hubs
             }
         }
 
-        public async Task<List<GetChats>> Connect(string token)
-        {
-            try
-            {
-                var id = new JWT().GetUserIdFromToken(token);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-                if (user != null)
-                {
-                    user.IsOnline = true;
-                    await context.SaveChangesAsync();
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return null;
-            }
-        }
 
         public async Task<List<GetChats>> StopConnect(string token)
         {
@@ -225,15 +257,11 @@ namespace Server.Hubs
             {
                 var id = new JWT().GetUserIdFromToken(_get.CreatorId);
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-                Console.WriteLine(user);
                 if(user != null)
                 {   
                     var objectId = ObjectId.Parse(_get.IdChat.ToString());
                     var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
                     var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
-                    Console.WriteLine(objectId);
-                    
-
                     if (!chatModel.UsersID.Contains(id))
                     {
                         Console.WriteLine("Chat ID not found in user IDs.");
@@ -261,11 +289,9 @@ namespace Server.Hubs
                 {
                     if (user.ChatsID != null && user.ChatsID.Count > 0)
                     {
-                        Console.WriteLine("user.ChatsID.Count: " + user.ChatsID.Count);
                         var ChatsData = new List<GetChats>();
                         foreach (var item in user.ChatsID)
                         {
-                            Console.WriteLine(item);
                         }
                         foreach (var GetChatID in user.ChatsID)
                         {

@@ -21,13 +21,13 @@ import { FormsModule } from "@angular/forms";
 })
 export class MessageComponent implements OnInit, OnDestroy {
 [x: string]: any;
-  public userStatus: StatusModel = WebSocketService.userStatus;
-  public Chats: Chats[] = WebSocketService.Chats;
-  public Message: Message[] = WebSocketService.Message;
+  public userStatus!: StatusModel;
+  public Chats!: Chats[];
+  public Message!: Message[];
   public OpenChat!: GetMessageModel;
   public YouID!: string;
   private id: string;
-  open: boolean = false;
+  public open: boolean = false;
   status: boolean = false;
   public message: string = "";
 
@@ -39,14 +39,6 @@ export class MessageComponent implements OnInit, OnDestroy {
     this.id = this.cookieService.get('authToken');
   }
 
-  async ngDoCheck() {
-    if (WebSocketService.Chats !== this.Chats || WebSocketService.userStatus !== this.userStatus) {
-      this.Chats = WebSocketService.Chats;
-      this.Message = WebSocketService.Message;
-      this.userStatus = WebSocketService.userStatus;
-    }
-  }
-
   async ngOnInit() {
     try {
       await this.WS.startConnection();
@@ -54,16 +46,17 @@ export class MessageComponent implements OnInit, OnDestroy {
         token: this.id
       }
       setTimeout(async () => {
-        await this.WS.GetChats(tokenModel);
+        this.Chats = await this.WS.GetChats(tokenModel);
         this.YouID = await this.WS.GetId(this.cookieService.get('authToken'));
-      }, 500);
+        await this.WS.Connect(this.id);
+      }, 1000);
     } catch (error) {
       console.error('Error during initialization:', error);
     }
   }
 
   ngOnDestroy(): void {
-    this.WS.stopConnection();
+    this.WS.stopConnection(this.id);
   }
 
   openFindPeopleComponent(): void {
@@ -103,9 +96,7 @@ export class MessageComponent implements OnInit, OnDestroy {
 
     if(this.OpenChat.avatar != null){
       this.open = true;
-      this.WS.hubConnection?.on("ReceiveMessage", (newMessage) => {
-        this.OpenChat.message?.push(newMessage);
-      });
+      this.OpenChat.message?.push(await this.WS.GetSendMessage());
     }
   }
 }

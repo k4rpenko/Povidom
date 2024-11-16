@@ -21,8 +21,6 @@ namespace PGAdminDAL.Model
         public List<string> PostID { get; set; } = new List<string>();
         public List<string> ChatsID { get; set; } = new List<string>();
 
-        public Dictionary<string, string> Appeal { get; set; } = new Dictionary<string, string>();
-
         public DateTime? LastLogin { get; set; }
         public DateTime? DateOfBirth { get; set; }
 

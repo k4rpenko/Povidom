@@ -13,6 +13,6 @@ export class UserPost {
   constructor() { }
 
   getPosts(nick: string): Observable<PostArray> {
-    return this.http.get<PostArray>(`${CheckUser.url}/api/SpacePosts/?UserNick=${nick}`, { withCredentials: true });
+    return this.http.get<PostArray>(`api/SpacePosts/?UserNick=${nick}`);
   }
 }

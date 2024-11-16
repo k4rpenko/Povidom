@@ -15,7 +15,7 @@ export class LoginService {
       "password": password
     };
     
-    return this.http.post<{ token	: string }>(`${CheckUser.url}/api/Auth/login`, json, {
+    return this.http.post<{ token	: string }>(`api/Auth/login`, json, {
       headers: { 'Content-Type': 'application/json' }
     });
   }

@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\NoSQL\NoSQL.csproj" />
+    <ProjectReference Include="..\NoSQL\NoSQL.csproj" />
     <ProjectReference Include="..\PGAdminDAL\PGAdminDAL.csproj" />
     <ProjectReference Include="..\RedisDAL\RedisDAL.csproj" />
   </ItemGroup>

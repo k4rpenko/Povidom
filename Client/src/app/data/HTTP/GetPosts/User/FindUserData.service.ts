@@ -13,9 +13,7 @@ export class FindUserData {
   constructor() { }
 
   FindUserData(nick: string): Observable<userG> {
-    return this.http.get<userG>(`${CheckUser.url}/api/Fleets/chat/${nick}`, {
-      withCredentials: true
-    });    
+    return this.http.get<userG>(`api/Fleets/chat/${nick}`);    
   }
 }
 

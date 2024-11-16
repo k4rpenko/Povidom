@@ -210,11 +210,12 @@ main{
 
 .MessageTextArray{
     display: flex;
+    flex-direction: column-reverse;
 }
 
 .message-sender {
-    background-color: #f0f0f0; 
-    color: black;
+    background-color: #2a7874; 
+    color: white;
     align-self: flex-end; 
     border-radius: 15px;
     padding: 10px;
@@ -223,7 +224,7 @@ main{
 }
 
 .message-receiver {
-    background-color: #007bff; 
+    background-color: #203332; 
     color: white;
     align-self: flex-start;
     border-radius: 15px;

@@ -14,7 +14,7 @@ export class RegisterService {
       "email": email,
       "password": password
     };
-    return this.http.post<{ token	: string }>(`${CheckUser.url}/api/Auth/registration`, json, {
+    return this.http.post<{ token	: string }>(`api/Auth/registration`, json, {
       headers: { 'Content-Type': 'application/json' }
     });
   }

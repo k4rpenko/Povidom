@@ -13,7 +13,7 @@ export class EmailValid {
     const json = {
       jwt: data
     };
-    return this.http.post(`${CheckUser.url}/api/SpacePosts/${null}`, json, {
+    return this.http.post(`api/SpacePosts/${null}`, json, {
       headers: { 'Content-Type': 'application/json' }
   });
   }

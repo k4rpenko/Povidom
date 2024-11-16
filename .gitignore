@@ -25,3 +25,6 @@ NoSQL/obj/Debug/net8.0/NoSQL.AssemblyInfoInputs.cache
 /Test/bin
 /Test/obj
 /NoSQL/obj
+/Server/NoSQL/bin
+/Server/NoSQL/obj
+/Server/Test/obj

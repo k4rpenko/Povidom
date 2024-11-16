@@ -13,7 +13,7 @@ export class ConfirmationEmail {
     const json = {
       "email": email,
     };
-    return this.http.post(`${CheckUser.url}/api/AccountSettings/ConfirmationEmail`, json, {
+    return this.http.post(`api/AccountSettings/ConfirmationEmail`, json, {
       headers: { 'Content-Type': 'application/json' }
   });
   }

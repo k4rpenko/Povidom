@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using PGAdminDAL;
+using PGAdminDAL.Model;
 using RedisDAL;
 using Server.Controllers;
 using Server.Hash;
@@ -12,6 +13,7 @@ using Server.Sending;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,6 +54,17 @@ namespace Test.Controllers
             var result = await authController.CreateUser(user);
 
             Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public async Task CreateUser_ReturnsOk()
+        {
+            var user = new UserAuth { Email = "test@gmail.com", Password = "strinG123" };
+
+            var result = await authController.CreateUser(user);
+
+
+            Assert.IsInstanceOf<OkObjectResult>(result);
         }
 
         [TearDown]

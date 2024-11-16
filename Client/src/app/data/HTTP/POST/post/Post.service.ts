@@ -11,7 +11,7 @@ export class SendPost {
   constructor() { }
 
   SendPost(post: Post) {
-    return this.http.post(`${CheckUser.url}/api/SpacePosts/AddPost`, post, {
+    return this.http.post(`api/SpacePosts/AddPost`, post, {
       headers: { 'Content-Type': 'application/json' }
   });
   }

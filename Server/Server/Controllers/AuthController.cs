@@ -14,14 +14,16 @@ namespace Server.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly EmailSeding _emailSend = new EmailSeding();
+        private readonly EmailSeding emailSend = new EmailSeding();
         private readonly AppDbContext context;
-        private readonly RedisConfigure redis;
-        private readonly JWT _jwt = new JWT();
-        HASH _HASH = new HASH();
-        RSAHash _rsa = new RSAHash();
+        private readonly JWT jwt = new JWT();
+        HASH HASH = new HASH();
+        RSAHash rsa = new RSAHash();
 
-        public AuthController(AppDbContext _context)  { context = _context; }
+        public AuthController(
+            AppDbContext _context
+            )
+        { context = _context;}
 
 
         [HttpPost("registration")]
@@ -35,18 +37,18 @@ namespace Server.Controllers
                 if (user == null)
                 {
 
-                    var KeyG = BitConverter.ToString(_HASH.GenerateKey()).Replace("-", "").ToLower();
+                    var KeyG = BitConverter.ToString(HASH.GenerateKey()).Replace("-", "").ToLower();
                     int nextUserNumber = await context.User.CountAsync() + 1;
                     var newUser = new UserModel
                     {
                         Email = _user.Email,
                         ConcurrencyStamp = KeyG,
-                        PasswordHash = _HASH.Encrypt(_user.Password, KeyG),
+                        PasswordHash = HASH.Encrypt(_user.Password, KeyG),
                         UserName = $"User{nextUserNumber}",
                         FirstName = "User",
                         Avatar = "https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg",
-                        PublicKey = _rsa.GeneratePublicKeys(), 
-                        PrivateKey = _rsa.GeneratePrivateKeys()
+                        PublicKey = rsa.GeneratePublicKeys(), 
+                        PrivateKey = rsa.GeneratePrivateKeys()
 
                     };  
 
@@ -69,7 +71,7 @@ namespace Server.Controllers
                         UserId = newUser.Id,
                         LoginProvider = "Default",
                         Name = newUser.UserName,
-                        Value = _jwt.GenerateJwtToken(newUser.Id, KeyG, 720, UserRoleID.Id)
+                        Value = jwt.GenerateJwtToken(newUser.Id, KeyG, 720, UserRoleID.Id)
                     };
 
                     context.UserTokens.Add(newToken);
@@ -84,7 +86,7 @@ namespace Server.Controllers
                         var RefreshToken = newToken.Value;
                         
                         await context.SaveChangesAsync();
-                        await _emailSend.PasswordCheckEmailAsync(_user.Email, _jwt.GenerateJwtToken(userId, KeyG, 1), Request.Scheme, Request.Host.ToString());
+                        await emailSend.PasswordCheckEmailAsync(_user.Email, jwt.GenerateJwtToken(userId, KeyG, 1), Request.Scheme, Request.Host.ToString());
                         return Ok();
                     }
                 }
@@ -100,6 +102,7 @@ namespace Server.Controllers
             }
         }
 
+
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(UserAuth _user)
         {
@@ -109,12 +112,12 @@ namespace Server.Controllers
                 var user = context.User.FirstOrDefault(u => u.Email == _user.Email);
                 var RoleUser = context.UserRoles.FirstOrDefault(u => u.UserId == user.Id);
                 if (user == null) { return NotFound(); }
-                if (_HASH.Encrypt(_user.Password, user.ConcurrencyStamp) != user.PasswordHash) { return Unauthorized(); }
+                if (HASH.Encrypt(_user.Password, user.ConcurrencyStamp) != user.PasswordHash) { return Unauthorized(); }
                 if (user.EmailConfirmed == false)
                 {
                     return BadRequest();
                 }
-                var accets = _jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, RoleUser.RoleId);
+                var accets = jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, RoleUser.RoleId);
                 return Ok(new { token = accets });
             }
             catch (Exception ex)

@@ -33,6 +33,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 
 
 builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddJsonProtocol(options => {});
 
 
 builder.Services.Configure<IdentityOptions>(options =>

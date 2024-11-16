@@ -8,14 +8,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PGAdminDAL.Migrations
 {
     /// <inheritdoc />
-    public partial class Spacegram : Migration
+    public partial class Spacework : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:PostgresExtension:hstore", ",,");
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -51,7 +48,6 @@ namespace PGAdminDAL.Migrations
                     RetweetPostID = table.Column<List<string>>(type: "text[]", nullable: true),
                     PostID = table.Column<List<string>>(type: "text[]", nullable: true),
                     ChatsID = table.Column<List<string>>(type: "text[]", nullable: true),
-                    Appeal = table.Column<Dictionary<string, string>>(type: "hstore", nullable: true),
                     LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsVerified = table.Column<bool>(type: "boolean", nullable: true),
@@ -93,6 +89,26 @@ namespace PGAdminDAL.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Appeals",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Appeals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Appeals_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -183,6 +199,11 @@ namespace PGAdminDAL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Appeals_UserId",
+                table: "Appeals",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
@@ -223,6 +244,9 @@ namespace PGAdminDAL.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Appeals");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

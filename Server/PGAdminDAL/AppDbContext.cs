@@ -16,6 +16,7 @@ namespace PGAdminDAL
         }
 
         public DbSet<UserModel> User { get; set; }
+        public DbSet<Appeal> Appeals { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -40,6 +41,13 @@ namespace PGAdminDAL
             modelBuilder.Entity<UserModel>().Property(x => x.Avatar)
                 .HasMaxLength(2000)
                 .IsRequired();
+
+
+            modelBuilder.Entity<Appeal>()
+                .HasOne(a => a.User) 
+                .WithMany() 
+                .HasForeignKey(a => a.UserId) 
+                .OnDelete(DeleteBehavior.Cascade); 
         }
     }
 }

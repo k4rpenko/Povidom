@@ -13,9 +13,7 @@ export class GetUserData {
   constructor() { }
 
   GetUserData(): Observable<user> {
-    return this.http.get<user>(`${CheckUser.url}/api/Fleets`, {
-      withCredentials: true
-    });    
+    return this.http.get<user>(`api/Fleets`);    
   }
 }
 

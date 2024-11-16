@@ -328,7 +328,7 @@ namespace Server.Controllers
 
                 if (user != null)
                 {
-                    user.Appeal.Add(Account.Appeal, Account.Id);
+                    
 
                     await context.SaveChangesAsync();
                     return Ok();

@@ -14,7 +14,7 @@ export class updateAccetsToken {
       accessToken: data
     };
     
-    return this.http.put<{ token	: string }>(`${CheckUser.url}/api/AccountSettings/TokenUpdate`, json, {
+    return this.http.put<{ token	: string }>(`api/AccountSettings/TokenUpdate`, json, {
       headers: { 'Content-Type': 'application/json' }
     });
   }

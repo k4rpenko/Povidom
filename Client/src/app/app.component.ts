@@ -34,11 +34,12 @@ export class AppComponent implements OnInit{
       this.router.navigate(['']);
     }
   }
+  
   ngOnInit(): void {
     const now = new Date();
     this.UpdateJWT(now);
     this.router.events.subscribe(() => {
-      this.showMainContent = this.router.url !== '/'; // Замість '/' вкажіть свій "звичайний" маршрут
+      this.showMainContent = this.router.url !== '/'; 
     });
   }
 

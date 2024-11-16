@@ -46,7 +46,6 @@ export class FindPeopleComponent {
         this.User = response.user;
       },
       error: (err) => {
-        console.error(err);
       }
     });
   }
