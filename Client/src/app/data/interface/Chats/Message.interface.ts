@@ -2,13 +2,15 @@ export interface Message{
     id: number;
     idUser: string;
     text: string;
-    img: string;
-    answerText: string;
+    img?: string;
+    idAnswer?: string;
     view: boolean;
     send: boolean
-    updatedAt: Date;
+    updatedAt?: Date;
+    createdAt: Date;
 }
 
-export interface MessageData{
-    message: Array<Message>;
+export interface MessageModel{
+    idChat: string;
+    message: Message;
 }

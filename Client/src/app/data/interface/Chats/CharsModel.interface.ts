@@ -1,11 +1,13 @@
 import { Message } from "./Message.interface";
+import { lastMessage } from "./User.interface";
 
-export interface GetMessageModel{
+export interface CharsModel{
     avatar?: string;
+    idUser?: string;
     nickName?: string;
     lastName?: string;
     createdAt?: Date; 
     chatId?: string;
-    lastMessage?: string;
+    lastMessage?: lastMessage;
     message?: Array<Message>;
 }

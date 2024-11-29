@@ -39,7 +39,7 @@ export class FindPeopleComponent {
 }
 
   onInputChange(event: Event): void {
-    const nick = (event.target as HTMLInputElement).value;
+    const nick = (event.target as HTMLInputElement).value.toLowerCase();
     this.inputNick = nick;
     this.profileService.FindUserData(nick).subscribe({
       next: (response) => {

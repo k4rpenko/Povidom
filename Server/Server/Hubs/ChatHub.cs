@@ -6,6 +6,7 @@ using NoSQL;
 using PGAdminDAL;
 using Server.Controllers;
 using Server.Models.MessageChat;
+using System.Linq;
 
 namespace Server.Hubs
 {
@@ -22,7 +23,7 @@ namespace Server.Hubs
         }
 
 
-        public async Task<List<GetChats>> Connect(string token)
+        public async Task<bool> Connect(string token)
         {
             try
             {
@@ -33,17 +34,18 @@ namespace Server.Hubs
                 {
                     user.IsOnline = true;
                     await context.SaveChangesAsync();
+                    return true;
                 }
-                return null;
+                return false;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error sending message: {ex.Message}");
-                return null;
+                return false;
             }
         }
         
-        public async Task<List<GetChats>> disconnection(string token)
+        public async Task<List<SendChats>> disconnection(string token)
         {
             try
             {
@@ -66,37 +68,41 @@ namespace Server.Hubs
 
 
 
-        public async Task<GetChats> CreateChat(ChatModel _chat)
+        public async Task<SendChats> CreateChat(MessageModel _get)
         {
-            if (_chat == null || _chat.AddUsersIdChat == null || _chat.AddUsersIdChat.Count < 2)
+            if (_get == null || _get.AddUsersIdChat == null || _get.AddUsersIdChat.Count < 2)
             {
                 throw new ArgumentException("Invalid chat model or user IDs.");
             }
 
-            var id = new JWT().GetUserIdFromToken(_chat.AddUsersIdChat[0]);
+            var id = new JWT().GetUserIdFromToken(_get.AddUsersIdChat[0]);
 
             var filter = Builders<ChatModelMongoDB>.Filter.And(
                 Builders<ChatModelMongoDB>.Filter.Or(
                     Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], id),
-                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], _chat.AddUsersIdChat[1])
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], _get.AddUsersIdChat[1])
                 ),
                 Builders<ChatModelMongoDB>.Filter.Or(
                     Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], id),
-                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], _chat.AddUsersIdChat[1])
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], _get.AddUsersIdChat[1])
                 )
             );
 
             var You = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-            var People = await context.User.FirstOrDefaultAsync(u => u.Id == _chat.AddUsersIdChat[1]);
+            var People = await context.User.FirstOrDefaultAsync(u => u.Id == _get.AddUsersIdChat[1]);
 
             if (You == null || People == null)
             {
                 throw new Exception("One or both users not found.");
             }
 
-            var PeopleInfo = new GetChats
+            var PeopleInfo = new SendChats
             {
-                LastMessage = "",
+                LastMessage = new LastMessage
+                {
+                    UserId = People.Id,
+                    Message = "",
+                },
                 Avatar = People.Avatar,
                 NickName = People.FirstName
             };
@@ -109,17 +115,21 @@ namespace Server.Hubs
                 return PeopleInfo;
             }
 
-            _chat.AddUsersIdChat[0] = id;
+            _get.AddUsersIdChat[0] = id;
             var newChat = new ChatModelMongoDB
             {
-                UsersID = _chat.AddUsersIdChat,
+                UsersID = _get.AddUsersIdChat,
                 Timestamp = DateTime.UtcNow
             };
 
-            var YouInfo = new GetChats
+            var YouInfo = new SendChats
             {
                 ChatId = newChat.UsersID.ToString(),
-                LastMessage = "",
+                LastMessage = new LastMessage
+                {
+                    UserId = You.Id,
+                    Message = "",
+                },
                 Avatar = You.Avatar,
                 NickName = You.FirstName
             };
@@ -144,155 +154,17 @@ namespace Server.Hubs
             return PeopleInfo;
         }
 
-        public async Task<bool> SendMessage(ChatModel _chat)
-        {
-            try
-            {
-                var id = new JWT().GetUserIdFromToken(_chat.CreatorId);
-                var objectId = ObjectId.Parse(_chat.IdChat.ToString());
-                var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
-                var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
-
-                
-                if (!chatModel.UsersID.Contains(id))
-                {
-                    Console.WriteLine("Chat ID not found in user IDs.");
-                    return false;
-                }
-
-                
-
-                var lastMessageId = chatModel.Chat?.Count > 0
-                    ? chatModel.Chat.OrderByDescending(m => m.CreatedAt).FirstOrDefault()?.Id ?? 0
-                    : 0;
-
-                var newMessage = new Message
-                {
-                    Id = lastMessageId + 1,
-                    IdUser = id,
-                    Text = _chat.Text,
-                    Img = string.IsNullOrEmpty(_chat.Img?.ToString()) ? null : _chat.Img.ToString(),
-                    IdAnswer = string.IsNullOrEmpty(_chat.Answer?.ToString()) ? null : _chat.Img.ToString(),
-                    CreatedAt = DateTime.UtcNow,
-                    View = false,
-                    Send = true
-                };
-
-                var update = Builders<ChatModelMongoDB>.Update
-                    .Push(chat => chat.Chat, newMessage)
-                    .Set(chat => chat.Timestamp, DateTime.UtcNow);
-
-                var updateResult = await _customers.UpdateOneAsync(filter, update);
-
-                if (updateResult.MatchedCount == 0)
-                {
-                    return false;
-                }
-
-                var Return = new GetChats
-                {
-                    Send = true
-                };
-
-                foreach (var userId in chatModel.UsersID)
-                {
-                    if (userId != id)
-                    {
-                        Users.TryGetValue(userId, out string value);
-                        await Clients.User(value).SendAsync("ReceiveMessage", newMessage);
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return false;
-            }
-        }
-
-
-        public async Task<List<GetChats>> StopConnect(string token)
+        public async Task<List<SendChats>> GetChats(string token)
         {
             try
             {
                 var id = new JWT().GetUserIdFromToken(token);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-                if (user != null)
-                {
-                    user.IsOnline = false;
-                    await context.SaveChangesAsync();
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return null;
-            }
-        }
-
-        public async Task<string> GetId(string token)
-        {
-            try
-            {
-                var id = new JWT().GetUserIdFromToken(token);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-                if (user != null)
-                {
-                    return id;
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return null;
-            }
-        }
-
-        public async Task<List<Message>> GetMessage(ChatModel _get)
-        {
-            try
-            {
-                var id = new JWT().GetUserIdFromToken(_get.CreatorId);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-                if(user != null)
-                {   
-                    var objectId = ObjectId.Parse(_get.IdChat.ToString());
-                    var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
-                    var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
-                    if (!chatModel.UsersID.Contains(id))
-                    {
-                        Console.WriteLine("Chat ID not found in user IDs.");
-                        return null;
-                    }
-
-                    return chatModel.Chat;
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return null;
-            }
-        }
-
-        public async Task<List<GetChats>> GetChats(TokenModel token)
-        {
-            try
-            {
-                var id = new JWT().GetUserIdFromToken(token.token);
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
                 if (user != null)
                 {
                     if (user.ChatsID != null && user.ChatsID.Count > 0)
                     {
-                        var ChatsData = new List<GetChats>();
-                        foreach (var item in user.ChatsID)
-                        {
-                        }
+                        var ChatsData = new List<SendChats>();
                         foreach (var GetChatID in user.ChatsID)
                         {
                             var objectIds = user.ChatsID.Select(chatId => ObjectId.Parse(GetChatID.ToString())).ToList();
@@ -303,21 +175,30 @@ namespace Server.Hubs
 
                             foreach (var chatModel in chatModels)
                             {
-                                foreach (var userId in chatModel.UsersID)
-                                {
-                                    if (userId != id)
-                                    {
-                                        var Ac = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
-                                        var chatInfo = new GetChats
-                                        {
-                                            ChatId = chatModel.Id.ToString(),
-                                            LastMessage = chatModel.Chat.Count > 0 ? chatModel.Chat[chatModel.Chat.Count - 1].Text : "",
-                                            Avatar = Ac?.Avatar,
-                                            NickName = Ac?.UserName
-                                        };
+                                var Ac = await context.User
+                                    .Where(u => chatModel.UsersID.Contains(u.Id) && u.Id != id)
+                                    .ToListAsync();
 
-                                        ChatsData.Add(chatInfo);
-                                    }
+                                foreach (var account in Ac)
+                                {
+                                    var lastMessage = chatModel.Chat.Count > 0 ? chatModel.Chat[^1] : null;
+
+                                    var chatInfo = new SendChats
+                                    {
+                                        ChatId = chatModel.Id.ToString(),
+                                        LastMessage = new LastMessage
+                                        {
+                                            UserId = lastMessage?.IdUser ?? "",
+                                            Message = lastMessage?.Text ?? ""
+                                        },
+                                        Avatar = account.Avatar,
+                                        NickName = account.UserName,
+                                        CreatedAt = lastMessage?.CreatedAt,
+                                        View = lastMessage?.View,
+                                        CreatorId = lastMessage?.IdUser
+                                    };
+
+                                    ChatsData.Add(chatInfo);
                                 }
                             }
                         }
@@ -335,10 +216,144 @@ namespace Server.Hubs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending message: {ex.Message}");
+                Console.WriteLine($"\n\n\n\n\n Error sending message: {ex.Message}\n\n\n");
                 return null;
             }
 
+        }
+
+
+
+        public async Task<bool> SendMessage(MessageModel _get)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(_get.CreatorId);
+                var objectId = ObjectId.Parse(_get.IdChat.ToString());
+                var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
+                var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
+
+                
+                if (!chatModel.UsersID.Contains(id))
+                {
+                    Console.WriteLine("Chat ID not found in user IDs.");
+                    return false;
+                }
+
+                
+
+                var lastMessageId = chatModel.Chat?.Count > 0
+                    ? chatModel.Chat.OrderByDescending(m => m.CreatedAt).FirstOrDefault()?.Id ?? 0
+                    : 0;
+
+                var newMessage = new MessageModel
+                {
+                    IdChat = _get.IdChat,
+                    message = new Message{
+                        Id = lastMessageId + 1,
+                        IdUser = id,
+                        Text = _get.Text,
+                        Img = string.IsNullOrEmpty(_get.Img?.ToString()) ? null : _get.Img.ToString(),
+                        IdAnswer = string.IsNullOrEmpty(_get.IdAnswer?.ToString()) ? null : _get.Img.ToString(),
+                        CreatedAt = DateTime.UtcNow,
+                        View = false,
+                        Send = true
+                    }
+                };
+
+                var update = Builders<ChatModelMongoDB>.Update
+                    .Push(chat => chat.Chat, newMessage.message)
+                    .Set(chat => chat.Timestamp, DateTime.UtcNow);
+
+                var updateResult = await _customers.UpdateOneAsync(filter, update);
+
+                if (updateResult.MatchedCount == 0)
+                {
+                    return false;
+                }
+
+                var Return = new SendChats
+                {
+                    Send = true
+                };
+
+                foreach (var userId in chatModel.UsersID)
+                {
+                    Users.TryGetValue(userId, out string value);
+                    await Clients.Users(value).SendAsync("ReceiveMessage", newMessage);
+                }
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<List<Message>> GetMessage(MessageModel _get)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(_get.CreatorId);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                if (user != null)
+                {
+                    var objectId = ObjectId.Parse(_get.IdChat.ToString());
+                    var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
+                    var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
+                    List<string> idMessage;
+
+                    if (chatModel != null && chatModel.UsersID.Contains(id))
+                    {
+                        foreach (var message in chatModel.Chat)
+                        {
+                            if (message.IdUser != id && message.View == false)
+                            {
+                                message.View = true;
+                            }
+                        }
+                        var update = Builders<ChatModelMongoDB>.Update.Set(chat => chat.Chat, chatModel.Chat);
+                        await _customers.UpdateOneAsync(filter, update);
+
+                        return chatModel.Chat;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Chat ID not found in user IDs.");
+                        return null;
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return null;
+            }
+        }
+
+
+
+        public async Task<string> GetId(string token)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(token);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                if (user != null)
+                {
+                    return user.Id;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return null;
+            }
         }
 
         public async Task<List<StatusModel>> GetStatus(string token)
@@ -379,5 +394,42 @@ namespace Server.Hubs
             return null;
         }
 
+        public async Task ViewMessage(MessageModel _get)
+        {
+            try
+            {
+                var objectId = ObjectId.Parse(_get.IdChat.ToString());
+                var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
+                var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
+                if (chatModel != null && chatModel.UsersID.Contains(_get.CreatorId))
+                {
+                    foreach (var message in chatModel.Chat)
+                    {
+                        if (message.IdUser == _get.CreatorId && message.View == false)
+                        {
+                            message.View = true;
+                        }
+                    }
+                    var update = Builders<ChatModelMongoDB>.Update.Set(chat => chat.Chat, chatModel.Chat);
+                    await _customers.UpdateOneAsync(filter, update);
+                    foreach (var userId in chatModel.UsersID)
+                    {
+                        if (userId != _get.CreatorId)
+                        {
+                            Users.TryGetValue(userId, out string value);
+                            await Clients.User(value).SendAsync("ViewMessage", _get.IdChat);
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Chat ID not found in user IDs.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+            }
+        }
     }
 }

@@ -5,10 +5,11 @@ import { CheckUser } from '../../Global';
 import { ChatModel } from '../../interface/Chats/ChatModel';
 import { StatusModel } from '../../interface/Chats/StatusModel.interface';
 import { TokenModel } from '../../interface/Chats/TokenModel';
-import { Message } from '../../interface/Chats/Message.interface';
+import { Message, MessageModel } from '../../interface/Chats/Message.interface';
 import { User } from '../../interface/User.interface';;
 import { MemoryCacheService } from '../../../content/Cache/MemoryCacheService';
 import { GetUserData } from '../GetPosts/User/GetUserData.service';
+import { SendModel } from '../../interface/Chats/SendModel.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -36,13 +37,12 @@ export class WebSocketService {
 
   public async Connect(token: string) {
     if (this.hubConnection) {
-      try {
-        const response = await this.hubConnection.invoke('Connect', token);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
+      const response = await this.hubConnection.invoke('Connect', token);
+      return response;
     }
+    return false; 
   }
+  
 
   private async loadUserData() {
     try {
@@ -64,21 +64,19 @@ export class WebSocketService {
     });
   }
 
-  public async startConnection() {
-    this.hubConnection!
-      .start()
-      .then(() => console.log('SignalR підключення успішно встановлено!'))
-      .catch(err => console.log('Помилка підключення до SignalR: ', err));
-
+  public async startConnection(): Promise<void> {
+    try {
+      await this.hubConnection?.start();
+    } catch (error) {
+      alert(`Помилка підключення до SignalR: ${error}`);
+    }
   }
   
   public async SendMessage(chatModel: ChatModel) {
     if (this.hubConnection) {
       try {
         const response = await this.hubConnection.invoke('SendMessage', chatModel);
-        if(response == false){
-          console.error('Error Send');
-        }
+        return response
       } catch (err) {
         console.error('Error invoking:', err);
       }
@@ -87,18 +85,16 @@ export class WebSocketService {
     }
   }
 
-  public async GetSendMessage(): Promise<Message> {
-    return new Promise((resolve, reject) => {
-      if (this.hubConnection) {
-        this.hubConnection.on("ReceiveMessage", (newMessage: Message) => {
-          resolve(newMessage);
-        });
-      } else {
-        console.error('Hub connection is not established.');
-        reject(new Error('Hub connection is not established.'));
-      }
-    });
+  onReceiveMessage(callback: (message: MessageModel) => void) {
+    if (this.hubConnection) {
+      this.hubConnection.on("ReceiveMessage", (newMessage: MessageModel) => {
+        callback(newMessage);
+      });
+    } else {
+      console.error("Hub connection is not established.");
+    }
   }
+  
   
 
 
@@ -141,10 +137,10 @@ export class WebSocketService {
     }
   }
 
-  public async GetChats(tokenModel: TokenModel) {
+  public async GetChats(token: string) {
     if (this.hubConnection) {
       try {
-        const response = await this.hubConnection.invoke("GetChats", tokenModel);
+        const response = await this.hubConnection.invoke("GetChats", token);
         return response
       } catch (err) {
         console.error('Error invoking:', err);
@@ -173,10 +169,34 @@ export class WebSocketService {
     }
   }*/
   
+  public async View(chatModel: SendModel) {
+    if (this.hubConnection) {
+      try {
+        var result = await this.hubConnection.invoke("ViewMessage", chatModel);
+      } catch (err) {
+        console.error('Error invoking:', err);
+      }
+    } else {
+      console.error('Hub connection is not established.');
+    }
+  }
+
+
+  GetView(callback: (chatId: string) => void) {
+    if (this.hubConnection) {
+      this.hubConnection.on("ViewMessage", (chatId: string) => {
+        callback(chatId);
+      });
+    } else {
+      console.error("Hub connection is not established.");
+    }
+  }
+
+
 
   public async stopConnection(token: string) {
     if (this.hubConnection) {
-      await this.hubConnection.invoke("GetChats", token);
+      await this.hubConnection.invoke("disconnection", token);
       this.hubConnection.stop()
         .then(() => console.log('Connection stopped'))
         .catch(err => console.log('Error while stopping connection: ' + err));

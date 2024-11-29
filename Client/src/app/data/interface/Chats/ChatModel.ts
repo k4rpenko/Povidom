@@ -1,3 +1,4 @@
+
 export interface ChatModel{
     IdChat?: string;
     CreatorId?: string; 
@@ -5,4 +6,5 @@ export interface ChatModel{
     Text?: string;
     Img?: string;
     Answer?: string;
+    CreatedAt?: Date
 }

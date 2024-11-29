@@ -2,7 +2,7 @@
 
 namespace Server.Models.MessageChat
 {
-    public class ChatModel
+    public class MessageModel
     {
         public string? IdChat { get; set; }
         public string? CreatorId { get; set; }
@@ -11,9 +11,12 @@ namespace Server.Models.MessageChat
 
         public string? Text { get; set; }
         public string? Img { get; set; }
-        public string? Answer { get; set; }
+        public string? IdAnswer { get; set; }
 
         public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        public Message? message { get; set; }
+        public List<string>? ChangIdMessageView { get; set; }
     }
 }
