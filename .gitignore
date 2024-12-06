@@ -28,3 +28,6 @@ NoSQL/obj/Debug/net8.0/NoSQL.AssemblyInfoInputs.cache
 /Server/NoSQL/bin
 /Server/NoSQL/obj
 /Server/Test/obj
+/Server/Test/bin
+Server/appsettings.json
+Server/appsettings.Development.json

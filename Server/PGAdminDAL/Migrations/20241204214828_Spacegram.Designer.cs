@@ -13,8 +13,8 @@ using PGAdminDAL;
 namespace PGAdminDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241115121523_Spacework")]
-    partial class Spacework
+    [Migration("20241204214828_Spacegram")]
+    partial class Spacegram
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -270,6 +270,9 @@ namespace PGAdminDAL.Migrations
                     b.Property<List<string>>("CommentPostID")
                         .IsRequired()
                         .HasColumnType("text[]");
+
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("timestamp with time zone");

@@ -3,7 +3,7 @@
     "target": {
       "host": "localhost",
       "protocol": "https:",
-      "port": 63478
+      "port": 53119
     },
     "secure": false,
     "logLevel": "debug",

@@ -98,7 +98,8 @@ namespace Server.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("", ex);
+                Console.WriteLine("\n\n ERROR: " + ex);
+                return StatusCode(500, new { message = "An internal server error occurred." });
             }
         }
 
@@ -106,24 +107,26 @@ namespace Server.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(UserAuth _user)
         {
-            if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password)) { return BadRequest(); }
+            if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password)) { return BadRequest(new { message = "Email or password cannot be empty." }); }
             try
             {
-                var user = context.User.FirstOrDefault(u => u.Email == _user.Email);
-                var RoleUser = context.UserRoles.FirstOrDefault(u => u.UserId == user.Id);
-                if (user == null) { return NotFound(); }
-                if (HASH.Encrypt(_user.Password, user.ConcurrencyStamp) != user.PasswordHash) { return Unauthorized(); }
-                if (user.EmailConfirmed == false)
-                {
-                    return BadRequest();
-                }
-                var accets = jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, RoleUser.RoleId);
-                return Ok(new { token = accets });
+                var user = await context.User.FirstOrDefaultAsync(u => u.Email == _user.Email);
+                if (user == null) { return NotFound(new { message = "User not found." }); }
+                if (HASH.Encrypt(_user.Password, user.ConcurrencyStamp) != user.PasswordHash) { return Unauthorized(new { message = "Invalid email or password." }); }
+                if (!user.EmailConfirmed) { return BadRequest(new { message = "Email not confirmed." }); }
+
+                var roleUser = await context.UserRoles.FirstOrDefaultAsync(u => u.UserId == user.Id);
+                if (roleUser == null) { return NotFound(new { message = "User role not found." }); }
+
+                var token = jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, roleUser.RoleId);
+                return Ok(new { token });
             }
             catch (Exception ex)
             {
-                throw new Exception("", ex);
+                Console.WriteLine("\n\n ERROR: " + ex);
+                return StatusCode(500, new { message = "An internal server error occurred." });
             }
         }
+
     }
 }

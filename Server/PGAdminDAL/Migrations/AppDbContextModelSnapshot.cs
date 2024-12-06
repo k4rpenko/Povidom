@@ -268,6 +268,9 @@ namespace PGAdminDAL.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.Property<string>("ConnectionId")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("timestamp with time zone");
 

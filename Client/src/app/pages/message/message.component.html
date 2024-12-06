@@ -7,65 +7,75 @@
                 <a (click)="openFindPeopleComponent()"><svg viewBox="0 0 24 24" aria-hidden="true" style="fill: #fff;"><g><path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5V12h-2v-1.537l-8 3.635-8-3.635V18.5c0 .276.224.5.5.5H13v2H4.498c-1.381 0-2.5-1.119-2.5-2.5v-13zm2 2.766l8 3.635 8-3.635V5.5c0-.276-.224-.5-.5-.5h-15c-.276 0-.5.224-.5.5v2.766zM19 18v-3h2v3h3v2h-3v3h-2v-3h-3v-2h3z"></path></g></svg></a>
             </div>
         </div>
-        
+
         <a (click)="OpenMessage(chat)" *ngFor="let chat of Chats" class="IdChat">
             <img [src]="chat.avatar || 'default-avatar.jpg'" alt="Chat Avatar">
-            <div class="ChatText">
+            <div class="ChatData">
+              <div class="ChatText">
                 <div class="ChatUser">
-                    <samp>{{chat.nickName || 'Anonymous'}}</samp>
+                  <samp>{{chat.nickName || 'Anonymous'}}</samp>
                 </div>
                 <div class="ChatUserMessage">
-                    <samp>{{ chat.lastMessage.message || 'No messages yet' }}</samp>
-                    <div class="ChatUserMessage-Data-status">
-                      <samp>{{ chat.createdAt | date: 'HH:mm' }}</samp> 
-                      <div class="ChatUserMessage-status" *ngIf="chat.creatorId === YouID else enother">
-                          <svg
-                          *ngIf="chat.view"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 512 512"
-                          preserveAspectRatio="xMidYMid meet"
-                          [ngStyle]="{ fill: 'white' }"
-                        >
-                          <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
-                            <path
-                              d="M3249 3826 c-19 -7 -45 -19 -57 -28 -12 -8 -358 -347 -770 -754 -411
+                  <samp>{{ chat.lastMessage.message || '' }}</samp>
+                </div>
+              </div>
+              <div class="ChatUserMessage-Data-status">
+                <samp>{{ chat.createdAt | date: 'HH:mm' }}</samp>
+                <div class="ChatUserMessage-status" *ngIf="chat.lastMessage.userId === YouID else enother">
+                  <div *ngIf="chat.view === true else NotView">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                      preserveAspectRatio="xMidYMid meet"
+                      [ngStyle]="{ fill: 'white' }"
+                    >
+                      <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
+                        <path
+                          d="M3249 3826 c-19 -7 -45 -19 -57 -28 -12 -8 -358 -347 -770 -754 -411
                             -406 -840 -830 -953 -942 l-206 -203 -401 418 c-221 230 -423 435 -449 455
                             -130 102 -310 60 -389 -92 -29 -55 -26 -163 6 -222 16 -30 201 -229 512 -551
                             268 -278 512 -527 541 -554 59 -54 108 -73 183 -73 105 0 69 -33 1204 1090
                             580 574 1065 1057 1078 1074 69 94 49 256 -41 332 -72 61 -174 80 -258 50z"
-                            />
-                            <path
-                              d="M4777 3816 c-20 -8 -52 -25 -70 -40 -17 -14 -452 -442 -966 -950
+                        />
+                        <path
+                          d="M4777 3816 c-20 -8 -52 -25 -70 -40 -17 -14 -452 -442 -966 -950
                             l-935 -925 -63 59 c-103 96 -204 113 -315 53 -85 -46 -128 -121 -128 -223 0
                             -70 17 -117 61 -169 81 -94 295 -302 328 -317 20 -10 64 -20 98 -22 121 -8 57
                             -65 1218 1083 578 572 1060 1053 1072 1071 92 133 22 328 -136 382 -45 16
                             -117 14 -164 -2z"
-                            />
-                          </g>
-                        </svg>
-                        <svg
-                          *ngIf="!chat.view"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 512 512"
-                          preserveAspectRatio="xMidYMid meet"
-                          [ngStyle]="{ fill: 'white' }"
-                        >
-                          <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
-                            <path
-                              d="M3249 3826 c-19 -7 -45 -19 -57 -28 -12 -8 -358 -347 -770 -754 -411
+                        />
+                      </g>
+                    </svg>
+                  </div>
+                  <ng-template  #NotView>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                      preserveAspectRatio="xMidYMid meet"
+                      [ngStyle]="{ fill: 'white' }"
+                    >
+                      <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
+                        <path
+                          d="M3249 3826 c-19 -7 -45 -19 -57 -28 -12 -8 -358 -347 -770 -754 -411
                             -406 -840 -830 -953 -942 l-206 -203 -401 418 c-221 230 -423 435 -449 455
                             -130 102 -310 60 -389 -92 -29 -55 -26 -163 6 -222 16 -30 201 -229 512 -551
                             268 -278 512 -527 541 -554 59 -54 108 -73 183 -73 105 0 69 -33 1204 1090
                             580 574 1065 1057 1078 1074 69 94 49 256 -41 332 -72 61 -174 80 -258 50z"
-                            />
-                          </g>
-                        </svg> 
-                      </div>
-                      <ng-template  #enother></ng-template>  
-                  </div>
+                        />
+                      </g>
+                    </svg>
+                  </ng-template>
                 </div>
+                <ng-template  #enother>
+                  <div class="ChatUserMessage-newMessage" *ngIf="chat.view === false">
+                    <div class="unread-circle">
+                      <samp>1+</samp>
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
             </div>
-        </a>        
+        </a>
     </div>
     <div *ngIf="open else close">
         <div class="Messages">
@@ -83,16 +93,16 @@
             <div class="MessageText">
                 <div class="MessageTextList">
                   <div class="MessageTextArray" *ngFor="let message of OpenChat.message">
-                    <div 
+                    <div
                       [ngClass]="{
-                        'message-You': message.idUser === YouID, 
+                        'message-You': message.idUser === YouID,
                         'message-Enother': message.idUser !== YouID
-                      }" 
+                      }"
                       class="Message"
                     >
                       <div class="message-Text"><p>{{ message.text }}</p></div>
                       <div class="message-Data-status">
-                        <samp>{{ message.createdAt | date: 'HH:mm' }}</samp> 
+                        <samp>{{ message.createdAt | date: 'HH:mm' }}</samp>
                         <div class="message-Data-status-WAIT" *ngIf="message.idUser === YouID && message.send != true else view">
                           <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                           width="1280.000000pt" height="1280.000000pt" viewBox="0 0 1280.000000 1280.000000"
@@ -159,20 +169,20 @@
                               580 574 1065 1057 1078 1074 69 94 49 256 -41 332 -72 61 -174 80 -258 50z"
                               />
                             </g>
-                          </svg>   
-                        </ng-template>                   
+                          </svg>
+                        </ng-template>
                        </div>
                     </div>
                   </div>
                 </div>
-            </div>              
+            </div>
             <div class="SandMessages">
               <form class="SandMessagesInput" (submit)="sendMessage()">
-                  <textarea 
-                      [(ngModel)]="message" 
-                      name="message" 
-                      id="message" 
-                      placeholder="Send a new message" 
+                  <textarea
+                      [(ngModel)]="message"
+                      name="message"
+                      id="message"
+                      placeholder="Send a new message"
                       (keydown)="handleKeydown($event)">
                   </textarea>
                   <div class="SandMessagesSVG">
@@ -184,11 +194,11 @@
                           </svg>
                       </button>
                   </div>
-              </form>                        
+              </form>
             </div>
         </div>
     </div>
-    
+
     <ng-template  #close>
         <div class="ChatUserclose">
             <h1>Select a message</h1>
@@ -196,5 +206,5 @@
         </div>
 
     </ng-template>
-         
+
 </main>

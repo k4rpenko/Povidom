@@ -11,6 +11,7 @@ namespace PGAdminDAL.Model
         public string? Location { get; set; }
         public string? PublicKey { get; set; }
         public string? PrivateKey { get; set; }
+        public string? ConnectionId { get; set; }
 
         public List<string> StoriesId { get; set; } = new List<string>();
         public List<string> Subscribers { get; set; } = new List<string>();

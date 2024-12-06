@@ -20,7 +20,7 @@ import { FormsModule } from "@angular/forms";
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.scss']
 })
-export class MessageComponent implements OnInit, OnDestroy {
+export class MessageComponent implements OnInit {
 [x: string]: any;
   public userStatus!: StatusModel;
   public Chats!: Chats[];
@@ -44,12 +44,10 @@ export class MessageComponent implements OnInit, OnDestroy {
     try {
       await this.WS.startConnection();
       var connect = await this.WS.Connect(this.id);
-      if(!connect){
-        this.WS.stopConnection(this.id);
-      }
-      else{
+      if(connect){
         this.Chats = await this.WS.GetChats(this.id);
         this.YouID = await this.WS.GetId(this.cookieService.get('authToken'));
+
         await this.WS.Connect(this.id);
         this.WS.onReceiveMessage((Message: MessageModel) => {
           this.updateMessage(Message);
@@ -59,15 +57,15 @@ export class MessageComponent implements OnInit, OnDestroy {
           chats.forEach(element => {
             element.view = true;
           });
+          var messageChang = this.OpenChat.message?.filter(u => u.idUser === this.YouID && u.view !== true);
+          messageChang!.forEach(element => {
+            element.view = true;
+          });
         });
       }
     } catch (error) {
       console.error('Error during initialization:', error);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.WS.stopConnection(this.id);
   }
 
   openFindPeopleComponent(): void {
@@ -84,17 +82,15 @@ export class MessageComponent implements OnInit, OnDestroy {
         Text: this.message,
         CreatedAt: new Date(),
       };
-      var idmessage = this.OpenChat.message![this.OpenChat.message!.length - 1].id + 1;
 
       const MessageModel: Message = {
-        id: idmessage,
-        idUser: this.YouID, 
+        idUser: this.YouID,
         text: this.message,
         view: false,
         send: false,
         createdAt: ChatModel.CreatedAt!
       };
-      
+
       const AddChat = this.Chats.find(u => u.chatId === ChatModel.IdChat);
       if (AddChat) {
         AddChat.lastMessage = {
@@ -103,19 +99,19 @@ export class MessageComponent implements OnInit, OnDestroy {
         };
         this.OpenChat.message?.push(MessageModel);
         var statusMessage = await this.WS.SendMessage(ChatModel);
-        if(statusMessage){
+        this.message = '';
+        if(statusMessage > 0){
           this.OpenChat.message![this.OpenChat.message!.length - 1].send = true;
+          MessageModel.id = statusMessage
         }
       }
-
-      this.message = '';
     }
   }
 
 
   async OpenMessage(Chats: Chats){
     const messages = await this.WS.GetMessage({ IdChat: Chats.chatId, CreatorId: this.id });
-    
+
     this.OpenChat = {} as CharsModel;
     this.OpenChat = {
       avatar: Chats.avatar,
@@ -125,14 +121,23 @@ export class MessageComponent implements OnInit, OnDestroy {
       lastMessage: Chats.lastMessage,
       message: messages
     }
-    
+
     if (this.OpenChat.chatId != null) {
       this.open = true;
+      if(this.OpenChat.lastMessage?.userId != this.YouID){
+        const send: SendModel = {
+          idChat: this.OpenChat.chatId,
+          creatorId: this.OpenChat.lastMessage?.userId
+        };
+        await this.WS.View(send);
+        var LastChats= this.Chats.find(u => u.chatId === Chats.chatId);
+        LastChats!.view = true;
+      }
     }
   }
 
 
-  
+
   async updateMessage(Message: MessageModel) {
     if (this.OpenChat.chatId === Message.idChat) {
       if (Message.message.idUser !== this.YouID) {
@@ -140,17 +145,24 @@ export class MessageComponent implements OnInit, OnDestroy {
         const send: SendModel = {
           idChat: Message.idChat,
           creatorId: Message.message.idUser
-        };    
-        await this.WS.View(send);
+        };
+        var result = await this.WS.View(send);
         this.OpenChat.message?.push(Message.message);
       }
     }
-  
+
     const chat = this.Chats.find(u => u.chatId === Message.idChat);
     if (chat != null) {
       chat.lastMessage.message = Message.message.text;
       chat.lastMessage.userId = Message.message.idUser;
+      chat.view = Message.message.view;
     }
+  }
+
+  async UpdateStatus(Message: MessageModel) {
+    setInterval(async() => {
+        await this.WS.Update(this.id);
+    }, 5000);
   }
 
 

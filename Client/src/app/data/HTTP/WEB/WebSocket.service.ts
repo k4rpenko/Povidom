@@ -1,12 +1,9 @@
 import { inject, Injectable, OnInit } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { Chats } from '../../interface/Chats/User.interface';
 import { CheckUser } from '../../Global';
 import { ChatModel } from '../../interface/Chats/ChatModel';
-import { StatusModel } from '../../interface/Chats/StatusModel.interface';
-import { TokenModel } from '../../interface/Chats/TokenModel';
-import { Message, MessageModel } from '../../interface/Chats/Message.interface';
-import { User } from '../../interface/User.interface';;
+import { MessageModel } from '../../interface/Chats/Message.interface';
+import { User } from '../../interface/Users/AllDataUser.interface';;
 import { MemoryCacheService } from '../../../content/Cache/MemoryCacheService';
 import { GetUserData } from '../GetPosts/User/GetUserData.service';
 import { SendModel } from '../../interface/Chats/SendModel.interface';
@@ -18,7 +15,7 @@ export class WebSocketService {
   public hubConnection: signalR.HubConnection | undefined;
   private UserData!: User;
   GetUserData = inject(GetUserData);
-  
+
   constructor(private cache: MemoryCacheService) {
     this.initializeService();
   }
@@ -40,9 +37,9 @@ export class WebSocketService {
       const response = await this.hubConnection.invoke('Connect', token);
       return response;
     }
-    return false; 
+    return false;
   }
-  
+
 
   private async loadUserData() {
     try {
@@ -59,7 +56,7 @@ export class WebSocketService {
 
   private AddCacheUser() {
     return this.GetUserData.GetUserData().subscribe(response => {
-      this.UserData = response.user; 
+      this.UserData = response.user;
       this.cache.setItem("User", this.UserData);
     });
   }
@@ -71,7 +68,7 @@ export class WebSocketService {
       alert(`Помилка підключення до SignalR: ${error}`);
     }
   }
-  
+
   public async SendMessage(chatModel: ChatModel) {
     if (this.hubConnection) {
       try {
@@ -94,8 +91,8 @@ export class WebSocketService {
       console.error("Hub connection is not established.");
     }
   }
-  
-  
+
+
 
 
 
@@ -123,7 +120,7 @@ export class WebSocketService {
       console.error('Hub connection is not established.');
     }
   }
-  
+
   public async GetId(token: string) {
     if (this.hubConnection) {
       try {
@@ -149,7 +146,7 @@ export class WebSocketService {
       console.error('Hub connection is not established.');
     }
   }
-  
+
   /*public GetChats(tokenModel: TokenModel) {
 
     if (this.hubConnection) {
@@ -168,18 +165,18 @@ export class WebSocketService {
       console.error('Hub connection is not established.');
     }
   }*/
-  
-  public async View(chatModel: SendModel) {
-    if (this.hubConnection) {
-      try {
-        var result = await this.hubConnection.invoke("ViewMessage", chatModel);
-      } catch (err) {
-        console.error('Error invoking:', err);
+
+    public async View(chatModel: SendModel){
+      if (this.hubConnection) {
+        try {
+          const result = await this.hubConnection.invoke("ViewMessage", chatModel);
+          return result;
+        } catch (err) {
+          console.error('Error invoking ViewMessage:', err);
+        }
       }
-    } else {
-      console.error('Hub connection is not established.');
     }
-  }
+
 
 
   GetView(callback: (chatId: string) => void) {
@@ -194,12 +191,13 @@ export class WebSocketService {
 
 
 
-  public async stopConnection(token: string) {
+  public async Update(token: string) {
     if (this.hubConnection) {
-      await this.hubConnection.invoke("disconnection", token);
-      this.hubConnection.stop()
-        .then(() => console.log('Connection stopped'))
-        .catch(err => console.log('Error while stopping connection: ' + err));
+      try {
+        await this.hubConnection.invoke("Update", token);
+      } catch (err) {
+        console.error('Error invoking ViewMessage:', err);
+      }
     }
   }
 }

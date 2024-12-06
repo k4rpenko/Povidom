@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GetUserData } from '../../data/HTTP/GetPosts/User/GetUserData.service';
-import { User } from '../../data/interface/User.interface';
+import { User } from '../../data/interface/Users/AllDataUser.interface';
 import { MemoryCacheService } from '../Cache/MemoryCacheService';
 import { UserPost } from '../../data/HTTP/GetPosts/User/UserPost.service';
 import { Post } from '../../data/interface/Post/Post.interface';
@@ -28,7 +28,7 @@ export class ProfileComponent implements OnInit {
     await this.loadUserData();
     await this.loadPosts(this.UserData?.userName || "");
   }
-  
+
   private loadPosts(nick: string) {
     this.spacePostsService.getPosts(nick).subscribe(response => {
       this.posts = response.post;
@@ -50,7 +50,7 @@ export class ProfileComponent implements OnInit {
 
   private AddCacheUser() {
     return this.GetUserData.GetUserData().subscribe(response => {
-      this.UserData = response.user; 
+      this.UserData = response.user;
       this.cache.setItem("User", this.UserData);
     });
   }

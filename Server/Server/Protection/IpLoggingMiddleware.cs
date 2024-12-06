@@ -1,16 +1,18 @@
 ﻿using RedisDAL;
+using RedisDAL.Interface;
+using RedisDAL.User;
 
 namespace Server.Protection
 {
     public class IpLoggingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly RedisConfigure _redisConfig;
+        private readonly RAuthUser _redisConfig;
 
-        public IpLoggingMiddleware(RequestDelegate next, RedisConfigure redisConfig)
+        public IpLoggingMiddleware(RequestDelegate next, RedisConfigure redisConfigure)
         {
             _next = next;
-            _redisConfig = redisConfig;
+            _redisConfig = new RAuthUser(redisConfigure);
         }
 
         public async Task InvokeAsync(HttpContext context)

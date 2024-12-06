@@ -74,16 +74,11 @@ export class AuthComponent {
           this.router.navigate(['/home']);
         },
         error: (error) => {
-          if (error.status === 401) {
-            this.passwordError = 'Не вірний пароль, або електронна адреса';
-          } else if (error.status === 400) {
-            this.ConfirmationPassword = true;
-            this.passwordError = 'Користувач існує, але не авторизований, підтвердіть електронну пошту';
-          } else if (error.status === 429) {
+          if (error.status === 429) {
             this.passwordError = 'Ви перевищили ліміт запитів';
-          } else {
-            this.passwordError = 'Сталася помилка, спробуйте ще раз';
           }
+          const message = error.error?.message || 'Сталася помилка, спробуйте ще раз';
+          this.passwordError = message;
         }
       });
     }

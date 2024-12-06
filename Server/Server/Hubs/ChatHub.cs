@@ -2,25 +2,53 @@
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Connections;
+using Newtonsoft.Json.Linq;
 using NoSQL;
 using PGAdminDAL;
+using RedisDAL;
+using RedisDAL.User;
 using Server.Controllers;
 using Server.Models.MessageChat;
+using Server.Protection;
 using System.Linq;
+using System.Net.WebSockets;
+using System.Text;
 
 namespace Server.Hubs
 {
     public class ChatHub : Hub
     {
-        Dictionary<string, string> Users = new Dictionary<string, string>();
         private readonly IMongoCollection<ChatModelMongoDB> _customers;
         private readonly AppDbContext context;
+        private readonly UsersConnectMessage _userConnect;
 
-        public ChatHub(AppMongoContext _Mongo, IConfiguration _configuration, AppDbContext _context)
+        public ChatHub(AppMongoContext _Mongo, IConfiguration _configuration, AppDbContext _context, RedisConfigure redisConfigure)
         {
+            _userConnect = new UsersConnectMessage(redisConfigure);
             _customers = _Mongo.Database?.GetCollection<ChatModelMongoDB>(_configuration.GetSection("MongoDB:MongoDbDatabaseChat").Value);
             context = _context;
+            //_userConnect.SubscribeToMessages();
         }
+
+        /*private async void SendInactivityNotification(string userId) 
+        {
+            var user = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
+            foreach (var chat in user.ChatsID) {
+                var objectId = ObjectId.Parse(chat.ToString());
+                var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
+                var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
+                foreach (var userGET in chatModel.UsersID)
+                {
+                    if(userGET != userId)
+                    {
+                        var userConnection = await _userConnect.GetUserConnection(userGET); 
+                        var connectionId = userConnection.FirstOrDefault(entry => entry.Name == "connectionId").Value; 
+                        await Clients.Client(connectionId).SendAsync("StatusUser", userId, false);
+                    }
+                }
+            }
+        }*/
 
 
         public async Task<bool> Connect(string token)
@@ -29,9 +57,10 @@ namespace Server.Hubs
             {
                 var id = new JWT().GetUserIdFromToken(token);
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-                Users.Add(id, Context.ConnectionId);
                 if (user != null)
                 {
+                    _userConnect.UpdateUserConnection(id, Context.ConnectionId);
+                    user.ConnectionId = Context.ConnectionId;
                     user.IsOnline = true;
                     await context.SaveChangesAsync();
                     return true;
@@ -51,9 +80,30 @@ namespace Server.Hubs
             {
                 var id = new JWT().GetUserIdFromToken(token);
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-                Users.Remove(id);
                 if (user != null)
                 {
+                    _userConnect.RemoveUser(id);
+                    user.IsOnline = true;
+                    await context.SaveChangesAsync();
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending message: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<List<SendChats>> Update(string token)
+        {
+            try
+            {
+                var id = new JWT().GetUserIdFromToken(token);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                if (user != null)
+                {
+                    _userConnect.UpdateUserConnection(id, Context.ConnectionId);
                     user.IsOnline = true;
                     await context.SaveChangesAsync();
                 }
@@ -136,12 +186,8 @@ namespace Server.Hubs
 
             foreach (var userId in newChat.UsersID)
             {
-                if (Users.ContainsKey(userId))
-                {
-                    Users.TryGetValue(userId, out string value);
-                    await Clients.User(value).SendAsync("CreatChat", YouInfo);
-                }
-                
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
+                await Clients.Client(user.ConnectionId).SendAsync("CreatChat", YouInfo);
             }
 
             await _customers.InsertOneAsync(newChat);
@@ -224,7 +270,7 @@ namespace Server.Hubs
 
 
 
-        public async Task<bool> SendMessage(MessageModel _get)
+        public async Task<int> SendMessage(MessageModel _get)
         {
             try
             {
@@ -237,7 +283,7 @@ namespace Server.Hubs
                 if (!chatModel.UsersID.Contains(id))
                 {
                     Console.WriteLine("Chat ID not found in user IDs.");
-                    return false;
+                    return -1;
                 }
 
                 
@@ -269,27 +315,26 @@ namespace Server.Hubs
 
                 if (updateResult.MatchedCount == 0)
                 {
-                    return false;
+                    return -1;
                 }
 
-                var Return = new SendChats
-                {
-                    Send = true
-                };
 
                 foreach (var userId in chatModel.UsersID)
                 {
-                    Users.TryGetValue(userId, out string value);
-                    await Clients.Users(value).SendAsync("ReceiveMessage", newMessage);
+                    if(userId != id)
+                    {
+                        var user = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
+                        Console.WriteLine("\n\n\n " + user.ConnectionId);
+                        await Clients.Client(user.ConnectionId).SendAsync("ReceiveMessage", newMessage);
+                    }
                 }
 
-
-                return true;
+                return lastMessageId;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error sending message: {ex.Message}");
-                return false;
+                return -1;
             }
         }
 
@@ -394,7 +439,7 @@ namespace Server.Hubs
             return null;
         }
 
-        public async Task ViewMessage(MessageModel _get)
+        public async Task<bool> ViewMessage(MessageModel _get)
         {
             try
             {
@@ -414,21 +459,20 @@ namespace Server.Hubs
                     await _customers.UpdateOneAsync(filter, update);
                     foreach (var userId in chatModel.UsersID)
                     {
-                        if (userId != _get.CreatorId)
+                        if (userId == _get.CreatorId)
                         {
-                            Users.TryGetValue(userId, out string value);
-                            await Clients.User(value).SendAsync("ViewMessage", _get.IdChat);
+                            var user = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
+                            await Clients.Client(user.ConnectionId).SendAsync("ViewMessage", _get.IdChat);
                         }
                     }
+                    return true;
                 }
-                else
-                {
-                    Console.WriteLine("Chat ID not found in user IDs.");
-                }
+                Console.WriteLine("Chat ID not found in user IDs.");
+                return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending message: {ex.Message}");
+                return false;
             }
         }
     }

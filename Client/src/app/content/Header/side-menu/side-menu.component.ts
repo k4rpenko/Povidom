@@ -3,18 +3,18 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MemoryCacheService } from '../../Cache/MemoryCacheService';
 import { GetUserData } from '../../../data/HTTP/GetPosts/User/GetUserData.service';
-import { User } from '../../../data/interface/User.interface';
+import { User } from '../../../data/interface/Users/AllDataUser.interface';
 
 @Component({
   selector: 'app-side-menu',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './side-menu.component.html',
-  styleUrls: ['./side-menu.component.scss'] 
+  styleUrls: ['./side-menu.component.scss']
 })
 export class SideMenuComponent {
   GetUserData = inject(GetUserData);
-  
+
   currentUrl: string = '';
   massage: boolean = false;
   home: boolean = false;
@@ -45,7 +45,7 @@ export class SideMenuComponent {
 
   private AddCacheUser() {
     return this.GetUserData.GetUserData().subscribe(response => {
-      this.UserData = response.user; 
+      this.UserData = response.user;
       this.cache.setItem("User", this.UserData);
     });
   }
@@ -60,7 +60,7 @@ export class SideMenuComponent {
     this.explore = false;
     this.notifications = false;
 
-    
+
     switch (this.currentUrl) {
       case '/message':
         this.massage = true;

@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PGAdminDAL.Migrations
 {
     /// <inheritdoc />
-    public partial class Spacework : Migration
+    public partial class Spacegram : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,6 +40,7 @@ namespace PGAdminDAL.Migrations
                     Location = table.Column<string>(type: "text", nullable: true),
                     PublicKey = table.Column<string>(type: "text", nullable: true),
                     PrivateKey = table.Column<string>(type: "text", nullable: true),
+                    ConnectionId = table.Column<string>(type: "text", nullable: true),
                     StoriesId = table.Column<List<string>>(type: "text[]", nullable: true),
                     Subscribers = table.Column<List<string>>(type: "text[]", nullable: true),
                     Followers = table.Column<List<string>>(type: "text[]", nullable: true),
