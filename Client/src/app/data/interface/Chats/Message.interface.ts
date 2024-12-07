@@ -1,13 +1,13 @@
 export interface Message{
     id?: number;
-    idUser: string;
-    text: string;
+    idUser?: string;
+    text?: string;
     img?: string;
     idAnswer?: string;
-    view: boolean;
-    send: boolean
+    view?: boolean;
+    send?: boolean
     updatedAt?: Date;
-    createdAt: Date;
+    createdAt?: Date;
 }
 
 export interface MessageModel{

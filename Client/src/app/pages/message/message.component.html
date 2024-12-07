@@ -9,20 +9,20 @@
         </div>
 
         <a (click)="OpenMessage(chat)" *ngFor="let chat of Chats" class="IdChat">
-            <img [src]="chat.avatar || 'default-avatar.jpg'" alt="Chat Avatar">
+            <img [src]="chat.user?.avatar" alt="Chat Avatar">
             <div class="ChatData">
               <div class="ChatText">
                 <div class="ChatUser">
-                  <samp>{{chat.nickName || 'Anonymous'}}</samp>
+                  <samp>{{chat.user?.userName || 'Anonymous'}}</samp>
                 </div>
                 <div class="ChatUserMessage">
-                  <samp>{{ chat.lastMessage.message || '' }}</samp>
+                  <samp>{{ chat.message?.text }}</samp>
                 </div>
               </div>
               <div class="ChatUserMessage-Data-status">
-                <samp>{{ chat.createdAt | date: 'HH:mm' }}</samp>
-                <div class="ChatUserMessage-status" *ngIf="chat.lastMessage.userId === YouID else enother">
-                  <div *ngIf="chat.view === true else NotView">
+                <samp>{{ chat.message?.createdAt| date: 'HH:mm' }}</samp>
+                <div class="ChatUserMessage-status" *ngIf="chat.message!.idUser === YouID else enother">
+                  <div *ngIf="chat.message?.view === true else NotView">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 512 512"
@@ -67,7 +67,7 @@
                   </ng-template>
                 </div>
                 <ng-template  #enother>
-                  <div class="ChatUserMessage-newMessage" *ngIf="chat.view === false">
+                  <div class="ChatUserMessage-newMessage" *ngIf="!chat.message!.view">
                     <div class="unread-circle">
                       <samp>1+</samp>
                     </div>
@@ -80,11 +80,11 @@
     <div *ngIf="open else close">
         <div class="Messages">
             <div class="MessagesProfile">
-                <img src="{{OpenChat.avatar}}" alt="">
+                <img src="{{OpenChat.user?.avatar}}" alt="">
                 <div class="MessagesdataAndStatus">
                     <div class="MessagesdataforUser">
-                        <samp>{{OpenChat.nickName}}</samp>
-                        <samp class="ChatUserData">{{OpenChat.lastName}}</samp>
+                        <samp>{{OpenChat.user?.userName}}</samp>
+                        <samp class="ChatUserData">{{OpenChat.user?.lastName}}</samp>
                     </div>
                     <div class="ChatUserLastStatus" *ngIf="!status else close"><samp> був недавно </samp></div>
                     <ng-template class="ChatUserLastStatusTrue" #close><samp> В мережі </samp></ng-template>
@@ -92,7 +92,7 @@
             </div>
             <div class="MessageText">
                 <div class="MessageTextList">
-                  <div class="MessageTextArray" *ngFor="let message of OpenChat.message">
+                  <div class="MessageTextArray" *ngFor="let message of OpenChat.messageArray">
                     <div
                       [ngClass]="{
                         'message-You': message.idUser === YouID,

@@ -1,12 +1,10 @@
 import { inject, Injectable, OnInit } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { CheckUser } from '../../Global';
-import { ChatModel } from '../../interface/Chats/ChatModel';
-import { MessageModel } from '../../interface/Chats/Message.interface';
 import { User } from '../../interface/Users/AllDataUser.interface';;
 import { MemoryCacheService } from '../../../content/Cache/MemoryCacheService';
 import { GetUserData } from '../GetPosts/User/GetUserData.service';
-import { SendModel } from '../../interface/Chats/SendModel.interface';
+import { Chats } from '../../interface/Chats/Chats.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -69,10 +67,10 @@ export class WebSocketService {
     }
   }
 
-  public async SendMessage(chatModel: ChatModel) {
+  public async SendMessage(Chats: Chats) {
     if (this.hubConnection) {
       try {
-        const response = await this.hubConnection.invoke('SendMessage', chatModel);
+        const response = await this.hubConnection.invoke('SendMessage', Chats);
         return response
       } catch (err) {
         console.error('Error invoking:', err);
@@ -82,10 +80,10 @@ export class WebSocketService {
     }
   }
 
-  onReceiveMessage(callback: (message: MessageModel) => void) {
+  onReceiveMessage(callback: (Chats: Chats) => void) {
     if (this.hubConnection) {
-      this.hubConnection.on("ReceiveMessage", (newMessage: MessageModel) => {
-        callback(newMessage);
+      this.hubConnection.on("ReceiveMessage", (Chats: Chats) => {
+        callback(Chats);
       });
     } else {
       console.error("Hub connection is not established.");
@@ -96,10 +94,10 @@ export class WebSocketService {
 
 
 
-  public async CreatChat(chatModel: ChatModel) {
+  public async CreatChat(Chats: Chats) {
     if (this.hubConnection) {
       try {
-        await this.hubConnection.invoke('CreateChat', chatModel);
+        await this.hubConnection.invoke('CreateChat', Chats);
       } catch (err) {
         console.error('Error invoking CreateChat:', err);
       }
@@ -108,10 +106,10 @@ export class WebSocketService {
     }
   }
 
-  public async GetMessage(chatModel: ChatModel) {
+  public async GetMessage(Chats: Chats) {
     if (this.hubConnection) {
       try {
-        const response = await this.hubConnection.invoke('GetMessage', chatModel);
+        const response = await this.hubConnection.invoke('GetMessage', Chats);
         return response;
       } catch (err) {
         console.error('Error invoking:', err);
@@ -166,10 +164,10 @@ export class WebSocketService {
     }
   }*/
 
-    public async View(chatModel: SendModel){
+    public async View(Chats: Chats){
       if (this.hubConnection) {
         try {
-          const result = await this.hubConnection.invoke("ViewMessage", chatModel);
+          const result = await this.hubConnection.invoke("ViewMessage", Chats);
           return result;
         } catch (err) {
           console.error('Error invoking ViewMessage:', err);

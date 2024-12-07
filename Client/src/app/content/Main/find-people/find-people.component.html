@@ -13,7 +13,7 @@
         </div>
     </div>
     <div>
-        <a (click)="CreatChat(_user.id.toString())" *ngFor="let _user of User" class="IdUser">
+        <a (click)="CreatChat(_user.id!)" *ngFor="let _user of User" class="IdUser">
             <img [src]="_user.avatar" alt="">
             <div class="IdUserText">
                 <div class="IdUserName">
@@ -24,6 +24,6 @@
                     <samp>{{ _user.title }}</samp>
                 </div>
             </div>
-        </a>        
+        </a>
     </div>
 </div>

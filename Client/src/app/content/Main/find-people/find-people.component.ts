@@ -5,7 +5,7 @@ import { User } from '../../../data/interface/Users/User.interface';
 import { CommonModule } from '@angular/common';
 import { CookieService } from 'ngx-cookie-service';
 import { WebSocketService } from '../../../data/HTTP/WEB/WebSocket.service';
-import { ChatModel } from '../../../data/interface/Chats/ChatModel';
+import { Chats } from '../../../data/interface/Chats/Chats.interface';
 
 @Component({
   selector: 'app-find-people',
@@ -17,10 +17,10 @@ import { ChatModel } from '../../../data/interface/Chats/ChatModel';
 export class FindPeopleComponent {
   profileService = inject(FindUserData);
   User: User[] = [];
-  inputNick: string = ''; 
+  inputNick: string = '';
   id!: string;
 
-  constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<FindPeopleComponent>, private cookieService: CookieService, private WS: WebSocketService) {  
+  constructor(public dialog: MatDialog, public dialogRef: MatDialogRef<FindPeopleComponent>, private cookieService: CookieService, private WS: WebSocketService) {
     this.id = this.cookieService.get('authToken')
   }
 
@@ -30,8 +30,8 @@ export class FindPeopleComponent {
 
   CreatChat(Id: string) {
     const AddUsersIdChat: Array<string> = [this.id, Id];
-    
-    const ChatModel: ChatModel = {
+
+    const ChatModel: Chats = {
       AddUsersIdChat: AddUsersIdChat
     }
     this.WS.CreatChat(ChatModel);
