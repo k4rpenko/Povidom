@@ -10,13 +10,15 @@ Spacegram — це пет-проєкт соціальної мережі, яка
 ### Frontend: Angular  
 
 1. Перейдіть у директорію `client` (або відповідну директорію з Angular-кодом).  
-2. Встановіть залежності:  
+2. Встановіть залежності:
+ 
    ```bash
    npm install
 
 ### Backend: ASP.NET
 1. Додайте файли конфігурації appsettings.json та appsettings.Development.json у кореневу директорію бекенд-проекту.
 2. Приклад структури appsettings.json:
+ 
    ```bash
    {
       "Logging": {
