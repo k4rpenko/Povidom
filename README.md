@@ -1,23 +1,23 @@
 # Spacegram  
-Spacegram — це пет-проєкт соціальної мережі, яка поєднує:  
-- **Безпеку, оптимізацію та швидкість** Telegram, забезпечуючи конфіденційність даних, наскрізне шифрування повідомлень, а також миттєвий відгук інтерфейсу.  
-- **Зручність публікацій та взаємодій**, як у Twitter та Instagram: користувачі можуть легко створювати пости, редагувати їх, коментувати, робити репости та взаємодіяти зі спільнотою.  
+Spacegram is a social network pet project that combines:  
+- **Security, optimization, and speed** of Telegram, providing data privacy, end-to-end message encryption, and instant feedback from the interface.  
+- Ease of publishing and interacting, similar to Twitter and Instagram: users can easily create posts, edit them, comment, repost, and interact with the community.  
 
 ---
 
-## Запуск проекту  
+## Launching the project  
 
 ### Frontend: Angular  
 
-1. Перейдіть у директорію `client` (або відповідну директорію з Angular-кодом).  
-2. Встановіть залежності:
+1. Change to the `client` directory (or the corresponding directory with Angular code).  
+2. Install the dependencies:
  
    ```bash
    npm install
 
 ### Backend: ASP.NET
-1. Додайте файли конфігурації appsettings.json та appsettings.Development.json у кореневу директорію бекенд-проекту.
-2. Приклад структури appsettings.json:
+1. Add the configuration files appsettings.json and appsettings.Development.json to the root directory of the backend project.
+2. Example of the structure of appsettings.json:
  
    ```bash
    {
