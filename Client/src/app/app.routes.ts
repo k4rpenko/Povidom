@@ -1,12 +1,16 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
-import { PostsComponent } from './pages/posts/posts.component';
-import { MessageComponent } from './pages/message/message.component';
-import { ProfileComponent } from './content/profile/profile.component';
+import { PostsComponent } from './pages/home/posts.component';
+import { MessageComponent } from './pages/messages/message.component';
+import { UsersComponent } from './pages/user/users.component';
+import { SettingsComponent } from './pages/user/settings/settings.component';
+import { CommentsPostComponent } from './pages/comments-post/comments-post.component';
+import { Auth } from './pages/auth/auth.component';
 
 export const routes: Routes = [
-    { path: '', component: LoginComponent },
+    { path: '', component: Auth},
     { path: 'home', component: PostsComponent },
     { path: 'message', component: MessageComponent },
-    { path: ':username', component: ProfileComponent }, 
+    { path: 'comment/:post', component: CommentsPostComponent },
+    { path: ':username', component: UsersComponent },
+    { path: 'settings', component: SettingsComponent },
 ];

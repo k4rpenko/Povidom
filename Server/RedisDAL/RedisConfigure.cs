@@ -19,7 +19,6 @@ namespace RedisDAL
             {
                 _redis = ConnectionMultiplexer.Connect(connectionString);
                 _db = _redis.GetDatabase();
-
             }
             catch (RedisConnectionException ex)
             {

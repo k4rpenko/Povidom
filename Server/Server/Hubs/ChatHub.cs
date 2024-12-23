@@ -2,53 +2,29 @@
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Connections;
-using Newtonsoft.Json.Linq;
 using NoSQL;
 using PGAdminDAL;
-using RedisDAL;
 using RedisDAL.User;
 using Server.Controllers;
+using Server.Interface;
 using Server.Models.MessageChat;
-using Server.Protection;
-using System.Linq;
 using System.Net.WebSockets;
-using System.Text;
 
 namespace Server.Hubs
 {
-    public class ChatHub : Hub
+    public class ChatHub : Hub, IChatHub
     {
         private readonly IMongoCollection<ChatModelMongoDB> _customers;
         private readonly AppDbContext context;
-        private readonly UsersConnectMessage _userConnect;
+        private UsersConnectMessage _userConnect;
 
-        public ChatHub(AppMongoContext _Mongo, IConfiguration _configuration, AppDbContext _context, RedisConfigure redisConfigure)
+
+        public ChatHub(AppMongoContext _Mongo, IConfiguration _configuration, AppDbContext _context, UsersConnectMessage UCM)
         {
-            _userConnect = new UsersConnectMessage(redisConfigure);
             _customers = _Mongo.Database?.GetCollection<ChatModelMongoDB>(_configuration.GetSection("MongoDB:MongoDbDatabaseChat").Value);
             context = _context;
-            //_userConnect.SubscribeToMessages();
+            _userConnect = UCM;
         }
-
-        /*private async void SendInactivityNotification(string userId) 
-        {
-            var user = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
-            foreach (var chat in user.ChatsID) {
-                var objectId = ObjectId.Parse(chat.ToString());
-                var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
-                var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
-                foreach (var userGET in chatModel.UsersID)
-                {
-                    if(userGET != userId)
-                    {
-                        var userConnection = await _userConnect.GetUserConnection(userGET); 
-                        var connectionId = userConnection.FirstOrDefault(entry => entry.Name == "connectionId").Value; 
-                        await Clients.Client(connectionId).SendAsync("StatusUser", userId, false);
-                    }
-                }
-            }
-        }*/
 
 
         public async Task<bool> Connect(string token)
@@ -59,18 +35,33 @@ namespace Server.Hubs
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
                 if (user != null)
                 {
-                    _userConnect.UpdateUserConnection(id, Context.ConnectionId);
-                    user.ConnectionId = Context.ConnectionId;
+                    await _userConnect.UpdateUserConnection(id, Context.ConnectionId);
                     user.IsOnline = true;
                     await context.SaveChangesAsync();
+                    foreach (var chat in user.ChatsID)
+                    {
+                        var objectId = ObjectId.Parse(chat.ToString());
+                        var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
+                        var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
+                        foreach (var userGET in chatModel.UsersID)
+                        {
+                            if (userGET != id)
+                            {
+                                var userConnection = await _userConnect.GetUserConnectionId(userGET);
+                                if (userConnection != null)
+                                {
+                                    await Clients.Client(userConnection).SendAsync("StatusUser", id, true);
+                                }
+                            }
+                        }
+                    }
                     return true;
                 }
                 return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return false;
+                throw ex;
             }
         }
         
@@ -82,7 +73,7 @@ namespace Server.Hubs
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
                 if (user != null)
                 {
-                    _userConnect.RemoveUser(id);
+                    await _userConnect.RemoveUser(id);
                     user.IsOnline = true;
                     await context.SaveChangesAsync();
                 }
@@ -90,12 +81,11 @@ namespace Server.Hubs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return null;
+                throw ex;
             }
         }
 
-        public async Task<List<Chats>> Update(string token)
+        public async Task Update(string token)
         {
             try
             {
@@ -103,16 +93,29 @@ namespace Server.Hubs
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
                 if (user != null)
                 {
-                    _userConnect.UpdateUserConnection(id, Context.ConnectionId);
-                    user.IsOnline = true;
-                    await context.SaveChangesAsync();
+                    await _userConnect.UpdateUserConnection(id, Context.ConnectionId);
+                    foreach (var chat in user.ChatsID)
+                    {
+                        var objectId = ObjectId.Parse(chat.ToString());
+                        var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
+                        var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
+                        foreach (var userGET in chatModel.UsersID)
+                        {
+                            if (userGET != id)
+                            {
+                                var userConnection = await _userConnect.GetUserConnectionId(userGET);
+                                if (userConnection != null)
+                                {
+                                    await Clients.Client(userConnection).SendAsync("StatusUser", id, true);
+                                }
+                            }
+                        }
+                    }
                 }
-                return null;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return null;
+                throw ex;
             }
         }
 
@@ -192,8 +195,8 @@ namespace Server.Hubs
 
             foreach (var userId in newChat.UsersID)
             {
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
-                await Clients.Client(user.ConnectionId).SendAsync("CreatChat", YouInfo);
+                var ConnectId = await _userConnect.GetUserConnectionId(userId);
+                await Clients.Client(ConnectId).SendAsync("CreatChat", YouInfo);
             }
 
             await _customers.InsertOneAsync(newChat);
@@ -250,6 +253,7 @@ namespace Server.Hubs
                                             Id = account.Id,
                                             Avatar = account.Avatar,
                                             UserName = account.UserName,
+                                            IsOnline = account.IsOnline
                                         }
                                         
                                     };
@@ -272,8 +276,7 @@ namespace Server.Hubs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n\n\n\n\n Error sending message: {ex.Message}\n\n\n");
-                return null;
+                throw ex;
             }
 
         }
@@ -332,9 +335,9 @@ namespace Server.Hubs
                 {
                     if(userId != id)
                     {
-                        var user = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
-                        Console.WriteLine("\n\n\n " + user.ConnectionId);
-                        await Clients.Client(user.ConnectionId).SendAsync("ReceiveMessage", newMessage);
+                        var ConnectId = await _userConnect.GetUserConnectionId(userId);
+                        Console.WriteLine("\n\nUser: " + userId + "Connect id: " + ConnectId);
+                        await Clients.Client(ConnectId).SendAsync("ReceiveMessage", newMessage);
                     }
                 }
 
@@ -342,8 +345,7 @@ namespace Server.Hubs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return -1;
+                throw ex;
             }
         }
 
@@ -384,8 +386,7 @@ namespace Server.Hubs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return null;
+                throw ex;
             }
         }
 
@@ -405,8 +406,7 @@ namespace Server.Hubs
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending message: {ex.Message}");
-                return null;
+                throw ex;
             }
         }
 
@@ -433,8 +433,8 @@ namespace Server.Hubs
                     {
                         if (userId == _get.User.Id)
                         {
-                            var user = await context.User.FirstOrDefaultAsync(u => u.Id == userId);
-                            await Clients.Client(user.ConnectionId).SendAsync("ViewMessage", _get.Id);
+                            var ConnectId = await _userConnect.GetUserConnectionId(userId);
+                            await Clients.Client(ConnectId).SendAsync("ViewMessage", _get.Id);
                         }
                     }
                     return true;
@@ -444,7 +444,7 @@ namespace Server.Hubs
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
     }

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace Server.Models.MessageChat
+﻿namespace Server.Models.MessageChat
 {
     public class Chats
     {

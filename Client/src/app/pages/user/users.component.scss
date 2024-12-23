@@ -1,0 +1,150 @@
+main {
+  display: flex;
+  height: 100%;
+  justify-content: flex-end;
+  z-index: 2;
+  transition: width 0.3s ease;
+}
+
+main{
+  color: #E7E9EA;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.ProfileContainer{
+  max-width: 600px;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid #2F3336;
+  overflow: hidden;
+}
+
+.ProfileBanner {
+    height: 200px;
+    background-color: #333;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.ProfileAvatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid rgb(24,25,26);
+    position: absolute;
+    bottom: -60px;
+    left: 20px;
+    object-fit: cover;
+}
+
+.ProfileHeader {
+  padding: 15px;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.ProfileHeader button {
+  color: #fff;
+  background-color: #1FB0A8;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.ProfileInfo{
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 30px;
+}
+
+.FollowButton{
+  padding: 15px;
+  display: flex;
+  gap: 10px;
+  flex-direction: row-reverse;
+}
+
+.FollowButton button{
+  color: #000000;
+  background-color: #ffffff;
+  border-width: 1px;
+  border-color: #000000;
+  padding: 10px 30px;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.ProfileHeader button:hover {
+    background-color: #17a099;
+}
+
+
+.ProfileName {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.ProfileUsername {
+  color: #71767B;
+  font-size: 15px;
+}
+
+.ProfileNameTitle{
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+}
+
+.ProfileBio {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #cfd1d3;
+}
+
+
+.UserFollowingSubscribe{
+  display: flex;
+  gap: 30px;
+}
+
+.UserFollowing, .UserSubscribe{
+  gap: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.ProfileTabs {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #2F3336;
+}
+
+.ProfileTab {
+    padding: 10px 0;
+    color: #71767B;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.ProfileTab:hover {
+  color: #1FB0A8;
+}
+
+.ProfileTabActive {
+  color: #1FB0A8;
+  font-weight: bold;
+  border-bottom: 3px solid #1FB0A8;
+}

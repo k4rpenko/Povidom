@@ -20,6 +20,7 @@ namespace PGAdminDAL.Model
         public List<string> CommentPostID { get; set; } = new List<string>();
         public List<string> RetweetPostID { get; set; } = new List<string>();
         public List<string> PostID { get; set; } = new List<string>();
+        public List<string> RecallPostId { get; set; } = new List<string>();
         public List<string> ChatsID { get; set; } = new List<string>();
 
         public DateTime? LastLogin { get; set; }

@@ -8,16 +8,6 @@ namespace Server.Models.Post
         [BsonElement("UserId")]
         public string? UserId { get; set; }
 
-        [BsonElement("UserNickname")]
-        public string UserNickname { get; set; }
-
-        [BsonElement("UserName")]
-        public string UserName { get; set; }
-
-
-        [BsonElement("UserAvatur")]
-        public string UserAvatar { get; set; }
-
         [BsonElement("Content")]
         public string? Content { get; set; }
 
@@ -30,15 +20,6 @@ namespace Server.Models.Post
         [BsonElement("UserId")]
         public string? UserId { get; set; }
 
-        [BsonElement("UserNickname")]
-        public string UserNickname { get; set; }
-
-        [BsonElement("UserName")]
-        public string UserName { get; set; }
-
-
-        [BsonElement("UserAvatur")]
-        public string UserAvatar { get; set; }
 
         [BsonElement("CreatedAt")]
         public DateTime? CreatedAt { get; set; }
@@ -53,15 +34,6 @@ namespace Server.Models.Post
 
         [BsonElement("UserId")]
         public string UserId { get; set; }
-
-        [BsonElement("UserNickname")]
-        public string UserNickname { get; set; }
-
-        [BsonElement("UserName")]
-        public string UserName { get; set; }
-
-        [BsonElement("UserAvatur")]
-        public string UserAvatar { get; set; }
 
         [BsonElement("Content")]
         public string? Content { get; set; }
@@ -89,6 +61,9 @@ namespace Server.Models.Post
 
         [BsonElement("Mentions")]
         public List<string>? Mentions { get; set; } = new List<string>();
+
+        [BsonElement("Recall")]
+        public List<string>? Recall { get; set; } = new List<string>();
 
         [BsonElement("Comments")]
         public List<Comment>? Comments { get; set; } = new List<Comment>();

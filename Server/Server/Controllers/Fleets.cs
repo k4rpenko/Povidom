@@ -1,8 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using NoSQL;
 using PGAdminDAL;
 using PGAdminDAL.Model;
 using Server.Models.MessageChat;
+using Server.Models.Post;
 using Server.Models.Users;
 using Server.utils;
 using System;
@@ -17,10 +23,11 @@ namespace Server.Controllers
     [Route("api/[controller]")]
     public class Fleets : Controller
     {
+        private readonly IMongoCollection<SpacePostModel> _customers;
         private readonly AppDbContext context;
         private readonly JWT _jwt = new JWT();
 
-        public Fleets(AppDbContext _context) { context = _context; }
+        public Fleets(AppDbContext _context, AppMongoContext _Mongo,  IConfiguration _configuration) { context = _context; _customers = _Mongo.Database?.GetCollection<SpacePostModel>(_configuration.GetSection("MongoDB:MongoDbDatabase").Value); }
 
         [HttpGet("FindPeople")]
         public async Task<IActionResult> FindPeople(string query)
@@ -109,15 +116,41 @@ namespace Server.Controllers
                 var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Nick);
                 if (user != null)
                 {
-                    var fleetsUser = new FleetsUserFModel
+                    var PostForID = new List<SpacePostModel>();
+                    var Recall = new List<SpacePostModel>();
+                    foreach (var item in user.PostID)
                     {
-                        Id = user.Id,
+                        var objectId = ObjectId.Parse(item);
+                        var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
+                        PostForID.Add(post);
+                    }
+                    foreach (var item in user.RetweetPostID)
+                    {
+                        var objectId = ObjectId.Parse(item);
+                        var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
+                        PostForID.Add(post);
+                    }
+
+                    foreach (var item in user.RecallPostId)
+                    {
+                        var objectId = ObjectId.Parse(item);
+                        var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
+                        Recall.Add(post);
+                    }
+
+                    var userAccount = new UserAccount
+                    {
+                        Id = user.Id.ToString(),
+                        Avatar = user.Avatar,
                         UserName = user.UserName,
+                        Title = user.Title,
+                        PhoneNumber = user.PhoneNumber,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        Avatar = user.Avatar,
-                        Title = user.Title,
-                        PostID = user.PostID
+                        Post = PostForID,
+                        RecallPost = Recall,
+                        FollowersAmount = user.Followers.Count,
+                        SubscribersAmount = user.Subscribers.Count,
                     };
 
                     if (Request.Cookies.TryGetValue("Token", out string cookieValue))
@@ -125,12 +158,12 @@ namespace Server.Controllers
                         var id = new JWT().GetUserIdFromToken(cookieValue);
                         if (id != null)
                         {
-                            fleetsUser.SubscribersBool = user.Subscribers.Contains(id);
-                            fleetsUser.FollowersBool = user.Followers.Contains(id);
+                            userAccount.YouSubscriber = user.Subscribers.Contains(id);
+                            userAccount.YouFollower = user.Followers.Contains(id);
                         }
                     }
 
-                    return Ok(new { User = fleetsUser});
+                    return Ok(userAccount);
                 }
                 return NotFound();
             }
@@ -273,14 +306,20 @@ namespace Server.Controllers
         {
             try
             {
-                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Account.NickName);
-                var id = _jwt.GetUserIdFromToken(Account.Token);
+                Console.WriteLine(Account.Id);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == Account.Id);
+                if (!Request.Cookies.TryGetValue("authToken", out string cookieValue))
+                {
+                    return Unauthorized();
+                }
+
+                var id = new JWT().GetUserIdFromToken(cookieValue);
                 var You = await context.User.FindAsync(id);
 
                 if (user != null && You != null)
                 {
-                    user.Followers.Add(Account.Id);
-                    You.Subscribers.Add(Account.NickName);
+                    user.Followers.Add(id);
+                    You.Subscribers.Add(Account.Id);
 
                     await context.SaveChangesAsync();
                     return Ok();

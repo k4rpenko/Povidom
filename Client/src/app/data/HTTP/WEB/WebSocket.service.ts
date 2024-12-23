@@ -2,8 +2,8 @@ import { inject, Injectable, OnInit } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { CheckUser } from '../../Global';
 import { User } from '../../interface/Users/AllDataUser.interface';;
-import { MemoryCacheService } from '../../../content/Cache/MemoryCacheService';
-import { GetUserData } from '../GetPosts/User/GetUserData.service';
+import { MemoryCacheService } from '../../Cache/MemoryCacheService';
+import { UserChangGet } from '../GetPosts/User/UserChangGet.service';
 import { Chats } from '../../interface/Chats/Chats.interface';
 
 @Injectable({
@@ -12,22 +12,19 @@ import { Chats } from '../../interface/Chats/Chats.interface';
 export class WebSocketService {
   public hubConnection: signalR.HubConnection | undefined;
   private UserData!: User;
-  GetUserData = inject(GetUserData);
+  UserChangGet = inject(UserChangGet);
 
-  constructor(private cache: MemoryCacheService) {
-    this.initializeService();
-  }
-
+  constructor(private cache: MemoryCacheService) { this.initializeService();}
 
   async initializeService() {
     await this.loadUserData();
-
-    if (this.UserData?.id !== null && this.UserData.id !== "") {
+    if (this.UserData?.id) {
       this.hubConnection = new signalR.HubConnectionBuilder()
         .withUrl(`${CheckUser.url}/message`)
         .withAutomaticReconnect()
         .build();
     }
+
   }
 
   public async Connect(token: string) {
@@ -53,7 +50,7 @@ export class WebSocketService {
   }
 
   private AddCacheUser() {
-    return this.GetUserData.GetUserData().subscribe(response => {
+    return this.UserChangGet.Get().subscribe(response => {
       this.UserData = response.user;
       this.cache.setItem("User", this.UserData);
     });
@@ -119,17 +116,8 @@ export class WebSocketService {
     }
   }
 
-  public async GetId(token: string) {
-    if (this.hubConnection) {
-      try {
-        const response = await this.hubConnection.invoke('GetId', token);
-        return response;
-      } catch (err) {
-        console.error('Error invoking:', err);
-      }
-    } else {
-      console.error('Hub connection is not established.');
-    }
+  public async GetId() {
+    return this.UserData.id!
   }
 
   public async GetChats(token: string) {
@@ -187,7 +175,15 @@ export class WebSocketService {
     }
   }
 
-
+  GetStatusUser(callback: (idUser: string, status: boolean) => void) {
+    if (this.hubConnection) {
+      this.hubConnection.on("StatusUser", (idUser: string, status: boolean) => {
+        callback(idUser, status);
+      });
+    } else {
+      console.error("Hub connection is not established.");
+    }
+  }
 
   public async Update(token: string) {
     if (this.hubConnection) {
@@ -195,6 +191,19 @@ export class WebSocketService {
         await this.hubConnection.invoke("Update", token);
       } catch (err) {
         console.error('Error invoking ViewMessage:', err);
+      }
+    }
+  }
+
+  public delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  public async UpdateConnect(token: string) {
+    while (true) {
+      await this.delay(5000);
+      if (this.hubConnection) {
+        await this.hubConnection.invoke('Update', token);
       }
     }
   }

@@ -314,6 +314,10 @@ namespace PGAdminDAL.Migrations
                     b.Property<string>("PublicKey")
                         .HasColumnType("text");
 
+                    b.Property<List<string>>("RecallPostId")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
                     b.Property<List<string>>("RetweetPostID")
                         .IsRequired()
                         .HasColumnType("text[]");

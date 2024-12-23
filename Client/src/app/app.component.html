@@ -1,6 +1,7 @@
-<ng-container *ngIf="showMainContent">
+<div [ngClass]="showMainContent ? 'Body' : 'AuthBody'">
+  <ng-container *ngIf="showMainContent">
     <app-side-menu></app-side-menu>
-</ng-container>
+  </ng-container>
 
-
-<router-outlet />
+  <router-outlet />
+</div>

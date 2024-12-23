@@ -4,6 +4,8 @@ services:
     container_name: "redis-server"
     ports:
       - "6379:6379"
+    command: ["redis-server", "--notify-keyspace-events", "Ex"]
+  
 
   mailhog:
     image: mailhog/mailhog
@@ -14,30 +16,36 @@ services:
 
 
   server:
+    image: "server"
+    container_name: "aspnet-server"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     ports:
-      - "8080"
-      - "8081"
+      - "8080:8080" 
+      - "8081:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
-  nginx:
-    image: nginx
-    container_name: nginx
-    volumes:
-    - ../nginx.conf:/etc/nginx/nginx.conf
-    ports:
-        - "80:80"
-  
-        
+  # nginx:
+  #   image: nginx
+  #   container_name: nginx
+  #   volumes:
+  #   - ../nginx.conf:/etc/nginx/nginx.conf
+  #   ports:
+  #       - "80:80"
+
   # angular:
   #   build:
   #     context: ../Client
   #     dockerfile: Dockerfile
   #   ports:
   #     - "4200:4200"
+  #   volumes:
+  #     - ../Client:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   stdin_open: true
+  #   tty: true
     

@@ -1,0 +1,267 @@
+
+main {
+  display: flex;
+  height: 100%;
+  justify-content: flex-end;
+  z-index: 2;
+  transition: width 0.3s ease;
+}
+
+main{
+  color: #E7E9EA;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+main a{
+  text-decoration: none;
+  color: inherit;
+}
+
+.mainPost {
+  max-width: 600px;
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid #2F3336;
+  overflow: hidden;
+}
+
+.HeaderPosts {
+
+  height: auto;
+  width: 100%;
+  border-bottom: 1px solid #2F3336;
+  display: flex;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  justify-content: center;
+}
+
+.HeaderPost samp{
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 700;
+}
+
+.HeaderPosts-ForU, .HeaderPosts-Following{
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+.HeaderPosts-ForU {
+  border-right: 1px solid #2F3336;
+}
+
+.HeaderPosts-ForU samp{
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 600;
+}
+
+
+.HeaderPosts-Following{
+  color: #71767B;
+  font-size: 15px;
+}
+
+.SendPost{
+  display: flex;
+  padding: 20px;
+  height: auto;
+  width: auto;
+  border-bottom: 1px solid #2F3336;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.SendPost img{
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.SendPostBox{
+  max-height: 100%;
+  height: auto;
+}
+
+.SendPostContext{
+  display: flex;
+  align-items: center;
+}
+
+.SendPost-textarea{
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  border: none;
+  outline: none;
+  height: auto;
+  overflow-y: hidden;
+  resize: none;
+  background-color: transparent;
+  color: white;
+  border-bottom: 1px solid #2f3336;
+}
+
+
+.SendPostContext img{
+  border-radius: 50%;
+  max-width: 40px;
+  width: 100%;
+}
+
+.SendPostAddendum{
+  gap: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.SendPostAddendum div{
+  display: flex;
+  justify-content: space-between;
+}
+
+.SendPostAddendum div button{
+  color: #fff;
+  background-color: #1FB0A8;
+  min-height: 35px;
+  padding-left: 16px;
+  padding-right: 16px;
+  max-width: 100%;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.SendPostAddendum-SVG{
+  width: auto;
+  display: flex;
+}
+
+.SendPostAddendum-SVG svg{
+  position: relative;
+  display: inline-block;
+  fill: #1FB0A8;
+  width: 20px;
+  height: 20px;
+}
+
+.Post-Box {
+  height: auto;
+  font-weight: 600;
+}
+
+.Post-item {
+  height: auto;
+  padding: 20px;
+  width: auto;
+  border-bottom: 1px solid #2F3336;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.Post-FUser {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #E7E9EA;
+}
+
+.Post-FUser span {
+  display: inline-block;
+}
+
+.Post-FUser .UserNickname {
+  color: #71767B;
+  font-size: 13px;
+}
+
+.Post-Context {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #E7E9EA;
+}
+
+.Post-Context samp{
+  text-overflow: unset;
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.Post-Context img {
+  margin-top: 10px;
+  border-radius: 12px;
+  max-width: 100%;
+  height: auto;
+}
+
+.Post-Mad {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-top: 5px;
+  color: #71767B;
+  font-size: 13px;
+}
+
+.Post-Mad a {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #71767B;
+}
+
+.Post-Mad svg, .SVG, .SVGFill {
+  width: 16px;
+  height: 16px;
+  transition: 0.2s;
+}
+
+.SVG-Comments a:hover, .SVG-Retpost a:hover, .SVG-Like a:hover, .SVG-View a:hover {
+  fill: #1FB0A8;
+  color: #1FB0A8;
+}
+
+
+.SVG-Fill-Like a:hover{
+  transition: 0.2s;
+  color: #CE156A;
+}
+
+
+.postUserAvatar {
+  border-radius: 50%;
+  max-width: 40px;
+}
+
+.Post-item-user {
+  height: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.Post-item-user-Text {
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.Post-FUser {
+  font-size: 15px;
+  display: flex;
+}
+
+.Post-FUser-nick {
+  color: #4b5257;
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 500;
+}

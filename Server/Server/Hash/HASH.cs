@@ -29,5 +29,17 @@ namespace Server.Hash
                 return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             }
         }
+
+        public string HashSha256(string message)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+
+                byte[] hashBytes = sha256.ComputeHash(messageBytes);
+
+                return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+            }
+        }
     }
 }

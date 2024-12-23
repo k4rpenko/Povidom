@@ -1,11 +1,11 @@
 import { Component, inject, OnInit, Type } from "@angular/core";
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
-import { SideMenuComponent } from "./content/Header/side-menu/side-menu.component";
+import { SideMenuComponent } from "../Global/Header/side-menu/side-menu.component";
 import {CheckUser} from "./data/Global"
 import { updateAccetsToken } from "./data/HTTP/POST/updateAccetsToken.service";
 import { CookieService } from 'ngx-cookie-service';
 import { CommonModule } from "@angular/common";
-import { MemoryCacheService } from "./content/Cache/MemoryCacheService";
+import { MemoryCacheService } from "./data/Cache/MemoryCacheService";
 
 
 @Component({
@@ -14,7 +14,7 @@ import { MemoryCacheService } from "./content/Cache/MemoryCacheService";
   imports: [RouterOutlet, SideMenuComponent, CommonModule],
   providers: [CookieService],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'] 
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
   title = 'Client';
@@ -34,12 +34,12 @@ export class AppComponent implements OnInit{
       this.router.navigate(['']);
     }
   }
-  
+
   ngOnInit(): void {
     const now = new Date();
     this.UpdateJWT(now);
     this.router.events.subscribe(() => {
-      this.showMainContent = this.router.url !== '/'; 
+      this.showMainContent = this.router.url !== '/';
     });
   }
 
@@ -58,7 +58,7 @@ export class AppComponent implements OnInit{
                 error: (error) => {
                   const cookies = document.cookie.split(";");
                   for (let cookie of cookies) {
-                      const cookieName = cookie.split("=")[0].trim(); 
+                      const cookieName = cookie.split("=")[0].trim();
                       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
                       this.cache.clearItem("User")
                   }

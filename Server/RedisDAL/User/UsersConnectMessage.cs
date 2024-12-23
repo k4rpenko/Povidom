@@ -1,9 +1,5 @@
 ﻿using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RedisDAL.User
 {
@@ -11,15 +7,26 @@ namespace RedisDAL.User
     {
         private readonly IDatabase _db;
         private readonly ISubscriber _subscriber;
+        public Action<string> UserRemoved;
 
         public UsersConnectMessage(RedisConfigure redisConfigure)
         {
             _db = redisConfigure.GetDatabase();
             _subscriber = redisConfigure.GetSubscriber();
-            /*_subscriber.Subscribe("__keyevent@0__:expired", (channel, message) =>
+            _subscriber.Unsubscribe("__keyevent@0__:expired");
+            _subscriber.Subscribe("__keyevent@0__:expired", async (channel, message) =>
             {
-                NotifyServer(message);
-            });*/
+                var expiredKey = message.ToString();
+                if (expiredKey.StartsWith("UsersConnect:"))
+                {
+                    var userId = expiredKey.Substring("UsersConnect:".Length);
+                    if (!await _db.KeyExistsAsync(expiredKey))
+                    {
+                        UserRemoved?.Invoke(userId);
+                    }
+                }
+            });
+
         }
 
         public async Task UpdateUserConnection(string userId, string connectionId)
@@ -31,13 +38,14 @@ namespace RedisDAL.User
                 new HashEntry("lastPingTime", DateTime.UtcNow.ToString())
             };
             await _db.HashSetAsync(key, fields);
-            await _db.KeyExpireAsync(key, TimeSpan.FromSeconds(5));
+            await _db.KeyExpireAsync(key, TimeSpan.FromSeconds(7));
         }
 
-        public async Task<HashEntry[]> GetUserConnection(string userId)
+        public async Task<string> GetUserConnectionId(string userId)
         {
             var key = $"UsersConnect:{userId}";
-            return await _db.HashGetAllAsync(key);
+            var connectionId = await _db.HashGetAsync(key, "connectionId");
+            return connectionId.ToString();
         }
 
 
@@ -61,24 +69,5 @@ namespace RedisDAL.User
             var server = _db.Multiplexer.GetServer(_db.Multiplexer.GetEndPoints()[0]);
             return server.Keys(pattern: "UsersConnect:*").Select(k => k.ToString());
         }
-
-        /*private async Task NotifyServer(string userId)
-        {
-            
-        }
-
-        public void SubscribeToMessages()
-        {
-            _subscriber.Subscribe("user_notifications", (channel, message) =>
-            {
-                HandleNotification(message.ToString());
-            });
-        }
-
-        private string HandleNotification(string userId)
-        {
-            return userId;
-        }*/
-
     }
 }

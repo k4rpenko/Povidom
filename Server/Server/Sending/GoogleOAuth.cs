@@ -20,10 +20,9 @@ namespace Server.Sending
             ClientSecret = builder.GetSection("GoogleAuth:ClientSecret").Value;
         }
 
-        public string GenerateOauthUrl(string scope, string redirectUrl, string codeChang)
+        public string GenerateOauthUrl(string scope, string redirectUrl, string codeChallenge)
         {
             var OAuthEndPoint = "https://accounts.google.com/o/oauth2/v2/auth";
-
 
             var queryParams = new Dictionary<string, string>
             {
@@ -31,7 +30,7 @@ namespace Server.Sending
                 {"redirect_uri", redirectUrl},
                 {"response_type", "code"},
                 {"scope", scope},
-                {"code_challenge", codeChang},
+                {"code_challenge", codeChallenge},
                 {"code_challenge_method", "S256"}
             };
 
@@ -39,13 +38,7 @@ namespace Server.Sending
             return url;
         }
 
-        public object RefreshToken()
-        {
-
-            throw new NotImplementedException();
-        }
-
-        public async Task<OAuthResultModel> ExechangeCodeOauthT(string code, string codeVerifier, string redirectUrl)
+        public async Task<OAuthResultModel> ExchangeCodeForTokens(string code, string codeVerifier, string redirectUrl)
         {
             using (var client = new HttpClient())
             {

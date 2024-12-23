@@ -18,7 +18,6 @@ namespace RedisDAL.User
         public bool AuthRedisUser(string ip)
         {
             var requestKey = $"requests:{ip}";
-
             if (!_db.KeyExists(requestKey))
             {
                 _db.HashSet(requestKey, new HashEntry[]
@@ -26,6 +25,7 @@ namespace RedisDAL.User
                     new HashEntry("Request", 1),
                     new HashEntry("Blocked", "0")
                 });
+                _db.KeyExpire(requestKey, TimeSpan.FromMinutes(30));
                 return true;
             }
             else

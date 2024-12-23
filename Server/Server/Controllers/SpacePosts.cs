@@ -5,10 +5,13 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using NoSQL;
 using PGAdminDAL;
+using PGAdminDAL.Model;
+using Server.Models.MessageChat;
 using Server.Models.Post;
 using Server.Protection;
 using System.Linq;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Server.Controllers
@@ -33,7 +36,7 @@ namespace Server.Controllers
                 {
                     return NotFound("User not found.");
                 }
-
+                _data.UserId = id;
                 _data.CreatedAt = DateTime.UtcNow;
                 _data.UpdatedAt = DateTime.UtcNow;
                 await _customers.InsertOneAsync(_data);
@@ -41,7 +44,34 @@ namespace Server.Controllers
                 user.PostID.Add(_data.Id.ToString());
                 await context.SaveChangesAsync();
 
-                return Ok();
+                var postHome = new PostHome
+                {
+                    Id = _data.Id.ToString(),
+                    User = new UserFind
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        Avatar = user.Avatar
+                    },
+                    Content = _data.Content,
+                    CreatedAt = _data.CreatedAt,
+                    UpdatedAt = _data.UpdatedAt,
+                    MediaUrls = _data.MediaUrls,
+                    LikeAmount = _data.Like?.Count ?? 0,
+                    YouLike = user.LikePostID.Contains(_data.Id.ToString()) ? true : false,
+                    Retpost = _data.Retpost?.Count ?? 0,
+                    RetpostAmount = _data.InRetpost?.Count ?? 0,
+                    YouRetpost = user.RetweetPostID.Contains(_data.Id.ToString()) ? true : false,
+                    Hashtags = _data.Hashtags?.Count ?? 0,
+                    Mentions = _data.Mentions?.Count ?? 0,
+                    CommentAmount = _data.Comments?.Count ?? 0,
+                    YouComment = user.CommentPostID.Contains(_data.Id.ToString()) ? true : false,
+                    Views = _data.Views?.Count ?? 0,
+                    SPublished = _data.SPublished
+                };
+
+                return Ok(postHome);
             }
             catch (Exception ex)
             {
@@ -168,7 +198,7 @@ namespace Server.Controllers
             try
             {
                 var id = new JWT().GetUserIdFromToken(_data.UserId);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id); ;
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
 
                 var objectId = ObjectId.Parse(_data.Id);
 
@@ -222,13 +252,14 @@ namespace Server.Controllers
             //var filter = Builders<SpacePostModel>.Filter.ElemMatch(post => post.Views, Builders<string>.Filter.Ne(view => view, _data.Id.ToString()));
             //var posts = await _customers.Find(filter).Limit(30).ToListAsync();
 
-            List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
-
             if (!Request.Cookies.TryGetValue("authToken", out string cookieValue))
             {
                 return Unauthorized();
             }
             var id = new JWT().GetUserIdFromToken(cookieValue);
+            var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+
+            List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
 
             foreach (var item in posts)
             {
@@ -242,54 +273,85 @@ namespace Server.Controllers
                 }
             }
 
-            List<PostHome> postHomeList = posts.Select(post => new PostHome
+            List<PostHome> postHomeList = new List<PostHome>();
+
+            foreach (var post in posts)
             {
-                Id = post.Id.ToString().ToString(),
-                UserId = post.UserId,
-                UserNickname = post.UserNickname,
-                UserName = post.UserName,
-                UserAvatar = post.UserAvatar,
-                Content = post.Content,
-                CreatedAt = post.CreatedAt,
-                UpdatedAt = post.UpdatedAt,
-                MediaUrls = post.MediaUrls?.Count ?? 0,
-                Like = post.Like?.Count ?? 0,
-                Retpost = post.Retpost?.Count ?? 0,
-                InRetpost = post.InRetpost?.Count ?? 0,
-                Hashtags = post.Hashtags?.Count ?? 0,
-                Mentions = post.Mentions?.Count ?? 0,
-                Comments = post.Comments?.Count ?? 0,
-                Views = post.Views?.Count ?? 0,
-                SPublished = post.SPublished
-            }).ToList();
+                var users = context.User.FirstOrDefault(u => u.Id == post.UserId);
+
+                var postHome = new PostHome
+                {
+                    Id = post.Id.ToString(),
+                    User = new UserFind
+                    {
+                        Id = post.UserId,
+                        UserName = users?.UserName,
+                        FirstName = users?.FirstName,
+                        Avatar = users?.Avatar
+                    },
+                    Content = post.Content,
+                    CreatedAt = post.CreatedAt,
+                    UpdatedAt = post.UpdatedAt,
+                    MediaUrls = post.MediaUrls,
+                    LikeAmount = post.Like?.Count ?? 0,
+                    YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true: false,
+                    Retpost = post.Retpost?.Count ?? 0,
+                    RetpostAmount = post.InRetpost?.Count ?? 0,
+                    YouRetpost = user.RetweetPostID.Contains(post.Id.ToString()) ? true : false,
+                    Hashtags = post.Hashtags?.Count ?? 0,
+                    Mentions = post.Mentions?.Count ?? 0,
+                    CommentAmount = post.Comments?.Count ?? 0,
+                    YouComment = user.CommentPostID.Contains(post.Id.ToString()) ? true : false,
+                    Views = post.Views?.Count ?? 0,
+                    SPublished = post.SPublished
+                };
+
+                postHomeList.Add(postHome);
+            }
 
             return Ok(new { Post = postHomeList });
-
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Home(string UserNick)
+        public async Task<IActionResult> Home(string UserID)
         {
-            var filter = Builders<SpacePostModel>.Filter.Eq(post => post.UserNickname, UserNick);
+            if (!Request.Cookies.TryGetValue("authToken", out string cookieValue))
+            {
+                return Unauthorized();
+            }
+            var id = new JWT().GetUserIdFromToken(cookieValue);
+            var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+
+
+            var users = await context.User.FirstOrDefaultAsync(u => u.Id == UserID);
+            var filter = Builders<SpacePostModel>.Filter.Eq(post => post.UserId, UserID);
             List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
+            var userTask = await context.User.FirstOrDefaultAsync(u => u.Id == UserID);
+
 
             List<PostHome> postHomeList = posts.Select(post => new PostHome
             {
                 Id = post.Id.ToString().ToString(),
-                UserId = post.UserId,
-                UserNickname = post.UserNickname,
-                UserName = post.UserName,
-                UserAvatar = post.UserAvatar,
+                User = new UserFind
+                {
+                        Id = post.UserId,
+                        UserName = users.UserName,
+                        FirstName = users.FirstName,
+                        Avatar = users.Avatar
+                },
                 Content = post.Content,
                 CreatedAt = post.CreatedAt,
                 UpdatedAt = post.UpdatedAt,
-                MediaUrls = post.MediaUrls?.Count ?? 0,
-                Like = post.Like?.Count ?? 0,
+                MediaUrls = post.MediaUrls,
+                LikeAmount = post.Like?.Count ?? 0,
+                YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true : false,
                 Retpost = post.Retpost?.Count ?? 0,
-                InRetpost = post.InRetpost?.Count ?? 0,
+                RetpostAmount = post.InRetpost?.Count ?? 0,
+                YouRetpost = user.RetweetPostID.Contains(post.Id.ToString()) ? true : false,
                 Hashtags = post.Hashtags?.Count ?? 0,
                 Mentions = post.Mentions?.Count ?? 0,
-                Comments = post.Comments?.Count ?? 0,
+                CommentAmount = post.Comments?.Count ?? 0,
+                YouComment = user.CommentPostID.Contains(post.Id.ToString()) ? true : false,
                 Views = post.Views?.Count ?? 0,
                 SPublished = post.SPublished
             }).ToList();

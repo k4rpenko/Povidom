@@ -1,0 +1,37 @@
+<main>
+  <div class="Login">
+      <div class="google">
+          <h1>Be part of the change.</h1>
+          <h1>Join us today.</h1>
+      </div>
+      <div class="AnotherLogin">
+        <div id="g_id_onload"
+            data-callback="handleCredentialResponse"
+            data-auto_prompt="false">
+        </div>
+
+        <div class="g_id_signin"
+            data-type="standard"
+            data-shape="rectangular"
+            data-theme="outline"
+            data-text="signin_with"
+            data-size="large"
+            data-logo_alignment="left">
+        </div>
+
+        <div>
+            <div class="Line"></div>
+            <div><samp>або</samp></div>
+            <div class="Line"></div>
+        </div>
+        <div>
+            <a (click)="openAuth()">Create account</a>
+            <div>
+                <samp>Do you already have a profile?</samp>
+                <a (click)="openLogin()">Login</a>
+            </div>
+        </div>
+      </div>
+  </div>
+</main>
+

@@ -15,6 +15,9 @@ namespace PGAdminDAL
             _configuration = configuration;
         }
 
+        public AppDbContext GetDbContext() => (AppDbContext)_configuration;
+
+
         public DbSet<UserModel> User { get; set; }
         public DbSet<Appeal> Appeals { get; set; }
 

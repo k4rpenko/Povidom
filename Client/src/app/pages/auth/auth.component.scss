@@ -1,0 +1,157 @@
+
+main {
+  background-color: #111;
+  color: white;
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  font-weight: 600;
+  display: flex;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  flex-direction: row-reverse;
+}
+
+
+.Login {
+  background-color: #1A1A1A;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 40%;
+  text-align: center;
+}
+
+.google {
+  display: flex;
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  color: #bbb;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+
+.Login h1:last-of-type {
+  color: #ccc;
+  margin-bottom: 15px;
+}
+
+
+.AnotherLogin {
+  margin-top: 20px;
+  font-size: 1em;
+}
+
+
+.AnotherLogin a {
+  display: inline-block;
+  background-color: #2F3336;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.AnotherLogin a:hover {
+  background-color: #444;
+}
+
+
+.AnotherLogin .Line {
+  height: 1px;
+  background-color: #2F3336;
+  margin: 20px 0;
+}
+
+.AnotherLogin samp {
+  color: #bbb;
+  font-size: 1em;
+}
+
+
+.AnotherLogin a:last-of-type {
+  color: #1FB0A8;
+  font-weight: 600;
+}
+
+.AnotherLogin div > a:hover {
+  text-decoration: underline;
+}
+
+
+.side-menu-post-button {
+  background-color: #1FB0A8;
+  color: white;
+  font-size: 1em;
+  padding: 10px 40px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 15px;
+}
+
+.side-menu-post-button:hover {
+  background-color: #198a84;
+}
+
+
+.side-menu {
+  background-color: #1A1A1A;
+  color: white;
+  font-family: "CeraRoundPro-Medium", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  width: 25%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  box-sizing: border-box;
+  border-right: 1px solid #2F3336;
+  transition: width 0.3s ease-in-out;
+}
+
+
+header {
+  border-right: 1px solid #2F3336;
+  z-index: 3;
+  display: flex;
+  height: 100%;
+  width: 30%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  justify-content: flex-end;
+  transition: width 0.3s ease-in-out;
+}
+
+header a {
+  text-decoration: none;
+}
+
+
+.menu-item {
+  font-size: 1.2em;
+  color: #ffffff;
+  margin: 10px 0;
+  padding: 12px 20px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s, transform 0.3s ease;
+  cursor: pointer;
+  animation: slideIn 0.5s forwards ease-in-out;
+}
+
+.menu-item:hover {
+  background-color: #333;
+  color: #1FB0A8;
+  transform: scale(1.05);
+}

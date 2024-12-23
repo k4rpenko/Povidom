@@ -1,0 +1,66 @@
+<main>
+  <div class="ProfileContainer" *ngIf="UrlName === UserCache?.userName; else UserElse">
+    <div class="ProfileBanner">
+      <img src="{{UserCache?.avatar}}" alt="User Avatar" class="ProfileAvatar">
+    </div>
+    <div class="ProfileHeader" >
+      <button >Edit Profile</button>
+    </div>
+
+    <div class="ProfileInfo">
+      <div class="ProfileNameTitle">
+        <div>
+          <div class="ProfileName">{{UserCache?.firstName}}</div>
+          <div class="ProfileUsername">{{"@"}}{{UserCache?.userName}}</div>
+        </div>
+        <div class="UserProfileHeader_Items">asdsad</div>
+      </div>
+      <div class="UserFollowingSubscribe">
+        <a class="UserFollowing"><samp>1</samp><samp>Following</samp></a>
+        <a class="UserSubscribe"><samp>2</samp><samp>Subscribe</samp></a>
+      </div>
+    </div>
+    <div class="ProfileTabs">
+      <div class="ProfileTab"><samp>Post</samp></div>
+      <div class="ProfileTab"><samp>Media</samp></div>
+      <div class="ProfileTab"><samp>Replies</samp></div>
+    </div>
+  </div>
+
+
+  <ng-template #UserElse>
+    <div class="ProfileContainer">
+      <div class="ProfileBanner">
+        <img src="{{UserData!.avatar}}" alt="User Avatar" class="ProfileAvatar">
+      </div>
+      <div class="FollowButton">
+        <button *ngIf="!UserData?.youFollower; else UnfollowButton" (click)="Subscribers()">Follow</button>
+        <ng-template #UnfollowButton>
+          <button>Unfollow</button>
+        </ng-template>
+        <button>Message</button>
+      </div>
+
+      <div class="ProfileInfo">
+        <div class="ProfileNameTitle">
+          <div>
+            <div class="ProfileName">
+              {{ (UserData?.firstName || '') + ' ' + (UserData?.lastName || '') }}
+            </div>
+            <div class="ProfileUsername">{{"@"}}{{UserData?.userName}}</div>
+          </div>
+          <div class="UserProfileHeader_Items">{{UserData?.title}}</div>
+        </div>
+        <div class="UserFollowingSubscribe">
+          <a class="UserFollowing"><samp>{{UserData?.followersAmount}}</samp><samp>Following</samp></a>
+          <a class="UserSubscribe"><samp>{{UserData?.subscribersAmount}}</samp><samp>Subscribe</samp></a>
+        </div>
+      </div>
+      <div class="ProfileTabs">
+        <div class="ProfileTab"><samp>Post</samp></div>
+        <div class="ProfileTab"><samp>Media</samp></div>
+        <div class="ProfileTab"><samp>Replies</samp></div>
+      </div>
+    </div>
+  </ng-template>
+</main>
