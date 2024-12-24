@@ -2,10 +2,11 @@
 using System.Security.Cryptography;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Server.Interface.Hash;
 
 namespace Server.Hash
 {
-    public class HASH
+    public class HASH : IHASH
     {
         public byte[] GenerateKey()
         {

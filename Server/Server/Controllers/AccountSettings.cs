@@ -20,7 +20,7 @@ namespace Server.Controllers
         public AccountSettings(AppDbContext _context) { context = _context; }
 
         [HttpPost("ConfirmationAccount")]
-        public async Task<IActionResult> CheckingPassword(TokenModel Account)
+        public async Task<IActionResult> ConfirmationAccount(TokenModel Account)
         {
             try
             {
@@ -116,7 +116,7 @@ namespace Server.Controllers
                 if (!string.IsNullOrWhiteSpace(model.PhoneNumber)) user.PhoneNumber = model.PhoneNumber;
                 if (!string.IsNullOrWhiteSpace(model.LastName)) user.LastName = model.LastName;
                 if (!string.IsNullOrWhiteSpace(model.Avatar)) user.Avatar = model.Avatar;
-                if (!string.IsNullOrWhiteSpace(model.NickName)) user.UserName = model.NickName;
+                if (!string.IsNullOrWhiteSpace(model.NickName)) user.UserName = model.NickName.ToLower();
                 if (!string.IsNullOrWhiteSpace(model.Title)) user.Title = model.Title;
 
                 await context.SaveChangesAsync();

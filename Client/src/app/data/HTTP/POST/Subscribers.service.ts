@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { CheckUser } from '../../Global';
 
@@ -16,6 +16,18 @@ export class Subscribers {
 
     return this.http.put(`api/Fleets/Subscribers`, AccountSettingsModel, {
       headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  Delete(NickName: string, userId: string) {
+    const params = new HttpParams()
+      .set('NickName', NickName)
+      .set('userId', userId);
+
+    return this.http.delete(`api/Fleets/Subscribers`, {
+      headers: { 'Content-Type': 'application/json' },
+      responseType: 'text',
+      params
     });
   }
 }

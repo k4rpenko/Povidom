@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Server.Interface.Hash;
+using System;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Server.Hash
 {
-    public class RSAHash
+    public class RSAHash : IRSAHash
     {
         private RSA _rsa;
 

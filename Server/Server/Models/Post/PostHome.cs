@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Server.Models.MessageChat;
+using StackExchange.Redis;
 using System.Xml.Linq;
 
 namespace Server.Models.Post
@@ -13,7 +14,7 @@ namespace Server.Models.Post
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public List<string>? MediaUrls { get; set; }
-        public Like? LikeArray { get; set; }
+        public List<Like>? LikeArray { get; set; } = new List<Like>();
         public bool? YouLike { get; set; }
         public int? LikeAmount { get; set; }
         public int? Retpost { get; set; }
@@ -21,8 +22,8 @@ namespace Server.Models.Post
         public int? RetpostAmount { get; set; }
         public int? Hashtags { get; set; }
         public int? Mentions { get; set; }
-        public List<UserFind>? Recall { get; set; }
-        public Comment? CommentsArray { get; set; }
+        public List<UserFind>? Recall { get; set; } = new List<UserFind>();
+        public List<Comment>? CommentsArray { get; set; } = new List<Comment>();
         public bool? YouComment { get; set; }
         public int? CommentAmount { get; set; }
         public int? Views { get; set; }

@@ -7,23 +7,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RedisDAL;
 using Server.Models.Users;
+using Server.Interface.Hash;
+using Server.Interface.Sending;
+using Server.Interface.Controlles;
 
 namespace Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : Controller
+    public class AuthController : Controller, IAuthController
     {
-        private readonly EmailSeding emailSend = new EmailSeding();
-        private readonly AppDbContext context;
-        private readonly JWT jwt = new JWT();
-        HASH HASH = new HASH();
-        RSAHash rsa = new RSAHash();
+        private readonly IEmailSeding _emailSend;
+        private readonly IJwt _jwt;
+        private readonly IHASH _hash;
+        private readonly IRSAHash _rsa;
+        private readonly AppDbContext _context;
 
-        public AuthController(
-            AppDbContext _context
-            )
-        { context = _context;}
+        public AuthController(AppDbContext context, IEmailSeding emailSend, IJwt jwt, IHASH hash, IRSAHash rsa)
+        {
+            _context = context;
+            _emailSend = emailSend;
+            _jwt = jwt;
+            _hash = hash;
+            _rsa = rsa;
+        }
 
 
         [HttpPost("registration")]
@@ -33,29 +40,31 @@ namespace Server.Controllers
             try
             {
                 
-                var user = context.User.FirstOrDefault(u => u.Email == _user.Email);
+                var user = _context.User.FirstOrDefault(u => u.Email == _user.Email);
                 if (user == null)
                 {
 
-                    var KeyG = BitConverter.ToString(HASH.GenerateKey()).Replace("-", "").ToLower();
-                    int nextUserNumber = await context.User.CountAsync() + 1;
+                    var KeyG = BitConverter.ToString(_hash.GenerateKey()).Replace("-", "").ToLower();
+                    int nextUserNumber = await _context.User.CountAsync() + 1;
                     var newUser = new UserModel
                     {
                         Email = _user.Email,
+                        EmailConfirmed = true,
                         ConcurrencyStamp = KeyG,
-                        PasswordHash = HASH.Encrypt(_user.Password, KeyG),
+                        PasswordHash = _hash.Encrypt(_user.Password, KeyG),
                         UserName = $"User{nextUserNumber}",
                         FirstName = "User",
+                        LastName = "",
                         Avatar = "https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg",
-                        PublicKey = rsa.GeneratePublicKeys(), 
-                        PrivateKey = rsa.GeneratePrivateKeys()
+                        PublicKey = _rsa.GeneratePublicKeys(), 
+                        PrivateKey = _rsa.GeneratePrivateKeys()
 
                     };  
 
-                    context.User.Add(newUser);
+                    _context.User.Add(newUser);
  
 
-                    var UserRoleID = context.Roles.FirstOrDefault(u => u.Name == "User");
+                    var UserRoleID = _context.Roles.FirstOrDefault(u => u.Name == "User");
 
                     var UserRole = new IdentityUserRole<string>
                     {
@@ -64,29 +73,29 @@ namespace Server.Controllers
                     };
 
 
-                    context.UserRoles.Add(UserRole);
+                    _context.UserRoles.Add(UserRole);
 
                     var newToken = new IdentityUserToken<string>
                     {
                         UserId = newUser.Id,
                         LoginProvider = "Default",
                         Name = newUser.UserName,
-                        Value = jwt.GenerateJwtToken(newUser.Id, KeyG, 720, UserRoleID.Id)
+                        Value = _jwt.GenerateJwtToken(newUser.Id, KeyG, 720, UserRoleID.Id)
                     };
 
-                    context.UserTokens.Add(newToken);
+                    _context.UserTokens.Add(newToken);
 
-                    await context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                    
                     var userId = newUser.Id;
-                    var record = await context.User.FindAsync(userId);
+                    var record = await _context.User.FindAsync(userId);
 
                     if (record != null)
                     {
                         var RefreshToken = newToken.Value;
                         
-                        await context.SaveChangesAsync();
-                        await emailSend.PasswordCheckEmailAsync(_user.Email, jwt.GenerateJwtToken(userId, KeyG, 1), Request.Scheme, Request.Host.ToString());
+                        await _context.SaveChangesAsync();
+                        //await _emailSend.PasswordCheckEmailAsync(_user.Email, _jwt.GenerateJwtToken(userId, KeyG, 1), Request.Scheme, Request.Host.ToString());
                         return Ok();
                     }
                 }
@@ -107,25 +116,27 @@ namespace Server.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(UserAuth _user)
         {
-            if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password)) { return BadRequest(new { message = "Email or password cannot be empty." }); }
-            try
+            if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password))
             {
-                var user = await context.User.FirstOrDefaultAsync(u => u.Email == _user.Email);
-                if (user == null) { return NotFound(new { message = "User not found." }); }
-                if (HASH.Encrypt(_user.Password, user.ConcurrencyStamp) != user.PasswordHash) { return Unauthorized(new { message = "Invalid email or password." }); }
-                if (!user.EmailConfirmed) { return BadRequest(new { message = "Email not confirmed." }); }
-
-                var roleUser = await context.UserRoles.FirstOrDefaultAsync(u => u.UserId == user.Id);
-                if (roleUser == null) { return NotFound(new { message = "User role not found." }); }
-
-                var token = jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, roleUser.RoleId);
-                return Ok(new { token });
+                return BadRequest(new { message = "Email and Password cannot be null or empty" });
             }
-            catch (Exception ex)
+
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == _user.Email);
+
+            if (user == null)
             {
-                Console.WriteLine("\n\n ERROR: " + ex);
-                return StatusCode(500, new { message = "An internal server error occurred." });
+                return NotFound(new { message = "User not found." });
             }
+
+            var encryptedPassword = _hash.Encrypt(_user.Password, user.ConcurrencyStamp);
+
+            if (user.PasswordHash != encryptedPassword)
+            {
+                return Unauthorized(new { message = "Invalid credentials." });
+            }
+
+            var token = _jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 720, "User");
+            return Ok(new { token });
         }
 
     }

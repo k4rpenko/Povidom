@@ -10,8 +10,8 @@ export interface UserProfil {
   firstName?: string;
   lastName?: string;
 
-  posts?: Array<Post>;
-  recallPosts?: Array<Post>;
+  post?: Array<Post>;
+  recall?: Array<Post>;
 
   followersAmount?: number;
   followers?: Array<User>;

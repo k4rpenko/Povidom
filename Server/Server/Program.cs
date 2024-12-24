@@ -9,6 +9,10 @@ using System;
 using Server.Hubs;
 using RedisDAL.User;
 using Server.Sending;
+using Server.Interface.Sending;
+using Server.Interface.Hash;
+using Server.Controllers;
+using Server.Hash;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,12 +22,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 
-// Підключення до MongoDB і Redis
 builder.Services.AddSingleton<AppMongoContext>();
 builder.Services.AddSingleton<RedisConfigure>();
 builder.Services.AddSingleton<UsersConnectMessage>();
 builder.Services.AddHostedService<CharHubBackgroundService>();
-
+builder.Services.AddScoped<IEmailSeding, EmailSeding>();
+builder.Services.AddScoped<IJwt, JWT>();
+builder.Services.AddScoped<IHASH, HASH>();
+builder.Services.AddScoped<IRSAHash, RSAHash>();
 
 // Налаштування CORS (Cross-Origin Resource Sharing)
 builder.Services.AddCors(options =>

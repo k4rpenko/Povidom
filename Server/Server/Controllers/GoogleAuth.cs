@@ -62,9 +62,10 @@ namespace Server.Controllers
                 var newUser = new UserModel
                 {
                     Email = userInfo.Email,
+                    EmailConfirmed = true,
                     ConcurrencyStamp = KeyG,
                     PasswordHash = "",
-                    UserName = $"User{nextUserNumber}",
+                    UserName = $"user{nextUserNumber}",
                     FirstName = firstName,
                     LastName = lastName,
                     Avatar = userInfo.Picture != null || userInfo.Picture != "" ? userInfo.Picture : "https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg",

@@ -1,4 +1,5 @@
-﻿using Server.Models.Post;
+﻿using Server.Models.MessageChat;
+using Server.Models.Post;
 
 namespace Server.Models.Users
 {
@@ -12,13 +13,16 @@ namespace Server.Models.Users
         public string? PhoneNumber { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public List<SpacePostModel> Post = new List<SpacePostModel>();
-        public List<SpacePostModel> RecallPost = new List<SpacePostModel>();
+
+        // Заміна полів на властивості
+        public List<PostHome> Post { get; set; } = new List<PostHome>();
+        public List<PostHome> RecallPost { get; set; } = new List<PostHome>();
+
         public int FollowersAmount { get; set; }
-        public List<AccountSettingsModel> Followers = new List<AccountSettingsModel>();
+        public List<AccountSettingsModel> Followers { get; set; } = new List<AccountSettingsModel>();
         public bool YouFollower { get; set; }
         public int SubscribersAmount { get; set; }
-        public List<AccountSettingsModel> Subscribers = new List<AccountSettingsModel>();
+        public List<AccountSettingsModel> Subscribers { get; set; } = new List<AccountSettingsModel>();
         public bool YouSubscriber { get; set; }
     }
 }

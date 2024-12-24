@@ -70,14 +70,14 @@
                     </div>
                     <ng-template  #DLike>
                       <div class="SVG-Fill-Like">
-                        <a (click)="OpenComments(post)">
+                        <a (click)="DeleteLikePost(post)">
                           <svg  viewBox="0 0 24 24" aria-hidden="true" fill="#F91880"><path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"/></svg>
                           {{post.likeAmount}}
                         </a>
                       </div>
                     </ng-template>
                     <div class="SVG-View" >
-                      <a>
+                      <a >
                         <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="SVG"><g><path d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"></path></g></svg>
                         {{post.views}}
                       </a>

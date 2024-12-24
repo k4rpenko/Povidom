@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using NoSQL;
@@ -14,6 +15,7 @@ using Server.utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -74,7 +76,7 @@ namespace Server.Controllers
                 }
                     
 
-                var id = new JWT().GetUserIdFromToken(cookieValue);
+                var id = _jwt.GetUserIdFromToken(cookieValue);
                 if (id == null) { return Unauthorized(); }
 
 
@@ -116,28 +118,6 @@ namespace Server.Controllers
                 var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Nick);
                 if (user != null)
                 {
-                    var PostForID = new List<SpacePostModel>();
-                    var Recall = new List<SpacePostModel>();
-                    foreach (var item in user.PostID)
-                    {
-                        var objectId = ObjectId.Parse(item);
-                        var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
-                        PostForID.Add(post);
-                    }
-                    foreach (var item in user.RetweetPostID)
-                    {
-                        var objectId = ObjectId.Parse(item);
-                        var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
-                        PostForID.Add(post);
-                    }
-
-                    foreach (var item in user.RecallPostId)
-                    {
-                        var objectId = ObjectId.Parse(item);
-                        var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
-                        Recall.Add(post);
-                    }
-
                     var userAccount = new UserAccount
                     {
                         Id = user.Id.ToString(),
@@ -147,30 +127,81 @@ namespace Server.Controllers
                         PhoneNumber = user.PhoneNumber,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        Post = PostForID,
-                        RecallPost = Recall,
                         FollowersAmount = user.Followers.Count,
                         SubscribersAmount = user.Subscribers.Count,
                     };
 
-                    if (Request.Cookies.TryGetValue("Token", out string cookieValue))
+                    string id = null;
+                    UserModel You = null;
+
+                    if (Request.Cookies.TryGetValue("authToken", out string cookieValue))
                     {
-                        var id = new JWT().GetUserIdFromToken(cookieValue);
+                        id = _jwt.GetUserIdFromToken(cookieValue);
                         if (id != null)
                         {
-                            userAccount.YouSubscriber = user.Subscribers.Contains(id);
-                            userAccount.YouFollower = user.Followers.Contains(id);
+                            You = await context.User.FirstOrDefaultAsync(u => u.Id == id);
                         }
                     }
 
+                    if (You != null)
+                    {
+                        userAccount.YouSubscriber = user.Subscribers.Contains(id);
+                        userAccount.YouFollower = user.Followers.Contains(id);
+                    }
+
+                    async Task AddPosts(IEnumerable<string> postIds, Action<PostHome> addPost)
+                    {
+                        foreach (var item in postIds)
+                        {
+                            var objectId = ObjectId.Parse(item);
+                            var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+                            if (post != null)
+                            {
+                                addPost(new PostHome
+                                {
+                                    Id = post.Id.ToString(),
+                                    User = new UserFind
+                                    {
+                                        Id = user.Id,
+                                        UserName = user.UserName,
+                                        FirstName = user.FirstName,
+                                        Avatar = user.Avatar
+                                    },
+                                    Content = post.Content,
+                                    CreatedAt = post.CreatedAt,
+                                    UpdatedAt = post.UpdatedAt,
+                                    MediaUrls = post.MediaUrls,
+                                    LikeAmount = post.Like?.Count ?? 0,
+                                    YouLike = You != null ? You.LikePostID.Contains(post.Id.ToString()) ? true : false : false,
+                                    Retpost = post.Retpost?.Count ?? 0,
+                                    RetpostAmount = post.InRetpost?.Count ?? 0,
+                                    YouRetpost = You != null ? You.RetweetPostID.Contains(post.Id.ToString()) ? true : false : false,
+                                    Hashtags = post.Hashtags?.Count ?? 0,
+                                    Mentions = post.Mentions?.Count ?? 0,
+                                    CommentAmount = post.Comments?.Count ?? 0,
+                                    YouComment = You != null ? You.CommentPostID.Contains(post.Id.ToString()) ? true : false : false,
+                                    Views = post.Views?.Count ?? 0,
+                                    SPublished = post.SPublished
+                                });
+                            }
+                        }
+                    }
+
+
+                    await AddPosts(user.PostID, post => userAccount.Post.Add(post));
+                    await AddPosts(user.RetweetPostID, post => userAccount.Post.Add(post));
+                    await AddPosts(user.RecallPostId, post => userAccount.RecallPost.Add(post));
+
                     return Ok(userAccount);
                 }
+
                 return NotFound();
             }
             catch (Exception ex)
             {
                 return StatusCode(500);
             }
+
         }
 
         [HttpGet("")]
@@ -180,7 +211,7 @@ namespace Server.Controllers
             {
                 if (Request.Cookies.TryGetValue("authToken", out string cookieValue))
                 {
-                    var id = new JWT().GetUserIdFromToken(cookieValue);
+                    var id = _jwt.GetUserIdFromToken(cookieValue);
                     var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
                     if (user != null)
                     {
@@ -313,7 +344,7 @@ namespace Server.Controllers
                     return Unauthorized();
                 }
 
-                var id = new JWT().GetUserIdFromToken(cookieValue);
+                var id = _jwt.GetUserIdFromToken(cookieValue);
                 var You = await context.User.FindAsync(id);
 
                 if (user != null && You != null)
@@ -333,18 +364,18 @@ namespace Server.Controllers
         }
 
         [HttpDelete("Subscribers")]
-        public async Task<IActionResult> DeleteSubscribers(AccountSettingsModel Account)
+        public async Task<IActionResult> DeleteSubscribers([FromQuery] string NickName, [FromQuery] string userId)
         {
             try
             {
-                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == Account.NickName);
-                var id = _jwt.GetUserIdFromToken(Account.Token);
+                var user = await context.User.FirstOrDefaultAsync(u => u.UserName == NickName);
+                var id = _jwt.GetUserIdFromToken(userId);
                 var You = await context.User.FindAsync(id);
 
                 if (user != null && You != null)
                 {
-                    user.Followers.Remove(Account.Id);
-                    You.Subscribers.Remove(Account.NickName);
+                    user.Followers.Remove(You.Id);
+                    You.Subscribers.Remove(user.Id);
 
                     await context.SaveChangesAsync();
                     return Ok();

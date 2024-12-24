@@ -13,7 +13,7 @@ export class UserDataGet {
 
   constructor() { }
 
-  Get(nick: string): Observable<UserProfil> {
-    return this.http.get<UserProfil>(`api/Fleets/${nick}`);
+  Get(nick: string){
+    return this.http.get(`api/Fleets/${nick}`);
   }
 }

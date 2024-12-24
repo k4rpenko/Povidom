@@ -90,6 +90,27 @@ export class PostsComponent implements OnInit {
     });
   }
 
+  DeleteLikePost(post: Post) {
+    if (!post || !post.id) {
+      console.error('Post or Post ID is undefined');
+      return;
+    }
+
+    const postlike: SpacePostModel = {
+      Id: post.id!,
+      UserId: this.cookieService.get('authToken')
+    };
+
+    this.spacePostsLikeService.DeleteLike(postlike).subscribe({
+      next: (response) => {
+        const likedPost = this.posts.find(p => p.id === post.id);
+        likedPost!.likeAmount = Math.max(0, (likedPost!.likeAmount || 0) - 1);
+        likedPost!.youLike = false;
+      },
+      error: (error) => console.error('Error unliking post:', error)
+    });
+  }
+
 
   private loadPosts() {
     this.spacePostsService.getPosts().subscribe(response => {

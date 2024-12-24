@@ -110,8 +110,6 @@ namespace Server.Controllers
                 var id = new JWT().GetUserIdFromToken(_data.UserId);
                 var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
 
-                Console.WriteLine(id);
-
                 if (user.LikePostID.Contains(_data.Id))
                 {
                     return NotFound();
@@ -119,10 +117,10 @@ namespace Server.Controllers
                 
                 var newLike = new Like()
                 {
-                    UserId = _data.UserId,
+                    UserId = id,
                     CreatedAt = DateTime.UtcNow
                 };
-                Console.WriteLine(newLike);
+
                 var objectId = ObjectId.Parse(_data.Id);
 
                 var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.Like, newLike);
@@ -149,6 +147,53 @@ namespace Server.Controllers
                 throw new Exception("", ex);
             }
         }
+
+        [HttpDelete("LikePost")]
+        public async Task<IActionResult> DeleteLikePost([FromQuery] string id, [FromQuery] string userId)
+        {
+            try
+            {
+                var userIdFromToken = new JWT().GetUserIdFromToken(userId);
+                var user = await context.User.FirstOrDefaultAsync(u => u.Id == userIdFromToken);
+
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                if (!user.LikePostID.Contains(id))
+                {
+                    return NotFound("Like not found for this post.");
+                }
+
+                var objectId = ObjectId.Parse(id);
+
+                var updateDefinition = Builders<SpacePostModel>.Update.PullFilter(
+                    post => post.Like,
+                    like => like.UserId == userIdFromToken
+                );
+
+                var updateResult = await _customers.UpdateOneAsync(
+                    post => post.Id == objectId,
+                    updateDefinition
+                );
+
+                if (updateResult.MatchedCount == 0)
+                {
+                    return NotFound("Post not found.");
+                }
+
+                user.LikePostID.Remove(id);
+                await context.SaveChangesAsync();
+
+                return Ok("Delete Like");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while removing the like: {ex.Message}");
+            }
+        }
+
 
         [HttpPut("Comment")]
         public async Task<IActionResult> AddComment(SpaceWorkModel _data)

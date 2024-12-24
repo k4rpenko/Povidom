@@ -5,10 +5,11 @@ using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.Tokens;
 using PGAdminDAL;
+using Server.Interface.Hash;
 
 namespace Server.Controllers
 {
-    public class JWT
+    public class JWT : IJwt
     {
         private readonly byte[] Key;
 
