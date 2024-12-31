@@ -1,15 +1,13 @@
-﻿using Server.Hash;
-using Server.Sending;
+﻿using Server.Sending;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using Server.Models.Google;
 using Newtonsoft.Json;
 using PGAdminDAL;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PGAdminDAL.Model;
-using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Server.Interface.Hash;
 
 namespace Server.Controllers
 {
@@ -18,12 +16,18 @@ namespace Server.Controllers
     public class GoogleAuth : Controller
     {
         GoogleOAuth GoogleOAuth = new GoogleOAuth();
-        HASH sha = new HASH();
-        RSAHash rsa = new RSAHash();
         private readonly AppDbContext context;
-        private readonly JWT jwt = new JWT();
+        private readonly IJwt _jwt;
+        private readonly IHASH _hash;
+        private readonly IRSAHash _rsa;
 
-        public GoogleAuth(AppDbContext _context) { context = _context; }
+        public GoogleAuth(AppDbContext _context, IJwt jwt, IHASH hash, IRSAHash rsa)
+        {
+            context = _context;
+            _jwt = jwt;
+            _hash = hash;
+            _rsa = rsa;
+        }
 
         [HttpGet("GoogleAuth")]
         public async Task<IActionResult> RedirectOauthServer()
@@ -58,7 +62,7 @@ namespace Server.Controllers
                 string lastName = nameParts.Length > 1 ? nameParts[1] : "";
 
                 int nextUserNumber = await context.User.CountAsync() + 1;
-                var KeyG = BitConverter.ToString(sha.GenerateKey()).Replace("-", "").ToLower();
+                var KeyG = BitConverter.ToString(_hash.GenerateKey()).Replace("-", "").ToLower();
                 var newUser = new UserModel
                 {
                     Email = userInfo.Email,
@@ -69,8 +73,8 @@ namespace Server.Controllers
                     FirstName = firstName,
                     LastName = lastName,
                     Avatar = userInfo.Picture != null || userInfo.Picture != "" ? userInfo.Picture : "https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg",
-                    PublicKey = rsa.GeneratePublicKeys(),
-                    PrivateKey = rsa.GeneratePrivateKeys()
+                    PublicKey = _rsa.GeneratePublicKeys(),
+                    PrivateKey = _rsa.GeneratePrivateKeys()
                 };
 
                 context.User.Add(newUser);
@@ -101,7 +105,7 @@ namespace Server.Controllers
                     UserId = newUser.Id,
                     LoginProvider = "Default",
                     Name = newUser.UserName,
-                    Value = jwt.GenerateJwtToken(newUser.Id, KeyG, 720, UserRoleID.Id)
+                    Value = _jwt.GenerateJwtToken(newUser.Id, KeyG, 720, UserRoleID.Id)
                 };
 
                 context.UserTokens.Add(newToken);
@@ -116,7 +120,7 @@ namespace Server.Controllers
                     var RefreshToken = newToken.Value;
                     await context.SaveChangesAsync();
                 }
-                var accets = jwt.GenerateJwtToken(userId, KeyG, 1, UserRole.RoleId);
+                var accets = _jwt.GenerateJwtToken(userId, KeyG, 1, UserRole.RoleId);
                 return Ok(new { token = accets });
             }
             else
@@ -127,7 +131,7 @@ namespace Server.Controllers
                     return StatusCode(500, "User role not found.");
                 }
 
-                var accessToken = jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, roleUser.RoleId);
+                var accessToken = _jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 1, roleUser.RoleId);
                 return Ok(new { token = accessToken });
             }
         }

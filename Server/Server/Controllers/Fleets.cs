@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using NoSQL;
 using PGAdminDAL;
 using PGAdminDAL.Model;
+using Server.Interface.Hash;
 using Server.Models.MessageChat;
 using Server.Models.Post;
 using Server.Models.Users;
@@ -27,9 +28,14 @@ namespace Server.Controllers
     {
         private readonly IMongoCollection<SpacePostModel> _customers;
         private readonly AppDbContext context;
-        private readonly JWT _jwt = new JWT();
+        private readonly IJwt _jwt;
 
-        public Fleets(AppDbContext _context, AppMongoContext _Mongo,  IConfiguration _configuration) { context = _context; _customers = _Mongo.Database?.GetCollection<SpacePostModel>(_configuration.GetSection("MongoDB:MongoDbDatabase").Value); }
+        public Fleets(AppDbContext _context, AppMongoContext _Mongo,  IConfiguration _configuration, IJwt jwt) 
+        { 
+            context = _context; 
+            _customers = _Mongo.Database?.GetCollection<SpacePostModel>(_configuration.GetSection("MongoDB:MongoDbDatabase").Value);
+            _jwt = jwt;
+        }
 
         [HttpGet("FindPeople")]
         public async Task<IActionResult> FindPeople(string query)

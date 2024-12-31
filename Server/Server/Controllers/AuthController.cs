@@ -1,11 +1,8 @@
-﻿using Server.Hash;
-using Server.Sending;
-using PGAdminDAL;
+﻿using PGAdminDAL;
 using PGAdminDAL.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RedisDAL;
 using Server.Models.Users;
 using Server.Interface.Hash;
 using Server.Interface.Sending;
@@ -49,7 +46,7 @@ namespace Server.Controllers
                     var newUser = new UserModel
                     {
                         Email = _user.Email,
-                        EmailConfirmed = true,
+                        EmailConfirmed = false,
                         ConcurrencyStamp = KeyG,
                         PasswordHash = _hash.Encrypt(_user.Password, KeyG),
                         UserName = $"User{nextUserNumber}",

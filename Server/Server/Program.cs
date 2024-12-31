@@ -31,6 +31,8 @@ builder.Services.AddScoped<IJwt, JWT>();
 builder.Services.AddScoped<IHASH, HASH>();
 builder.Services.AddScoped<IRSAHash, RSAHash>();
 
+
+
 // Налаштування CORS (Cross-Origin Resource Sharing)
 builder.Services.AddCors(options =>
 {
@@ -116,7 +118,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-
 app.Use(async (context, next) =>
 {
     // Перевірка, чи містить шлях @fs
@@ -149,7 +150,6 @@ app.Use(async (context, next) =>
 });
 
 
-
 // Додавання Swagger для API в режимі розробки
 if (app.Environment.IsDevelopment())
 {
@@ -159,11 +159,7 @@ if (app.Environment.IsDevelopment())
 
 // Реєстрація SignalR Hub для чату в реальному часі
 app.MapHub<ChatHub>("/message");
-
-// Налаштування CORS
 app.UseCors("AllowSpecificOrigin");
-
-// Використання сесій, автентифікації та авторизації
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();

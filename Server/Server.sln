@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoSQL", "NoSQL\NoSQL.csproj", "{ADAF3B83-E2FA-4DEC-986E-574FC074BBD7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcClient", "..\GrpcClient\GrpcClient.csproj", "{320C2241-A7DD-4DA3-A062-3B15C843AA88}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{ADAF3B83-E2FA-4DEC-986E-574FC074BBD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADAF3B83-E2FA-4DEC-986E-574FC074BBD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADAF3B83-E2FA-4DEC-986E-574FC074BBD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{320C2241-A7DD-4DA3-A062-3B15C843AA88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{320C2241-A7DD-4DA3-A062-3B15C843AA88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{320C2241-A7DD-4DA3-A062-3B15C843AA88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{320C2241-A7DD-4DA3-A062-3B15C843AA88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

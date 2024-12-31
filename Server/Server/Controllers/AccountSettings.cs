@@ -1,41 +1,44 @@
-﻿using Server.Hash;
-using Server.Sending;
-using PGAdminDAL;
+﻿using PGAdminDAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.utils;
 using Server.Models.Users;
 using Server.Models.Tokens;
+using Server.Interface.Hash;
 namespace Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class AccountSettings : Controller
     {
-        private UserName _untilUser = new UserName();
-        private readonly EmailSeding _emailSend = new EmailSeding();
-        private readonly AppDbContext context;
-        private HASH _HASH = new HASH();
-        private JWT _jwt = new JWT();
-        public AccountSettings(AppDbContext _context) { context = _context; }
+        private readonly IJwt _jwt;
+        private readonly IHASH _hash;
+        private readonly AppDbContext _context;
+
+        public AccountSettings(AppDbContext context, IJwt jwt, IHASH hash) 
+        { 
+            _context = context;
+            _jwt = jwt;
+            _hash = hash;
+        }
 
         [HttpPost("ConfirmationAccount")]
         public async Task<IActionResult> ConfirmationAccount(TokenModel Account)
         {
             try
             {
-                if (Account.ConfirmationToken != null && _jwt.ValidateToken(Account.ConfirmationToken, context))
+                if (Account.ConfirmationToken != null && _jwt.ValidateToken(Account.ConfirmationToken, _context))
                 {
                     var id = _jwt.GetUserIdFromToken(Account.ConfirmationToken);
-                    var user = context.User.FirstOrDefault(u => u.Id == id);
-                    var userRole = context.UserRoles.FirstOrDefault(u => u.UserId == id);
+                    var user = _context.User.FirstOrDefault(u => u.Id == id);
+                    var userRole = _context.UserRoles.FirstOrDefault(u => u.UserId == id);
                     if (user != null)
                     {
                         user.EmailConfirmed = true;
-                        await context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
+                        var accets = _jwt.GenerateJwtToken(id, user.ConcurrencyStamp, 1, userRole.RoleId);
+                        return Ok(new { token = accets });
                     }
-                    var accets = _jwt.GenerateJwtToken(id, user.ConcurrencyStamp, 1, userRole.RoleId);
-                    return Ok(new { token = accets });
                 }
                 return NotFound();
             }
@@ -51,15 +54,17 @@ namespace Server.Controllers
             try
             {
                 var id = _jwt.GetUserIdFromToken(_tokenM.AccessToken);
-                var user = context.User.FirstOrDefault(u => u.Id == id);
-                var userRoles = context.UserRoles.FirstOrDefault(u => u.UserId == id);
-                var refreshToke = context.UserTokens.FirstOrDefault(t => t.UserId == id);
-                if (_jwt.ValidateToken(refreshToke.Value, context) == false)
+                var user = _context.User.FirstOrDefault(u => u.Id == id);
+                var userRoles = _context.UserRoles.FirstOrDefault(u => u.UserId == id);
+                var refreshToke = _context.UserTokens.FirstOrDefault(t => t.UserId == id);
+
+                if (_jwt.ValidateToken(refreshToke.Value, _context) == false)
                 {
                     refreshToke.Value = null;
-                    await context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                     return Unauthorized();
                 }
+
                 var accessToken = _jwt.GenerateJwtToken(id, user.ConcurrencyStamp, 1, userRoles.RoleId);
                 return Ok(new { token = accessToken });
             }
@@ -74,18 +79,18 @@ namespace Server.Controllers
         {
             try
             {
-                if (Account.Password != null  && _jwt.ValidateToken(Account.Token, context))
+                if (Account.Password != null  && _jwt.ValidateToken(Account.Token, _context))
                 {
                     var id = _jwt.GetUserIdFromToken(Account.Token);
-                    var user = await context.User.FindAsync(id);
+                    var user = await _context.User.FindAsync(id);
                     if (user != null)
                     {
-                        string HashNewPassword = _HASH.Encrypt(Account.NewPassword, user.ConcurrencyStamp);
-                        string HashPassword = _HASH.Encrypt(Account.Password, user.ConcurrencyStamp);
+                        string HashNewPassword = _hash.Encrypt(Account.NewPassword, user.ConcurrencyStamp);
+                        string HashPassword = _hash.Encrypt(Account.Password, user.ConcurrencyStamp);
                         if (HashPassword == user.PasswordHash)
                         {
                             user.PasswordHash = HashNewPassword;
-                            await context.SaveChangesAsync();
+                            await _context.SaveChangesAsync();
                             return Ok();
                         }
                         return Unauthorized("Invalid credentials");
@@ -105,11 +110,9 @@ namespace Server.Controllers
             try
             {
                 var id = _jwt.GetUserIdFromToken(model.Token);
-                var user = await context.User.FindAsync(id);
-                if (user == null)
-                {
-                    return NotFound(new { message = "User not found" });
-                }
+                var user = await _context.User.FindAsync(id);
+
+                if (user == null) { return NotFound(new { message = "User not found" }); }
 
                 if (!string.IsNullOrWhiteSpace(model.FirstName)) user.FirstName = model.FirstName;
                 if (!string.IsNullOrWhiteSpace(model.Email)) user.Email = model.Email;
@@ -119,7 +122,7 @@ namespace Server.Controllers
                 if (!string.IsNullOrWhiteSpace(model.NickName)) user.UserName = model.NickName.ToLower();
                 if (!string.IsNullOrWhiteSpace(model.Title)) user.Title = model.Title;
 
-                await context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return Ok(new { message = "User updated successfully" });
             }
             catch (Exception ex)
@@ -133,17 +136,16 @@ namespace Server.Controllers
         {
             try
             {
-                var mainUser = await context.User.FirstOrDefaultAsync(u => u.Id == model.Id);
+                var mainUser = await _context.User.FirstOrDefaultAsync(u => u.Id == model.Id);
 
                 if (mainUser == null)
                 {
-                    return Ok();
+                    return NotFound(new { message = "User not found" });
                 }
-                else {
-                    var additionalNicknames = _untilUser.GenerateAdditionalNicknames(model.NickName, context);
 
-                    return Ok(new { modUserName = additionalNicknames });
-                }
+                var additionalNicknames = new UserName().GenerateAdditionalNicknames(model.NickName, _context);
+                return Ok(new { modUserName = additionalNicknames });
+
             }
             catch (Exception ex)
             {

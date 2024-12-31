@@ -1,18 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using NoSQL;
 using PGAdminDAL;
-using PGAdminDAL.Model;
 using Server.Models.MessageChat;
 using Server.Models.Post;
-using Server.Protection;
-using System.Linq;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Server.Controllers
 {
@@ -22,8 +15,13 @@ namespace Server.Controllers
     {
         private readonly IMongoCollection<SpacePostModel> _customers;
         private readonly AppDbContext context;
-        public SpacePosts(AppMongoContext _Mongo, IConfiguration _configuration, AppDbContext _context) { _customers = _Mongo.Database?.GetCollection<SpacePostModel>(_configuration.GetSection("MongoDB:MongoDbDatabase").Value); context = _context; }
-        private readonly JWT _jwt = new JWT();
+
+        public SpacePosts(AppMongoContext _Mongo, IConfiguration _configuration, AppDbContext _context) 
+        { 
+            _customers = _Mongo.Database?.GetCollection<SpacePostModel>(_configuration.GetSection("MongoDB:MongoDbDatabase").Value); 
+            context = _context; 
+        }
+
 
         [HttpPost("AddPost")]
         public async Task<IActionResult> AddPost(SpacePostModel _data)

@@ -7,7 +7,6 @@ namespace Server.utils
     public class UserName
     {
         private static Random random = new Random();
-        const string letters = "abcdefghijklmnopqrstuvwxyz";
 
         internal List<string> GenerateAdditionalNicknames(string nickname, AppDbContext context)
         {
