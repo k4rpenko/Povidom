@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Server.Hash
 {
-    public class RSAHash : IRSAHash
+    internal class RSAHash : IRSAHash
     {
         private RSA _rsa;
 

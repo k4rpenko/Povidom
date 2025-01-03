@@ -5,7 +5,7 @@ using Server.Interface.Sending;
 
 namespace Server.Sending
 {
-    public class EmailSeding : IEmailSeding
+    internal class EmailSeding : IEmailSeding
     {
         SmtpClient smtpClient;
         string SenderEmail;

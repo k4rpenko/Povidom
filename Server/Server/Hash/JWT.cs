@@ -9,7 +9,7 @@ using Server.Interface.Hash;
 
 namespace Server.Controllers
 {
-    public class JWT : IJwt
+    internal class JWT : IJwt
     {
         private readonly byte[] Key;
 

@@ -5,7 +5,7 @@ using Server.Models.Tokens;
 
 namespace Server.Sending
 {
-    public class GoogleOAuth
+    internal class GoogleOAuth
     {
         readonly string ClientID;
         readonly string ClientSecret;

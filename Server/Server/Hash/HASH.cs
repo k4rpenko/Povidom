@@ -6,7 +6,7 @@ using Server.Interface.Hash;
 
 namespace Server.Hash
 {
-    public class HASH : IHASH
+    internal class HASH : IHASH
     {
         public byte[] GenerateKey()
         {
