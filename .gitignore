@@ -31,3 +31,9 @@ NoSQL/obj/Debug/net8.0/NoSQL.AssemblyInfoInputs.cache
 /Server/Test/bin
 Server/appsettings.json
 Server/appsettings.Development.json
+/GrpcClient/bin
+/GrpcClient/obj
+/Server/GrpcService/bin
+/Server/GrpcService/obj
+/Server/MediaServer/bin
+/Server/MediaServer/obj

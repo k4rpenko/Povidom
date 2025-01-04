@@ -4,3 +4,10 @@ services:
     build:
       context: .
       dockerfile: Server/Dockerfile
+
+  mediaserver:
+    image: ${DOCKER_REGISTRY-}mediaserver
+    build:
+      context: .
+      dockerfile: MediaServer/Dockerfile
+
