@@ -50,3 +50,35 @@ Spacegram is a social network pet project that combines:
         "MongoDbDatabaseChat": ""
       }
    }
+
+### Backend: Spring
+1. Add the configuration files
+```
+└── src
+    └── main
+        └── resources
+            ├── application.properties
+            └── Config
+                └── Postgres
+                    └── hibernate.cfg.xml"
+```
+
+3. Example of the structure of application.properties:
+ 
+   ```bash
+   spring.application.name=server
+   server.port=8090
+4. Example of the structure of hibernate.cfg.xml:
+ 
+   ```bash
+   <hibernate-configuration>
+       <session-factory>
+           <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+           <property name="hibernate.connection.url"></property>
+           <property name="hibernate.connection.username"></property>
+           <property name="hibernate.connection.password"></property>
+           <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+   
+           <property name="hibernate.archive.autodetection">class</property>
+       </session-factory>
+   </hibernate-configuration>
