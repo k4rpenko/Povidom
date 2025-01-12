@@ -27,6 +27,9 @@ public class AspNetUsers {
     @Column(name = "\"ConcurrencyStamp\"")
     private String ConcurrencyStamp;
 
+    @Column(name = "\"PhoneNumber\"")
+    private String PhoneNumber;
+
     @Column(name = "\"FirstName\"")
     private String firstName;
 
@@ -139,6 +142,14 @@ public class AspNetUsers {
 
     public void setConcurrencyStamp(String ConcurrencyStamp) {
         this.ConcurrencyStamp = ConcurrencyStamp;
+    }
+
+    public String getPhoneNumber() {
+        return PhoneNumber;
+    }
+
+    public void setPhoneNumber(String PhoneNumber) {
+        this.PhoneNumber = PhoneNumber;
     }
 
     public String getFirstName() {

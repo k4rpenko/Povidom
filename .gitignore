@@ -58,3 +58,4 @@ Server/Csharp_Server/appsettings.Development.json
 /Server/Csharp_Server/Server/obj
 /Server/Csharp_Server/Test/bin
 /Server/Csharp_Server/Test/obj
+*.pfx

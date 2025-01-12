@@ -22,31 +22,6 @@ namespace Server.Controllers
             _hash = hash;
         }
 
-        [HttpPost("ConfirmationAccount")]
-        public async Task<IActionResult> ConfirmationAccount(TokenModel Account)
-        {
-            try
-            {
-                if (Account.ConfirmationToken != null && _jwt.ValidateToken(Account.ConfirmationToken, _context))
-                {
-                    var id = _jwt.GetUserIdFromToken(Account.ConfirmationToken);
-                    var user = _context.User.FirstOrDefault(u => u.Id == id);
-                    var userRole = _context.UserRoles.FirstOrDefault(u => u.UserId == id);
-                    if (user != null)
-                    {
-                        user.EmailConfirmed = true;
-                        await _context.SaveChangesAsync();
-                        var accets = _jwt.GenerateJwtToken(id, user.ConcurrencyStamp, 1, userRole.RoleId);
-                        return Ok(new { token = accets });
-                    }
-                }
-                return NotFound();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("", ex);
-            }
-        }
 
         [HttpPut("TokenUpdate")]
         public async Task<IActionResult> AccessToken(TokenModel _tokenM)

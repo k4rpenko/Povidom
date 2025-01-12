@@ -1,7 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "GrpcService";
-
+option java_outer_classname = "Greet";
 package greet;
 
 
@@ -22,9 +21,9 @@ message FileReply {
 }
 
 message TestRequest {
-	string name = 1;
+  string name = 1;
 }
 
 message TestResponse {
-	string message = 1;
+  string message = 1;
 }
