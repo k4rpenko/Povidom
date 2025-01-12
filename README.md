@@ -82,3 +82,29 @@ Spacegram is a social network pet project that combines:
            <property name="hibernate.archive.autodetection">class</property>
        </session-factory>
    </hibernate-configuration>
+
+### HTPS: Grpc
+1. you have to create KEY; CSR CRT; PFX; PEM
+2.  Creating a private key (private.key)
+    ```bash
+     openssl genpkey -algorithm RSA -out private.key -aes256
+
+3.  Creating a request certificate (CSR) - request.csr
+      ```bash
+     openssl req -new -key private.key -out request.csr
+
+4.  Create a self-signed certificate (certificate.crt)
+    ```bash
+     openssl x509 -req -in request.csr -signkey private.key -out certificate.crt
+
+5.  Converting a certificate to PEM format (certificate.pem)
+    ```bash
+     openssl x509 -in certificate.crt -out certificate.pem
+    
+8.  Converting a private key to PEM (private.pem)
+    ```bash
+     openssl rsa -in private.key -out private.pem
+    
+8.  Create a PFX file (PKCS#12)
+    ```bash
+    openssl pkcs12 -export -out keystore.pfx -inkey private.key -in certificate.crt -certfile certificate.crt -passout pass:yourpassword
