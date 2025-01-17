@@ -7,7 +7,7 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 
-var certificate = new X509Certificate2("path/certificate.pfx", "Yourpassword");
+var certificate = new X509Certificate2("certificate.pfx", "password");
 // Завантажуємо сертифікат і ключ з файлів
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -42,4 +42,4 @@ app.MapControllers();
 app.MapGrpcService<GreeterService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 
-app.Run();
+await app.RunAsync();

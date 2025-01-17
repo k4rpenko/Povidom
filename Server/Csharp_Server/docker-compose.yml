@@ -11,3 +11,31 @@ services:
       context: .
       dockerfile: MediaServer/Dockerfile
 
+
+  messagesserver:
+    image: ${DOCKER_REGISTRY-}messagesserver
+    build:
+      context: Messages
+      dockerfile: Dockerfile
+
+
+  authserver:
+    image: ${DOCKER_REGISTRY-}authserver
+    build:
+      context: .
+      dockerfile: AuthServer/Dockerfile
+
+
+  userserver:
+    image: ${DOCKER_REGISTRY-}userserver
+    build:
+      context: .
+      dockerfile: UserServer/Dockerfile
+
+
+  adminserver:
+    image: ${DOCKER_REGISTRY-}adminserver
+    build:
+      context: .
+      dockerfile: AdminServer/Dockerfile
+

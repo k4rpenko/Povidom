@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using PGAdminDAL;
 using Server.Interface.Hash;
 
-namespace Server.Controllers
+namespace Server.Hash
 {
     internal class JWT : IJwt
     {

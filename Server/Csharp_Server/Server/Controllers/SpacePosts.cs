@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using NoSQL;
 using PGAdminDAL;
+using Server.Hash;
 using Server.Models.MessageChat;
 using Server.Models.Post;
 

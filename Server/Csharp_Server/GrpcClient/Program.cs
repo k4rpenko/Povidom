@@ -11,7 +11,7 @@ class Program
     static async Task Main(string[] args)
     {
 
-        var clientCertificate = new X509Certificate2("path/certificate.pfx", "password");
+        var clientCertificate = new X509Certificate2("D:/Sertificate/certificate.pfx", "password");
 
         var handler = new HttpClientHandler();
         handler.ClientCertificates.Add(clientCertificate);

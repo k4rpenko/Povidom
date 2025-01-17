@@ -14,8 +14,8 @@ public class Client {
     public void Send(byte[] data, String fileName, int chunkIndex) {
         ManagedChannel channel = null;
         try {
-            File privateKeyFile = new File("path/private.pem");
-            File certificateFile = new File("path/certificate.pem");
+            File privateKeyFile = new File("D:/Sertificate/private.pem");
+            File certificateFile = new File("D:/Sertificate/certificate.pem");
 
             if (!privateKeyFile.exists() || !certificateFile.exists()) {
                 throw new IllegalArgumentException("Private key or certificate file does not exist.");

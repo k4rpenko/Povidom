@@ -59,3 +59,14 @@ Server/Csharp_Server/appsettings.Development.json
 /Server/Csharp_Server/Test/bin
 /Server/Csharp_Server/Test/obj
 *.pfx
+/Server/Csharp_Server/Messages/obj
+/Server/Csharp_Server/Messages/.vs
+/Server/Csharp_Server/Messages/bin
+/Server/Csharp_Server/AdminServer/bin
+/Server/Csharp_Server/AdminServer/obj
+/Server/Csharp_Server/AuthServer/bin
+/Server/Csharp_Server/AuthServer/obj
+/Server/Csharp_Server/CommonLibrary/obj
+/Server/Csharp_Server/ServerApplication/obj
+/Server/Csharp_Server/UserServer/bin
+/Server/Csharp_Server/UserServer/obj
