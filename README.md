@@ -18,8 +18,88 @@ Spacegram is a social network pet project that combines:
 ### Backend: ASP.NET
 1. Add the configuration files appsettings.json and appsettings.Development.json to the root directory of the backend project.
 2. Example of the structure of appsettings.json:
- 
-   ```bash
+3. AdminServer
+   
+   ```json
+   {
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "AllowedHosts": "*"
+   }
+
+4. AuthServer
+
+   ```json
+   {
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "Npgsql": {
+       "ConnectionString": ""
+     },
+     "Redis": {
+       "ConnectionString": ""
+     },
+     "Mailhog": {
+       "Host": "",
+       "Port": ,
+       "SenderName": "",
+       "SenderEmail": "",
+       "SenderPassword": ""
+     },
+     "GoogleAuth": {
+       "ClientID": "",
+       "ClientSecret": ""
+     }
+   }
+5. MediaServer
+   ```json
+   {
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "AllowedHosts": "*",
+     "Kestrel": {
+       "EndpointDefaults": {
+         "Protocols": "Http2"
+       }
+     }
+   }
+
+6. MessagesServer
+   ```json
+   {
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "Npgsql": {
+       "ConnectionString": ""
+     },
+     "Redis": {
+       "ConnectionString": ""
+     },
+     "MongoDB": {
+       "ConnectionString": "",
+       "MongoDbDatabase": "",
+       "MongoDbDatabaseChat": ""
+     }
+   }
+
+7. PostServer
+   ```json
    {
       "Logging": {
         "LogLevel": {
@@ -50,6 +130,29 @@ Spacegram is a social network pet project that combines:
         "MongoDbDatabaseChat": ""
       }
    }
+
+8. UserServer
+   ```json
+   {
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "Npgsql": {
+       "ConnectionString": ""
+     },
+     "Redis": {
+       "ConnectionString": ""
+     },
+     "MongoDB": {
+       "ConnectionString": "",
+       "MongoDbDatabase": "",
+       "MongoDbDatabaseChat": ""
+     }
+   }
+
 
 ### Backend: Spring
 1. Add the configuration files
