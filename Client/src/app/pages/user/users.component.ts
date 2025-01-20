@@ -1,25 +1,26 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { CookieService } from 'ngx-cookie-service';
+
 import { User } from '../../data/interface/Users/AllDataUser.interface';
 import { MemoryCacheService } from '../../data/Cache/MemoryCacheService';
 import { UserPost } from '../../data/HTTP/GetPosts/User/UserPost.service';
 import { Post } from '../../data/interface/Post/Post.interface';
-import { CommonModule } from '@angular/common';
 import { UserDataGet } from '../../data/HTTP/GetPosts/User/UserDataGet.service';
 import { UserProfil } from '../../data/interface/Users/UserProfil.interface';
 import { UserChangGet } from '../../data/HTTP/GetPosts/User/UserChangGet.service';
 import { Subscribers } from '../../data/HTTP/POST/Subscribers.service';
 import { LikePost } from '../../data/HTTP/POST/post/LikePost.service';
 import { SpacePostModel } from '../../data/interface/Post/SpacePostModel.interface';
-import { CookieService } from 'ngx-cookie-service';
-
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+  styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
   spacePostsService = inject(UserPost);
@@ -30,6 +31,7 @@ export class UsersComponent implements OnInit {
   username: string | null = '';
   UserCache!: User;
   UserData!: UserProfil;
+  UserNotFound: string = 'loading';
   posts: Post[] = [];
   UrlName: string = '';
   activeTab: string = 'Post';
@@ -39,8 +41,11 @@ export class UsersComponent implements OnInit {
   async ngOnInit() {
     this.UrlName = this.route.snapshot.params['username'];
     await this.loadUserCache();
-    if(this.UrlName !== this.UserCache?.userName){
+    if (this.UrlName !== this.UserCache?.userName) {
       await this.loadUserData();
+    }
+    else{
+      this.UserNotFound = 'Yes';
     }
   }
 
@@ -53,20 +58,24 @@ export class UsersComponent implements OnInit {
   private async loadUserCache() {
     try {
       const result = await this.cache.getItem('User');
-      if (result == null) {
-        await this.AddCacheUser();
-      } else {
-        this.UserCache = result;
-      }
+      this.UserCache = result;
+      await this.AddCacheUser();
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
   }
 
-  private async loadUserData() {
-    return this.UserDataGet.Get(this.UrlName).subscribe(response => {
-      this.UserData = response;
+  private loadUserData() {
+    this.UserDataGet.Get(this.UrlName).subscribe({
+      next: (response) => {
+        this.UserNotFound = 'Yes';
+        this.UserData = response;
+      },
+      error: (error) => {
+        this.UserNotFound = 'Not';
+      },
     });
+    console.log(this.UserNotFound);
   }
 
   private AddCacheUser() {
@@ -76,15 +85,13 @@ export class UsersComponent implements OnInit {
     });
   }
 
-
-  public Subscribers(){
+  public Subscribers() {
     return this.SubscriberPut.Put(this.UserData!.id!).subscribe(response => {
       this.UserData!.youFollower = true;
     });
   }
 
-
-  public DeleteSubscribers(){
+  public DeleteSubscribers() {
     return this.SubscriberPut.Delete(this.UrlName, this.cookieService.get('authToken')).subscribe(response => {
       this.UserData!.youFollower = false;
     });
@@ -93,7 +100,6 @@ export class UsersComponent implements OnInit {
   setActiveTab(tab: string) {
     this.activeTab = tab;
   }
-
 
   DeleteLikePost(post: Post) {
     if (!post || !post.id) {
@@ -116,7 +122,7 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  LikePost(postId: Post){
+  LikePost(postId: Post) {
     const postlike: SpacePostModel = {
       Id: postId.id!,
       UserId: this.cookieService.get('authToken')
@@ -131,5 +137,4 @@ export class UsersComponent implements OnInit {
       error: (error) => console.error('Error liking post:', error)
     });
   }
-
 }

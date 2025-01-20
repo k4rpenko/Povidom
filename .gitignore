@@ -70,3 +70,4 @@ Server/Csharp_Server/appsettings.Development.json
 /Server/Csharp_Server/ServerApplication/obj
 /Server/Csharp_Server/UserServer/bin
 /Server/Csharp_Server/UserServer/obj
+/Server/Csharp_Server/KafkaLibrary/obj

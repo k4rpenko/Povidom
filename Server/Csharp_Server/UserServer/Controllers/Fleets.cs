@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using KafkaLibrary.Producers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Newtonsoft.Json.Linq;
 using NoSQL;
 using PGAdminDAL;
 using PGAdminDAL.Model;
@@ -21,10 +23,13 @@ namespace UserServer.Controllers
     {
         private readonly IMongoCollection<SpacePostModel> _customers;
         private readonly AppDbContext context;
+        /*private readonly KafkaProducer _kafkaProducer;
+        private readonly string bootstrapServers; */
         private readonly IJwt _jwt;
 
         public Fleets(AppDbContext _context, AppMongoContext _Mongo,  IConfiguration _configuration, IJwt jwt) 
-        { 
+        {
+            //bootstrapServers = _configuration.GetSection("Kafka:bootstrapServers").Value;
             context = _context; 
             _customers = _Mongo.Database?.GetCollection<SpacePostModel>(_configuration.GetSection("MongoDB:MongoDbDatabase").Value);
             _jwt = jwt;
@@ -211,6 +216,19 @@ namespace UserServer.Controllers
                 if (Request.Cookies.TryGetValue("authToken", out string cookieValue))
                 {
                     var id = _jwt.GetUserIdFromToken(cookieValue);
+                    /*
+                    var producer = new KafkaProducer(bootstrapServers);
+                    var postKafka = await producer.SendMessage("post_topic", "key1", id);
+                    SpacePostModel userPost;
+                    if (postKafka != null)
+                    {
+                        userPost = postKafka.ToObject<SpacePostModel>();
+                    }
+                    else
+                    {
+                        userPost = null;
+                    }*/
+
                     var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
                     if (user != null)
                     {
@@ -222,7 +240,7 @@ namespace UserServer.Controllers
                             LastName = user.LastName,
                             Avatar = user.Avatar,
                             Title = user.Title,
-                            PostID = user.PostID
+                            PostID = user.PostID,
                         };
 
                         

@@ -5,6 +5,10 @@ using UserServer.Models.Users;
 using UserServer.Models.Tokens;
 using UserServer.Interface.Hash;
 using UserServer.utils;
+using System.Text.RegularExpressions;
+using KafkaLibrary.Consumers;
+using Microsoft.Extensions.Configuration;
+using KafkaLibrary.Producers;
 
 namespace UserServer.Controllers
 {
@@ -16,12 +20,13 @@ namespace UserServer.Controllers
         private readonly IHASH _hash;
         private readonly AppDbContext _context;
 
-        public AccountSettings(AppDbContext context, IJwt jwt, IHASH hash) 
-        { 
+        public AccountSettings(AppDbContext context, IJwt jwt, IHASH hash)
+        {
             _context = context;
             _jwt = jwt;
             _hash = hash;
         }
+
 
 
         [HttpPut("TokenUpdate")]
