@@ -1,0 +1,285 @@
+.app-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  color: var(--text-color-white);
+  font-family: var(--font-sfpro-regular);
+  justify-content: center;
+}
+
+.main{
+  display: flex;
+
+}
+
+.post-main{
+  width: 100%;
+  max-width: 700px;
+  height: 100%;
+  border-right: 1px solid var(--grey-light);
+}
+
+.posts-container {
+  min-width: 40%;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-header-nav {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--grey-light);
+}
+.nav-menu {
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid var(--grey-light);
+}
+.nav-item {
+  text-align: center;
+  padding: 25px;
+  flex: 1;
+  text-decoration: none;
+  color: var(--text-color);
+  font-family: "SFProDisplay-Medium";
+
+  &.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+  }
+
+  &:hover {
+    background-color: var(--grey);
+  }
+}
+
+.new-posts {
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+
+  samp{
+    font-family: var(--font-sfpro-regular);
+  }
+}
+
+.post-item {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-bottom: 1px solid var(--grey-light);
+}
+.post-data {
+  display: flex;
+  align-items: flex-start;
+}
+.post-profile-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.post-content-info {
+  flex: 1;
+}
+.post-data-info {
+  margin-bottom: 0.5rem;
+}
+
+.post-user-info {
+  display: flex;
+  gap: 0.5rem;
+}
+
+
+.post-username {
+  color: var(--white-dark);
+}
+
+.post-content {
+  margin-top: 0.5rem;
+}
+
+.post-reply {
+  margin-top: 1rem;
+}
+.post-reply-item {
+  display: flex;
+  border: 1px solid var(--grey-light);
+  padding: 0.8rem;
+  border-radius: 10px;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--yellow);
+  margin-right: 10px;
+}
+
+
+.post-user-info {
+  display: flex;
+  gap: 0.5rem;
+}
+.post-author {
+  font-family: var(--font-sfpro-medium);
+}
+
+.post-username {
+  color: var(--white-dark);
+}
+.post-content {
+  font-family: var(--font-sfpro-regular);
+  font-size: 0.94rem;
+  margin-top: 0.5rem;
+}
+
+.border-container {
+  height: 1px;
+  margin: 1rem 0;
+}
+
+
+.border-main{
+  padding: 25px;
+  width: 550px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.border-main-container{
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+}
+
+.notification{
+  gap: 30px;
+  display: flex;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--grey-light);
+  align-items: center;
+
+  svg{
+    margin-left: 10px;
+  }
+}
+
+
+.notification-content{
+  display: flex;
+  gap: 10px;
+}
+
+
+.Gold-subscribers {
+  height: 100%;
+  min-height: 243px;
+  display: flex;
+  border-radius: 10px;
+  border: 1px solid var(--grey-light);
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+}
+
+.Gold-subscribers-user {
+  display: flex;
+  height: 50px;
+  background: var(--background-light);
+  border-radius: 8px;
+}
+
+.Gold-user-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.Gold-username {
+  color: var(--white-dark);
+}
+
+.Gold-username-star {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.Gold-content {
+  margin-top: 0.5rem;
+}
+
+.Gold-GET-more{
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: 0.3s;
+
+  a{
+    text-align: center;
+    width: 100%;
+    padding: 20px;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid var(--grey-light);
+    border-radius: 10px;
+
+    samp{
+      color: var(--text-color-white);
+      font-family: var(--font-sfpro-regular);
+    }
+  }
+
+  &:hover{
+    transition: 0.3s;
+    border-radius: 10px;
+    background-color: var(--grey-light);
+  }
+}
+
+
+.music-list{
+  height: 100%;
+  min-height: 243px;
+  display: flex;
+  border-radius: 10px;
+  border: 1px solid var(--grey-light);
+  flex-direction: column;
+  gap: 10px;
+}
+
+.track{
+  padding: 5px 5px 5px 20px;
+  display: flex;
+  gap: 10px;
+  height: 50px;
+  background: var(--background-light);
+  border-bottom: 1px solid var(--grey-light);
+  align-items: center;
+}
+
+.track-image{
+  height: 40px;
+  width: 40px;
+  border-radius: 5px;
+}
+
+.track-title{
+  display: flex;
+  flex-direction: column;
+}
+
+.track-artist{
+  font-family: var(--font-sfpro-medium);
+  color: var(--grey-light);
+}

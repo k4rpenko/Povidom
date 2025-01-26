@@ -135,18 +135,6 @@ services:
         - "80:80"
     networks:
       - webnet
- 
-  ngrok:
-    image: wernight/ngrok
-    environment:
-      - NGROK_AUTHTOKEN=2rrLWd53Wf20sByFFLlUYEIXGn4_2g5ZwzCtcTNcrKouaA1AG
-      - NGROK_PORT=nginx:80
-    ports:
-      - "4040:4040"
-    networks:
-      - webnet
-    depends_on:
-      - nginx
 
 
   # zookeeper:
@@ -170,20 +158,20 @@ services:
   #   depends_on:
   #     - zookeeper
 
-  angular:
-    container_name: "Angular"
-    build:
-      context: ../../Client
-      dockerfile: Dockerfile
-    ports:
-      - "4200:4200"
-    volumes:
-      - ../../Client:/usr/src/app
-      - /usr/src/app/node_modules
-    stdin_open: true
-    tty: true
-    networks:
-      - webnet
+  # angular:
+  #   container_name: "Angular"
+  #   build:
+  #     context: ../../Client
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "4200:4200"
+  #   volumes:
+  #     - ../../Client:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   stdin_open: true
+  #   tty: true
+  #   networks:
+  #     - webnet
 
 networks:
   webnet:

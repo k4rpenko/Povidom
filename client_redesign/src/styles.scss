@@ -1,0 +1,50 @@
+:root {
+  --white-background: #F2F2F2;
+  --dark-background: #1F1F1F;
+  --grean: #30D158;
+  --yellow: #FFD60A;
+  --read: #FF453A;
+  --blue: #0A84FF;
+  --blue-dark-80: #086acc;
+  --blue-dark-60: #064f99;
+  --blue-dark-40: #043566;
+  --text-color-dark: #1d1d1f;
+  --text-color-white: #fff;
+  --white: #fff;
+  --white-dark: #cccccc;
+  --grey: #3A3A3C;
+  --grey-light: #545457;
+  --grey-dark: #19191a;
+  --border-radius: 10px;
+
+  --font-sfpro-black: "SFProDisplay-Black";
+  --font-sfpro-black-italic: "SFProDisplay-BlackItalic";
+  --font-sfpro-bold: "SFProDisplay-Bold";
+  --font-sfpro-bold-italic: "SFProDisplay-BoldItalic";
+  --font-sfpro-heavy: "SFProDisplay-Heavy";
+  --font-sfpro-heavy-italic: "SFProDisplay-HeavyItalic";
+  --font-sfpro-light: "SFProDisplay-Light";
+  --font-sfpro-light-italic: "SFProDisplay-LightItalic";
+  --font-sfpro-medium: "SFProDisplay-Medium";
+  --font-sfpro-medium-italic: "SFProDisplay-MediumItalic";
+  --font-sfpro-regular: "SFProDisplay-Regular";
+  --font-sfpro-regular-italic: "SFProDisplay-RegularItalic";
+  --font-sfpro-semibold: "SFProDisplay-Semibold";
+  --font-sfpro-semibold-italic: "SFProDisplay-SemiboldItalic";
+  --font-sfpro-thin: "SFProDisplay-Thin";
+  --font-sfpro-thin-italic: "SFProDisplay-ThinItalic";
+  --font-sfpro-ultralight: "SFProDisplay-Ultralight";
+  --font-sfpro-ultralight-italic: "SFProDisplay-UltralightItalic";
+}
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+
+html,
+body{
+  height: 100%;
+  background-color: var(--dark-background);
+}

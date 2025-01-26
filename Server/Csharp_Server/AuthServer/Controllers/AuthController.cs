@@ -8,6 +8,7 @@ using AuthServer.Interface.Hash;
 using AuthServer.Interface.Sending;
 using AuthServer.Interface.Controlles;
 using AuthServer.Models.Tokens;
+using System.Text.RegularExpressions;
 
 namespace AuthServer.Controllers
 {
@@ -34,7 +35,8 @@ namespace AuthServer.Controllers
         [HttpPost("registration")]
         public async Task<IActionResult> CreateUser(UserAuth _user)
         {
-            if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password)) { return BadRequest(new { message = "Email and Password cannot be null or empty" }); }
+            string emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+            if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password) || !Regex.IsMatch(_user.Email, emailPattern)) { return BadRequest(new { message = "Email and Password cannot be null or empty" }); }
             try
             {
                 
@@ -114,24 +116,15 @@ namespace AuthServer.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(UserAuth _user)
         {
-            if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password))
-            {
-                return BadRequest(new { message = "Email and Password cannot be null or empty" });
-            }
+            string emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+            if (string.IsNullOrWhiteSpace(_user.Email) || string.IsNullOrWhiteSpace(_user.Password) || !Regex.IsMatch(_user.Email, emailPattern)) { return BadRequest(new { message = "Email and Password cannot be null or empty" }); }
+            if (_user.Password.Contains(" ")) { return BadRequest(new { message = "Password cannot contain spaces" }); }
 
             var user = await _context.User.FirstOrDefaultAsync(u => u.Email == _user.Email);
-
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found." });
-            }
+            if (user == null) { return NotFound(new { message = "User not found." }); }
 
             var encryptedPassword = _hash.Encrypt(_user.Password, user.ConcurrencyStamp);
-
-            if (user.PasswordHash != encryptedPassword)
-            {
-                return Unauthorized(new { message = "Invalid credentials." });
-            }
+            if (user.PasswordHash != encryptedPassword) { return Unauthorized(new { message = "Invalid credentials." }); }
 
             var token = _jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 720, "User");
             return Ok(new { token });
