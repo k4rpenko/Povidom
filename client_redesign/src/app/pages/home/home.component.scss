@@ -13,8 +13,7 @@
 }
 
 .post-main{
-  width: 100%;
-  max-width: 700px;
+  width: 610px;
   height: 100%;
   border-right: 1px solid var(--grey-light);
 }
@@ -42,6 +41,7 @@
   text-decoration: none;
   color: var(--text-color);
   font-family: "SFProDisplay-Medium";
+  transition: background 0.3s;
 
   &.active {
     background-color: var(--primary-color);
@@ -49,7 +49,8 @@
   }
 
   &:hover {
-    background-color: var(--grey);
+    transition: background 0.3s;
+    background-color: var(--grey-dark-15);
   }
 }
 
@@ -58,9 +59,16 @@
   text-align: center;
   border-radius: 10px;
   cursor: pointer;
+  color: var(--grey-light-45);
+  transition: background 0.3s;
 
   samp{
     font-family: var(--font-sfpro-regular);
+  }
+
+  &:hover{
+    transition: background 0.3s;
+    background-color: var(--grey-dark-15);
   }
 }
 
@@ -69,8 +77,32 @@
   flex-direction: column;
   padding: 1rem;
   border-bottom: 1px solid var(--grey-light);
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover{
+    transition: background 0.3s;
+    background-color: var(--grey-dark-15);
+  }
 }
+
+.posts{
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.post-item-box{
+  display: flex;
+}
+
 .post-data {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  z-index: 10;
+}
+.post-new{
   display: flex;
   align-items: flex-start;
 }
@@ -95,16 +127,28 @@
 
 
 .post-username {
-  color: var(--white-dark);
+  color: var(--grey-light-45);
 }
 
 .post-content {
   margin-top: 0.5rem;
 }
 
+
+
 .post-reply {
-  margin-top: 1rem;
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 10px 0px 10px 50px;
+  z-index: 20;
+  transition: background 0.3s;
+
+  &:hover{
+    transition: background 0.3s;
+    background-color: var(--grey-dark);
+  }
 }
+
 .post-reply-item {
   display: flex;
   border: 1px solid var(--grey-light);
@@ -115,8 +159,7 @@
 .profile-icon {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background-color: var(--yellow);
+  border-radius: 100px;
   margin-right: 10px;
 }
 
@@ -129,14 +172,31 @@
   font-family: var(--font-sfpro-medium);
 }
 
-.post-username {
-  color: var(--white-dark);
-}
 .post-content {
   font-family: var(--font-sfpro-regular);
   font-size: 0.94rem;
   margin-top: 0.5rem;
 }
+
+.post-mut {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  gap: 20px;
+
+  a{
+    padding: 10px;
+    display: flex;
+    border-radius: 100px;
+    transition: background 0.3s;
+    align-items: center;
+
+    &:hover{
+      background-color: var(--grey);
+    }
+  }
+}
+
 
 .border-container {
   height: 1px;
@@ -155,131 +215,14 @@
 
 .border-main-container{
   display: flex;
-  gap: 15px;
-  flex-direction: column;
-}
-
-.notification{
   gap: 30px;
-  display: flex;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid var(--grey-light);
-  align-items: center;
+  flex-direction: column;
+}
 
-  svg{
-    margin-left: 10px;
+
+
+@media (max-width: 1400px) {
+  app-border-main {
+    display: none;
   }
-}
-
-
-.notification-content{
-  display: flex;
-  gap: 10px;
-}
-
-
-.Gold-subscribers {
-  height: 100%;
-  min-height: 243px;
-  display: flex;
-  border-radius: 10px;
-  border: 1px solid var(--grey-light);
-  flex-direction: column;
-  padding: 10px;
-  gap: 10px;
-}
-
-.Gold-subscribers-user {
-  display: flex;
-  height: 50px;
-  background: var(--background-light);
-  border-radius: 8px;
-}
-
-.Gold-user-info {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.Gold-username {
-  color: var(--white-dark);
-}
-
-.Gold-username-star {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.Gold-content {
-  margin-top: 0.5rem;
-}
-
-.Gold-GET-more{
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  transition: 0.3s;
-
-  a{
-    text-align: center;
-    width: 100%;
-    padding: 20px;
-    text-decoration: none;
-    cursor: pointer;
-    border: 1px solid var(--grey-light);
-    border-radius: 10px;
-
-    samp{
-      color: var(--text-color-white);
-      font-family: var(--font-sfpro-regular);
-    }
-  }
-
-  &:hover{
-    transition: 0.3s;
-    border-radius: 10px;
-    background-color: var(--grey-light);
-  }
-}
-
-
-.music-list{
-  height: 100%;
-  min-height: 243px;
-  display: flex;
-  border-radius: 10px;
-  border: 1px solid var(--grey-light);
-  flex-direction: column;
-  gap: 10px;
-}
-
-.track{
-  padding: 5px 5px 5px 20px;
-  display: flex;
-  gap: 10px;
-  height: 50px;
-  background: var(--background-light);
-  border-bottom: 1px solid var(--grey-light);
-  align-items: center;
-}
-
-.track-image{
-  height: 40px;
-  width: 40px;
-  border-radius: 5px;
-}
-
-.track-title{
-  display: flex;
-  flex-direction: column;
-}
-
-.track-artist{
-  font-family: var(--font-sfpro-medium);
-  color: var(--grey-light);
 }

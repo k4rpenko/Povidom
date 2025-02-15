@@ -1,0 +1,278 @@
+.app-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  color: var(--text-color-white);
+  font-family: var(--font-sfpro-regular);
+  justify-content: center;
+}
+
+
+.main{
+  display: flex;
+  max-width: 1140px;
+}
+
+.user-box{
+  display: flex;
+  border-right: 1px solid var(--grey-light);
+  width: 610px;
+  flex-direction: column
+}
+
+
+.user-profile{
+  gap: 30px;
+  display: flex;
+  padding: 40px 25px 20px 25px;
+  flex-direction: column;
+}
+
+.profile-infoo{
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.profile-icon{
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+}
+
+.profile-text{
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-username{
+  color: var(--grey-light-45);
+}
+
+.profile-actions{
+  display: flex;
+  gap: 60px;
+
+  button {
+    height: 30px;
+    width: 110px;
+    border-radius: 5px;
+    border: none;
+    font-family: var(--font-sfpro-medium);
+    cursor: pointer;
+
+    &.btn-following {
+      background: var(--blue);
+      color: var(--text-color-white);
+    }
+
+    &.btn-write {
+      background: var(--white);
+      color: var(--text-color-dark);
+    }
+  }
+}
+
+.user-biography{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.uset-for{
+  width: 100%;
+  display: flex;
+  gap: 15px;
+}
+
+.user-biography-text{
+  display: flex;
+  width: 100%;
+
+  samp{
+    color: var(--grey-light-45);
+    font-family: var(--font-sfpro-regular);
+    font-size: 15px;
+  }
+}
+
+.user-tracking{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  margin-right: 10px;
+}
+
+.user-followers{
+  display: flex;
+  text-decoration: none;
+  flex-direction: column;
+  align-items: center;
+
+  samp{
+    color: var(--white);
+    font-family: var(--font-sfpro-regular);
+  }
+}
+
+.user-following{
+  display: flex;
+  text-decoration: none;
+  flex-direction: column;
+  align-items: center;
+
+  samp{
+    color: var(--white);
+    font-family: var(--font-sfpro-regular);
+  }
+}
+
+.profile-posts{
+  display: flex;
+  width: 100%;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-top: 1px solid var(--grey-light);
+}
+
+
+
+
+.post-item {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-bottom: 1px solid var(--grey-light);
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover{
+    transition: background 0.3s;
+    background-color: var(--grey-dark-15);
+  }
+}
+
+.post-item:first-child{
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.posts{
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.post-item-box{
+  display: flex;
+}
+
+.post-data {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}
+.post-new{
+  display: flex;
+  align-items: flex-start;
+}
+.post-profile-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.post-content-info {
+  flex: 1;
+}
+.post-data-info {
+  margin-bottom: 0.5rem;
+}
+
+.post-user-info {
+  display: flex;
+  gap: 0.5rem;
+}
+
+
+.post-username {
+  color: var(--grey-light-45);
+}
+
+.post-content {
+  margin-top: 0.5rem;
+}
+
+
+
+.post-reply {
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 10px 0px 10px 50px;
+  z-index: 10;
+  transition: background 0.3s;
+  text-decoration: none;
+
+  &:hover{
+    transition: background 0.3s;
+    background-color: var(--grey-dark);
+  }
+}
+
+.post-reply-item {
+  display: flex;
+  border: 1px solid var(--grey-light);
+  padding: 0.8rem;
+  border-radius: 10px;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  margin-right: 10px;
+}
+
+
+.post-user-info {
+  display: flex;
+  gap: 0.5rem;
+}
+.post-author {
+  font-family: var(--font-sfpro-medium);
+}
+
+.post-content {
+  font-family: var(--font-sfpro-regular);
+  font-size: 0.94rem;
+  margin-top: 0.5rem;
+}
+
+.post-mut {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  gap: 20px;
+
+  a{
+    padding: 10px;
+    display: flex;
+    border-radius: 100px;
+    transition: background 0.3s;
+    align-items: center;
+
+    &:hover{
+      background-color: var(--grey);
+    }
+  }
+}
+
+
+@media (max-width: 1400px) {
+  app-border-main {
+    display: none;
+  }
+}

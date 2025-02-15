@@ -1,0 +1,173 @@
+.Neon {
+  height: 400px;
+  width: 100%;
+  position: absolute;
+  top: -200px;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(circle, rgba(10, 132, 255, 0.91) 0%, rgba(255, 255, 255, 0) 70%);
+  filter: blur(50px);
+  animation: _ngcontent-ng-c3612411785_neonGlow 2s infinite alternate;
+}
+@keyframes neonGlow {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.main{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  color: var(--text-color-white);
+  font-family: var(--font-sfpro-regular);
+  position: relative;
+}
+
+.app-container {
+  width: 100%;
+  display: flex;
+  padding: 25px;
+  z-index: 2;
+}
+
+.premium-container{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.premium-title-box{
+  display: flex;
+  gap: 60px;
+  margin-top: 125px;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.premium-title{
+
+  p{
+    font-family: var(--font-sfpro-medium);
+    font-size: 40px;
+  }
+}
+
+.premium-about{
+  display: flex;
+  gap: 50px;
+  align-items: center;
+  flex-direction: column;
+}
+
+.premium-text-about{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-direction: column;
+
+  p{
+    font-family: var(--font-sfpro-regular);
+    color: var(--grey-light-80);
+  }
+}
+
+.premium-form{
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.premium-boxs {
+  display: flex;
+  width: 100%;
+}
+
+.premium-box-container{
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.premium-box-container-title{
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.premium-box{
+  display: flex;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 500px;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--grey);
+}
+
+.premium-box-content{
+  display: flex;
+  width: 90%;
+  gap: 20px;
+  padding-bottom: 40px;
+  padding-top: 40px;
+  flex-direction: column;
+}
+
+.premium-box-offer {
+  display: flex;
+  width: 100%;
+  border: 1px solid var(--grey);
+  border-radius: 5px;
+  z-index: 2;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.premium-box-advantages{
+  padding: 3px 10px;
+  display: flex;
+  width: 100%;
+  background-color: var(--blue);
+}
+
+.premium-box-disadvantages{
+  padding: 3px 10px;
+  display: flex;
+  width: 100%;
+  flex-direction: row-reverse;
+}
+
+.pay{
+  display: flex;
+  margin-bottom: 100px;
+
+  button{
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 15px 75px;
+    border: none;
+    background-color: var(--blue);
+    transition: 0.2s;
+
+    &:hover{
+      background-color: var(--blue-dark-80);
+    }
+
+    samp{
+      color: var(--white);
+      font-family: var(--font-sfpro-regular);
+    }
+  }
+}
