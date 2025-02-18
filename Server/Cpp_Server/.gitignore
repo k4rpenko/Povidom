@@ -1,0 +1,147 @@
+# C++ specific ignores
+
+# Compiled Object files
+*.o
+*.obj
+*.lo
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+*.mod.c
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+build/
+install_manifest.txt
+_compile_commands.json
+
+# Boost
+boost/
+
+# JSON for Modern C++
+nlohmann/json.hpp
+
+# IDE specific ignores
+
+# CLion
+.idea/
+cmake-build-debug/
+cmake-build-release/
+cmake-build-relwithdebinfo/
+cmake-build-minsizerel/
+cmake-build-*
+*.iml
+
+# Visual Studio
+.vscode/
+.vscode/*
+.vs/
+.vs/*
+
+# Code::Blocks
+*.layout
+*.depend
+*.depend.*
+*.layout.*
+*.cbp.*
+*.workspace.*
+
+# QtCreator
+*.creator.*
+*.user
+*.user.*
+*.pro.user
+*.pro.user.**
+*.qbs.user
+*.qbs.user.**
+*.moc
+*.obj
+*.autosave
+
+# MacOS specific
+.DS_Store
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# Linux specific
+*~
+
+# Other
+*.log
+*.tmp
+*.swp
+*.bak
+*.swo
+*.pid
+*.seed
+*.pid.lock
+*.backup
+*.old
+*.org
+*.log.*
+
+# Ignore directories
+tmp/
+temp/
+.cache/
+logs/
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# Ignore compiled dynamic libraries
+*.dll
+*.so
+*.dylib
+
+# Ignore compiled static libraries
+*.lib
+*.a
+
+# Ignore compiled object files
+*.o
+*.obj

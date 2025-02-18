@@ -6,10 +6,12 @@ using MongoDB;
 using PGAdminDAL;
 using RedisDAL.User;
 using RedisDAL;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Підключення до бази даних PostgreSQL
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetSection("Npgsql:ConnectionString").Value));
 

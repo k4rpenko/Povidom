@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
-using AuthServer.Models.Tokens;
+using authentication.Models.Tokens;
 
 namespace authentication.Sending
 {

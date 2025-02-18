@@ -1,2 +1,4 @@
 *.xml
 *.pfx
+/Server/Cpp_Server/Libraries
+/Server/Cpp_Server/messager/messager/x64
