@@ -6,8 +6,8 @@
 #include <iostream>
 
 using namespace std;
-
-class FunctionRegistry {
+class FunctionRegistry
+{
 private:
     static map<string, function<void(any)>> functionMap;
 

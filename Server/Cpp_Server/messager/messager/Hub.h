@@ -15,7 +15,8 @@ using tcp = net::ip::tcp;
 using json = nlohmann::json;
 using namespace std;
 
-class Hub {
+class Hub
+{
 public:
     Hub() : ioc(1) {}
     void start(unsigned short PORT, const string& URL, short nodes);

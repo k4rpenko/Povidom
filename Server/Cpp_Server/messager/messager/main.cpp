@@ -1,9 +1,10 @@
-﻿#include "Hub.h"
-#include <iostream>
+﻿#include <iostream>
 #include "message.h"
+#include "Hub.h"
+
+
 
 int main() {
-    //WebSocket class
     message msg;
 
     Hub h;

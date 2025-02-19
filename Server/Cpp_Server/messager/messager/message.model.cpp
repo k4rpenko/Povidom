@@ -11,9 +11,10 @@ public:
     string Id;
 
     MessageModels() = default;
-    MessageModels(string Context, string Id) : Context(move(Context)), Id(move(Id)) {}
+    MessageModels(const string& Context, const string& Id)
+        : Context(Context), Id(Id) {
+    }
 
-    //logic of conversion to json
     friend void to_json(json& J, const MessageModels& msg) {
         J = json{ {"Context", msg.Context}, {"Id", msg.Id} };
     }
