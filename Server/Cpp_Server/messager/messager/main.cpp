@@ -3,6 +3,7 @@
 #include "message.h"
 
 int main() {
+    //WebSocket class
     message msg;
 
     Hub h;
