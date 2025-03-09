@@ -140,6 +140,8 @@
   display: flex;
   width: 100%;
   background-color: var(--blue);
+  align-items: center;
+  justify-content: space-between;
 }
 
 .premium-box-disadvantages{
@@ -147,6 +149,18 @@
   display: flex;
   width: 100%;
   flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.premium-box-item{
+  max-width: 50px;
+  width: 100%;
+  display: flex;
+  font-family: var(--font-sfpro-regular);
+  font-size: 14px;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .pay{

@@ -1,0 +1,70 @@
+.app-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  color: var(--text-color-white);
+  font-family: var(--font-sfpro-regular);
+  justify-content: center;
+}
+
+.main{
+  display: flex;
+  width: 100%;
+  max-width: 1140px;
+}
+
+.noti-box{
+  width: 610px;
+  height: 100%;
+  border-right: 1px solid var(--grey-light);
+}
+
+.notifications-item{
+  display: flex;
+  padding: 15px;
+  gap: 20px;
+  border-bottom: 1px solid var(--grey-light);
+  flex-direction: column;
+}
+
+.noti-main{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.SVG-title{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Avatar{
+  width: 40px;
+  border-radius: 100px;
+}
+
+.user{
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nick{
+  display: flex;
+
+  p{
+    color: var(--grey-light-45);
+  }
+}
+
+.Post-box{
+  a{
+    padding: 10px;
+    text-decoration: none;
+    color: var(--text-color-white);
+    font-size: 15px;
+    display: flex;
+    border: 1px solid var(--grey-light);
+    border-radius: 10px;
+  }
+}

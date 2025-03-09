@@ -1,0 +1,59 @@
+.app-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  color: var(--text-color-white);
+  font-family: var(--font-sfpro-regular);
+  justify-content: center;
+}
+
+.main{
+  display: flex;
+  width: 100%;
+  max-width: 1140px;
+}
+
+.settings{
+  display: flex;
+  width: 100%;
+}
+
+.settings-header{
+  width: 100%;
+  max-width: 400px;
+  border-right: 1px solid var(--grey-light);
+}
+
+.header-title{
+  padding: 30px;
+  display: flex;
+  border-bottom: 1px solid var(--grey-light);
+
+  p{
+    font-family: var(--font-sfpro-medium);
+    font-size: 40px;
+  }
+}
+
+.header-boxs{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+
+  a{
+    border-bottom: 1px solid var(--grey-light);
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--white);
+    padding: 10px 0px 10px 20px;
+
+    p{
+      font-family: var(--font-sfpro-light);
+      font-size: 18px;
+    }
+  }
+
+  a:hover{
+    background-color: var(--grey-dark-15);
+  }
+}
