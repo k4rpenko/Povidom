@@ -26,7 +26,6 @@ namespace RedisDAL.User
                     }
                 }
             });
-
         }
 
         public async Task UpdateUserConnection(string userId, string connectionId)

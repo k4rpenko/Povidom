@@ -1,13 +1,10 @@
-$font-family-Regular: 'SFProDisplay-Regular', sans-serif;
-$font-family-Medium: 'SFProDisplay-Medium', sans-serif;
-
 .auth-page {
   display: flex;
   min-height: 100vh;
-  font-family: $font-family-Regular;
 }
 
 .auth-title-box {
+  font-family: var(--font-sfpro-medium);
   position: relative;
   margin: 20px;
   border-radius: var(--border-radius);
@@ -31,12 +28,10 @@ $font-family-Medium: 'SFProDisplay-Medium', sans-serif;
 
 .auth-brand {
   font-size: 1.5rem;
-  font-weight: bold;
 }
 
 .auth-title {
   font-size: 2rem;
-  font-weight: bold;
 }
 
 .auth-description {
@@ -60,12 +55,13 @@ $font-family-Medium: 'SFProDisplay-Medium', sans-serif;
   padding: 2rem;
 }
 .auth-form-title {
+  font-family: var(--font-sfpro-regular);
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
-  font-weight: bold;
 }
 
 .auth-form-description {
+  font-family: var(--font-sfpro-regular);
   font-size: 1rem;
   margin-bottom: 1.5rem;
   color: #d1d1d1;
@@ -176,7 +172,6 @@ $font-family-Medium: 'SFProDisplay-Medium', sans-serif;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
   transition: background 0.3s;
 
   &:hover {
@@ -185,11 +180,12 @@ $font-family-Medium: 'SFProDisplay-Medium', sans-serif;
 }
 
 .auth-button samp{
-  font-family: $font-family-Medium;
+  font-family: var(--font-sfpro-bold);
   color: var(--text-color-white);
 }
 
 .auth-error {
+  font-family: var(--font-sfpro-regular);
   color: #ff4d4f;
   background: #4d0000;
   padding: 0.75rem;
@@ -207,12 +203,12 @@ $font-family-Medium: 'SFProDisplay-Medium', sans-serif;
 .auth-footer {
   margin-top: 1.5rem;
   color: #666;
-}
-a {
-  font-family: $font-family-Medium;
-  color: var(--blue);
-  text-decoration: none;
+  font-family: var(--font-sfpro-regular);
 
+  a {
+    color: var(--blue);
+    text-decoration: none;
+  }
   &:hover {
     color: var(--blue-dark-80);
   }

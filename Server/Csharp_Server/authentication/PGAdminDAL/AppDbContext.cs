@@ -20,6 +20,7 @@ namespace PGAdminDAL
 
         public DbSet<UserModel> User { get; set; }
         public DbSet<Appeal> Appeals { get; set; }
+        public DbSet<Sessions> Sessions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -50,7 +51,13 @@ namespace PGAdminDAL
                 .HasOne(a => a.User) 
                 .WithMany() 
                 .HasForeignKey(a => a.UserId) 
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Sessions>()
+                .HasOne(us => us.User)
+                .WithMany(u => u.Sessions)
+                .HasForeignKey(us => us.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

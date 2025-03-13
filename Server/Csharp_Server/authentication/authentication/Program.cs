@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB;
 using PGAdminDAL;
 using RedisDAL;
-using RedisDAL.User;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,9 +19,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IArgon2Hasher, Argon2Hasher>();
 builder.Services.AddSingleton<AppMongoContext>();
 builder.Services.AddSingleton<RedisConfigure>();
-builder.Services.AddSingleton<UsersConnectMessage>();
 builder.Services.AddScoped<IEmailSeding, EmailSeding>();
 builder.Services.AddScoped<IJwt, JWT>();
 builder.Services.AddScoped<IHASH256, HASH256>();
@@ -138,7 +137,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.UseCors("AllowSpecificOrigin");
 app.UseSession();

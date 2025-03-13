@@ -8,6 +8,9 @@ using Hash.Interface;
 using authentication.Interface.Sending;
 using authentication.Models.Users;
 using authentication.Models.Tokens;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json.Linq;
 
 namespace authentication.Controllers
 {
@@ -18,16 +21,16 @@ namespace authentication.Controllers
         private readonly IEmailSeding _emailSend;
         private readonly IJwt _jwt;
         private readonly IHASH256 _hash;
-        private readonly IRSAHash _rsa;
+        private readonly IArgon2Hasher _hasher;
         private readonly AppDbContext _context;
 
-        public Auth(AppDbContext context, IEmailSeding emailSend, IJwt jwt, IHASH256 hash, IRSAHash rsa)
+        public Auth(AppDbContext context, IArgon2Hasher hasher, IEmailSeding emailSend, IJwt jwt, IHASH256 hash)
         {
             _context = context;
             _emailSend = emailSend;
             _jwt = jwt;
+            _hasher = hasher;
             _hash = hash;
-            _rsa = rsa;
         }
 
 
@@ -55,9 +58,6 @@ namespace authentication.Controllers
                         FirstName = "User",
                         LastName = "",
                         Avatar = "https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg",
-                        PublicKey = _rsa.GeneratePublicKeys(), 
-                        PrivateKey = _rsa.GeneratePrivateKeys()
-
                     };  
 
                     _context.User.Add(newUser);
@@ -92,10 +92,52 @@ namespace authentication.Controllers
                     if (record != null)
                     {
                         var RefreshToken = newToken.Value;
-                        
-                        await _context.SaveChangesAsync();
+
                         //await _emailSend.PasswordCheckEmailAsync(_user.Email, _jwt.GenerateJwtToken(userId, KeyG, 1), Request.Scheme, Request.Host.ToString());
-                        return Ok();
+
+                        string token;
+                        string key;
+                        bool isUnique = false;
+                        do
+                        {
+                            key = _hasher.GenerateKey();
+                            token = _hasher.GenerateHash(userId, key);
+
+                            var find = await _context.User
+                                .Where(u => u.Sessions.Any(s => s.KeyHash == token))
+                                .FirstOrDefaultAsync();
+
+                            isUnique = (find == null);
+
+                        } while (!isUnique);
+
+                        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                        string safeIpAddress = string.IsNullOrEmpty(ipAddress) ? "Невідома IP" : ipAddress;
+
+                        string deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString() ?? "Невідомий пристрій";
+
+                        var SessionsData = new Sessions
+                        {
+                            UserId = record.Id,
+                            DeviceInfo = deviceInfo,
+                            IPAddress = safeIpAddress,
+                            KeyHash = token,
+                            Salt = key,
+                            LoginTime = DateTime.UtcNow
+                        };
+
+                        record.Sessions.Add(SessionsData);
+
+                        Response.Cookies.Append("_ASA", token, new CookieOptions
+                        {
+                            HttpOnly = true,
+                            Secure = true,
+                            SameSite = SameSiteMode.Strict,
+                            Expires = DateTime.UtcNow.AddHours(1)
+                        });
+
+                        await _context.SaveChangesAsync();
+                        return Ok(new { message = "Registration successful" });
                     }
                 }
                 if (user.EmailConfirmed == false)
@@ -125,8 +167,49 @@ namespace authentication.Controllers
             var encryptedPassword = _hash.Encrypt(_user.Password, user.ConcurrencyStamp);
             if (user.PasswordHash != encryptedPassword) { return Unauthorized(new { message = "Invalid credentials." }); }
 
-            var token = _jwt.GenerateJwtToken(user.Id, user.ConcurrencyStamp, 720, "User");
-            return Ok(new { token });
+            string token;
+            string key;
+            bool isUnique = false;
+            do
+            {
+                key = _hasher.GenerateKey();
+                token = _hasher.GenerateHash(user.Id, key);
+
+                var find = await _context.User
+                    .Where(u => u.Sessions.Any(s => s.KeyHash == token))
+                    .FirstOrDefaultAsync();
+
+                isUnique = (find == null);
+
+            } while (!isUnique);
+
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            string safeIpAddress = string.IsNullOrEmpty(ipAddress) ? "Невідома IP" : ipAddress;
+
+            string deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString() ?? "Невідомий пристрій";
+
+            var SessionsData = new Sessions
+            {
+                UserId = user.Id,
+                DeviceInfo = deviceInfo,
+                IPAddress = safeIpAddress,
+                KeyHash = token,
+                Salt = key,
+                LoginTime = DateTime.UtcNow
+            };
+
+            user.Sessions.Add(SessionsData);
+
+            Response.Cookies.Append("_ASA", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddHours(1)
+            });
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Registration successful" });
         }
 
 
@@ -143,9 +226,48 @@ namespace authentication.Controllers
                     if (user != null)
                     {
                         user.EmailConfirmed = true;
+
+                        string token;
+                        string key;
+                        bool isUnique = false;
+                        do
+                        {
+                            key = _hasher.GenerateKey();
+                            token = _hasher.GenerateHash(user.Id, key);
+
+                            var find = await _context.User
+                                .Where(u => u.Sessions.Any(s => s.KeyHash == token))
+                                .FirstOrDefaultAsync();
+
+                            isUnique = (find == null);
+
+                        } while (!isUnique);
+
+                        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                        string safeIpAddress = string.IsNullOrEmpty(ipAddress) ? "Невідома IP" : ipAddress;
+
+                        string deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString() ?? "Невідомий пристрій";
+
+                        var SessionsData = new Sessions
+                        {
+                            UserId = user.Id,
+                            DeviceInfo = deviceInfo,
+                            IPAddress = safeIpAddress,
+                            KeyHash = token,
+                            Salt = key,
+                            LoginTime = DateTime.UtcNow
+                        };
+
+                        Response.Cookies.Append("_ASA", token, new CookieOptions
+                        {
+                            HttpOnly = true,
+                            Secure = true,
+                            SameSite = SameSiteMode.Strict,
+                            Expires = DateTime.UtcNow.AddHours(1)
+                        });
+
                         await _context.SaveChangesAsync();
-                        var accets = _jwt.GenerateJwtToken(id, user.ConcurrencyStamp, 1, userRole.RoleId);
-                        return Ok(new { token = accets });
+                        return Ok();
                     }
                 }
                 return NotFound();

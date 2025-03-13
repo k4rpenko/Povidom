@@ -13,7 +13,7 @@ namespace authentication.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GoogleAuth : Controller
+    public class GoogleAuthentication : Controller
     {
         GoogleOAuth GoogleOAuth = new GoogleOAuth();
         private readonly AppDbContext context;
@@ -21,7 +21,7 @@ namespace authentication.Controllers
         private readonly IHASH256 _hash;
         private readonly IRSAHash _rsa;
 
-        public GoogleAuth(AppDbContext _context, IJwt jwt, IHASH256 hash, IRSAHash rsa)
+        public GoogleAuthentication(AppDbContext _context, IJwt jwt, IHASH256 hash, IRSAHash rsa)
         {
             context = _context;
             _jwt = jwt;
@@ -73,8 +73,6 @@ namespace authentication.Controllers
                     FirstName = firstName,
                     LastName = lastName,
                     Avatar = userInfo.Picture != null || userInfo.Picture != "" ? userInfo.Picture : "https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg",
-                    PublicKey = _rsa.GeneratePublicKeys(),
-                    PrivateKey = _rsa.GeneratePrivateKeys()
                 };
 
                 context.User.Add(newUser);

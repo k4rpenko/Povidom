@@ -57,3 +57,158 @@
     background-color: var(--grey-dark-15);
   }
 }
+
+.settings-main{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  border-right: 1px solid var(--grey-light);
+}
+
+.SavedButtons{
+  display: flex;
+  padding: 20px;
+  gap: 60px;
+}
+
+.SavedButtonsDelete{
+  background-color: var(--read);
+  border: none;
+  border-radius: 5px;
+  width: 100%;
+  height: 35px;
+  min-width: 100px;
+
+  samp{
+    letter-spacing: 0.6px;
+    font-size: 15px;
+    font-family: var(--font-sfpro-medium);
+    color: var(--text-color-white);
+  }
+}
+
+.SavedButtonsSave{
+  background-color: var(--white);
+  border: none;
+  border-radius: 5px;
+  width: 100%;
+  min-width: 100px;
+
+  samp{
+    letter-spacing: 0.6px;
+    font-size: 15px;
+    font-family: var(--font-sfpro-medium);
+    color: var(--grey-dark-15);
+  }
+}
+
+//profile
+.user-profile{
+  gap: 30px;
+  display: flex;
+  padding: 40px 25px 20px 25px;
+  flex-direction: column;
+  border-bottom: 1px solid var(--grey-light);
+}
+
+.profile-infoo{
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.profile-icon{
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+}
+
+.profile-text{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-username{
+  color: var(--grey-light-45);
+}
+
+.profile-actions{
+  display: flex;
+  gap: 60px;
+
+  button {
+    height: 30px;
+    width: 110px;
+    border-radius: 5px;
+    border: none;
+    font-family: var(--font-sfpro-medium);
+    cursor: pointer;
+
+    &.btn-following {
+      background: var(--blue);
+      color: var(--text-color-white);
+    }
+
+    &.btn-write {
+      background: var(--white);
+      color: var(--text-color-dark);
+    }
+  }
+}
+
+.user-biography{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.uset-for{
+  width: 100%;
+  display: flex;
+  gap: 15px;
+}
+
+.user-biography-text{
+  display: flex;
+  width: 100%;
+
+  samp{
+    color: var(--grey-light-45);
+    font-family: var(--font-sfpro-regular);
+    font-size: 15px;
+  }
+}
+
+.user-tracking{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  margin-right: 10px;
+}
+
+.user-followers{
+  display: flex;
+  text-decoration: none;
+  flex-direction: column;
+  align-items: center;
+
+  samp{
+    color: var(--white);
+    font-family: var(--font-sfpro-regular);
+  }
+}
+
+.user-following{
+  display: flex;
+  text-decoration: none;
+  flex-direction: column;
+  align-items: center;
+
+  samp{
+    color: var(--white);
+    font-family: var(--font-sfpro-regular);
+  }
+}
