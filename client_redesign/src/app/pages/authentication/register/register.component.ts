@@ -31,14 +31,16 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
-    /*
     if(this.password != this.password2) {
       this.Error = 'passwords do not match';
     }
     else{
       this.Rest.PostRegister(this.email, this.password).subscribe({
         next: async (response) => {
-
+          const token = response.cookie;
+          this.cookieService.set('_ASA', token, undefined, '/', 'localhost', true, 'Strict');
+          window.location.reload()
+          this.router.navigate(['home']);
         },
         error: (error) => {
           if (error.status === 429) {
@@ -51,7 +53,7 @@ export class RegisterComponent implements OnInit {
           }
         }
       });
-    }*/
+    }
     this.router.navigate(['home']);
   }
 }

@@ -128,16 +128,9 @@ namespace authentication.Controllers
 
                         record.Sessions.Add(SessionsData);
 
-                        Response.Cookies.Append("_ASA", token, new CookieOptions
-                        {
-                            HttpOnly = true,
-                            Secure = true,
-                            SameSite = SameSiteMode.Strict,
-                            Expires = DateTime.UtcNow.AddHours(1)
-                        });
 
                         await _context.SaveChangesAsync();
-                        return Ok(new { message = "Registration successful" });
+                        return Ok(new { cookie = token });
                     }
                 }
                 if (user.EmailConfirmed == false)
@@ -200,16 +193,8 @@ namespace authentication.Controllers
 
             user.Sessions.Add(SessionsData);
 
-            Response.Cookies.Append("_ASA", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddHours(1)
-            });
-
             await _context.SaveChangesAsync();
-            return Ok(new { message = "Registration successful" });
+            return Ok(new { cookie = token });
         }
 
 
@@ -258,16 +243,8 @@ namespace authentication.Controllers
                             LoginTime = DateTime.UtcNow
                         };
 
-                        Response.Cookies.Append("_ASA", token, new CookieOptions
-                        {
-                            HttpOnly = true,
-                            Secure = true,
-                            SameSite = SameSiteMode.Strict,
-                            Expires = DateTime.UtcNow.AddHours(1)
-                        });
-
                         await _context.SaveChangesAsync();
-                        return Ok();
+                        return Ok(new {cookie = token });
                     }
                 }
                 return NotFound();

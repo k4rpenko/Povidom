@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import {BorderMainComponent} from "../../components/border-main/border-main.component";
 import {HEADERComponent} from "../../components/header/header.component";
 import {CommonModule} from '@angular/common';
+import {IndexDBComponent} from "../../api/UserDB/index-db/index-db.component";
 
 @Component({
   selector: 'app-settings',
-  imports: [ CommonModule,  HEADERComponent ],
+    imports: [CommonModule, HEADERComponent, IndexDBComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })

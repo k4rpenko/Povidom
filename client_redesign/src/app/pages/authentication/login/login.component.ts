@@ -29,11 +29,10 @@ export class LoginComponent implements OnInit {
   Error: string = '';
 
   onSubmit(): void {
-    /*
     this.Rest.PostLogin(this.email, this.password).subscribe({
       next: (response) => {
-        const token = response.token;
-        this.cookieService.set('session', token);
+        const token = response.cookie;
+        this.cookieService.set('_ASA', token, undefined, '/', 'localhost', true, 'Strict');
         window.location.reload()
         this.router.navigate(['home']);
       },
@@ -45,7 +44,7 @@ export class LoginComponent implements OnInit {
           this.Error = errorMessage;
         }
       }
-    });*/
+    });
     this.router.navigate(['home']);
   }
 }

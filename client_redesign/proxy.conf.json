@@ -3,10 +3,11 @@
     "target": {
       "host": "localhost",
       "protocol": "http:",
-      "port": 80
+      "port": 8080
     },
     "secure": false,
     "logLevel": "debug",
-    "changeOrigin": true
+    "changeOrigin": true,
+    "withCredentials": true
   }
 }

@@ -1,5 +1,5 @@
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class LoginService {
       "password": password
     };
 
-    return this.http.post<{ token	: string  }>(`api/Auth/login`, json, {
+    return this.http.post<{ cookie	: string }>(`api/Auth/login`, json, {
       headers: { 'Content-Type': 'application/json' }
     });
   }

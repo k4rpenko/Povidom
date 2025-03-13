@@ -4,17 +4,12 @@ import { inject, Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class RegisterService {
+export class CheckCoockieService {
   http = inject(HttpClient)
   constructor() { }
 
-  PostRegister(email: String, password: String) {
-    const json = {
-      "email": email,
-      "password": password
-    };
-
-    return this.http.post<{ cookie	: string }>(`api/Auth/registration`, json, {
+  GetCheckCoockie(email: String, password: String) {
+    return this.http.get<{ cookie	: string }>(``, {
       headers: { 'Content-Type': 'application/json' }
     });
   }

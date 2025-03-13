@@ -120,7 +120,7 @@ app.Use(async (context, next) =>
 
         context.Response.Headers.Add("Content-Security-Policy",
             "default-src 'self'; " +
-            "script-src 'self' http://localhost:4200 https://localhost:8086 https://localhost:8087 'unsafe-inline' 'unsafe-eval'; " +
+            "script-src 'self' http://localhost:4200 https://localhost:7178 https://localhost:7178 'unsafe-inline' 'unsafe-eval'; " +
             "connect-src 'self'; " +
             "img-src 'self'; " +
             "style-src 'self' 'unsafe-inline';");
