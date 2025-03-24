@@ -8,9 +8,10 @@ export class CheckCoockieService {
   http = inject(HttpClient)
   constructor() { }
 
-  GetCheckCoockie(email: String, password: String) {
-    return this.http.get<{ cookie	: string }>(``, {
-      headers: { 'Content-Type': 'application/json' }
+  PutCheckCoockie() {
+    return this.http.get<{ cookie: string }>(`api/AccountSettings/SessionsUpdate`, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
     });
   }
 }

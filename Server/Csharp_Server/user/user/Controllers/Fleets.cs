@@ -97,7 +97,6 @@ namespace user.Controllers
                     LastName = u.LastName,
                     Avatar = u.Avatar,
                     Title = u.Title,
-                    PublicKey = u.PublicKey,
                 }).ToList();
 
                 return Ok(new { user = fleetsUsers});

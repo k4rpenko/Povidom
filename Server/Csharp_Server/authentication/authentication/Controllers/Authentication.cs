@@ -123,7 +123,7 @@ namespace authentication.Controllers
                             IPAddress = safeIpAddress,
                             KeyHash = token,
                             Salt = key,
-                            LoginTime = DateTime.UtcNow
+                            LoginTime = DateTime.UtcNow.AddDays(1)
                         };
 
                         record.Sessions.Add(SessionsData);
@@ -188,7 +188,7 @@ namespace authentication.Controllers
                 IPAddress = safeIpAddress,
                 KeyHash = token,
                 Salt = key,
-                LoginTime = DateTime.UtcNow
+                LoginTime = DateTime.UtcNow.AddDays(1)
             };
 
             user.Sessions.Add(SessionsData);
@@ -240,7 +240,7 @@ namespace authentication.Controllers
                             IPAddress = safeIpAddress,
                             KeyHash = token,
                             Salt = key,
-                            LoginTime = DateTime.UtcNow
+                            LoginTime = DateTime.UtcNow.AddDays(1)
                         };
 
                         await _context.SaveChangesAsync();

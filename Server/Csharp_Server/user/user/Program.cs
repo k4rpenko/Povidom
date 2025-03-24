@@ -5,9 +5,18 @@ using MongoDB;
 using PGAdminDAL;
 using RedisDAL.User;
 using RedisDAL;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
+/*
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Listen(IPAddress.Parse("127.0.0.1"), 5001, listenOptions =>
+    {
+        listenOptions.UseHttps("../certificate.pfx", "password");
+    });
+});*/
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetSection("Npgsql:ConnectionString").Value));
@@ -16,6 +25,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IArgon2Hasher, Argon2Hasher>();
 builder.Services.AddSingleton<AppMongoContext>();
 builder.Services.AddSingleton<RedisConfigure>();
 builder.Services.AddSingleton<UsersConnectMessage>();

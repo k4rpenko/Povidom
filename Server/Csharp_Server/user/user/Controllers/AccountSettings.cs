@@ -7,6 +7,8 @@ using user.utils;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
 using Hash.Interface;
+using PGAdminDAL.Model;
+using user.Models.MessageChat;
 
 namespace user.Controllers
 {
@@ -16,36 +18,67 @@ namespace user.Controllers
     {
         private readonly IJwt _jwt;
         private readonly IHASH256 _hash;
+        private readonly IArgon2Hasher _hasher;
         private readonly AppDbContext _context;
 
-        public AccountSettings(AppDbContext context, IJwt jwt, IHASH256 hash)
+        public AccountSettings(AppDbContext context, IJwt jwt, IArgon2Hasher hasher,  IHASH256 hash)
         {
             _context = context;
             _jwt = jwt;
             _hash = hash;
+            _hasher = hasher;
         }
 
 
 
-        [HttpPut("TokenUpdate")]
-        public async Task<IActionResult> AccessToken(TokenModel _tokenM)
+        [HttpGet("SessionsUpdate")]
+        public async Task<IActionResult> AccessToken()
         {
             try
             {
-                var id = _jwt.GetUserIdFromToken(_tokenM.AccessToken);
-                var user = _context.User.FirstOrDefault(u => u.Id == id);
-                var userRoles = _context.UserRoles.FirstOrDefault(u => u.UserId == id);
-                var refreshToke = _context.UserTokens.FirstOrDefault(t => t.UserId == id);
-
-                if (_jwt.ValidateToken(refreshToke.Value, _context) == false)
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
                 {
-                    refreshToke.Value = null;
-                    await _context.SaveChangesAsync();
                     return Unauthorized();
                 }
+                var sessions = _context.Sessions.FirstOrDefault(u => u.KeyHash == cookieValue);
+                if(sessions == null || sessions.LoginTime < DateTime.UtcNow) { return Unauthorized(); }
 
-                var accessToken = _jwt.GenerateJwtToken(id, user.ConcurrencyStamp, 1, userRoles.RoleId);
-                return Ok(new { token = accessToken });
+                string token;
+                string key;
+                bool isUnique = false;
+                do
+                {
+                    key = _hasher.GenerateKey();
+                    token = _hasher.GenerateHash(sessions.Id, key);
+
+                    var find = await _context.User
+                        .Where(u => u.Sessions.Any(s => s.KeyHash == token))
+                        .FirstOrDefaultAsync();
+
+                    isUnique = (find == null);
+
+                } while (!isUnique);
+
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                string safeIpAddress = string.IsNullOrEmpty(ipAddress) ? "Невідома IP" : ipAddress;
+
+                string deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString() ?? "Невідомий пристрій";
+
+                var SessionsData = new Sessions
+                {
+                    UserId = sessions.Id,
+                    DeviceInfo = deviceInfo,
+                    IPAddress = safeIpAddress,
+                    KeyHash = token,
+                    Salt = key,
+                    LoginTime = DateTime.UtcNow
+                };
+
+                sessions.KeyHash = token;
+                sessions.Salt = key;
+                await _context.SaveChangesAsync();
+
+                return Ok(new { cookie = token });
             }
             catch (Exception ex)
             {

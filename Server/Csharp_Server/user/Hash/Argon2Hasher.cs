@@ -2,6 +2,8 @@
 using System.Text;
 using Hash.Interface;
 using Konscious.Security.Cryptography;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Hash
 {
@@ -23,7 +25,6 @@ namespace Hash
                 return Convert.ToBase64String(hash);
             }
         }
-
 
         public string GenerateKey()
         {

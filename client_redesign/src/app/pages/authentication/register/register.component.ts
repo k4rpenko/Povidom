@@ -24,7 +24,7 @@ export class RegisterComponent implements OnInit {
   Error: string = '';
   Rest = inject(RegisterService);
 
-  constructor(private titleService: Title, private router: Router, private cookieService: CookieService) {}
+  constructor(private titleService: Title, private router: Router, private cookieService: CookieService) { }
 
   ngOnInit() {
     this.titleService.setTitle('Authentication');
@@ -39,7 +39,6 @@ export class RegisterComponent implements OnInit {
         next: async (response) => {
           const token = response.cookie;
           this.cookieService.set('_ASA', token, undefined, '/', 'localhost', true, 'Strict');
-          window.location.reload()
           this.router.navigate(['home']);
         },
         error: (error) => {

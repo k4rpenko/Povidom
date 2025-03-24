@@ -18,7 +18,7 @@ import {CookieService} from 'ngx-cookie-service';
 })
 export class LoginComponent implements OnInit {
   Rest = inject(LoginService);
-  constructor(private titleService: Title, private router: Router, private cookieService: CookieService) {}
+  constructor(private titleService: Title, private router: Router, private cookieService: CookieService) { }
 
   ngOnInit() {
     this.titleService.setTitle('Authentication');
@@ -33,7 +33,6 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         const token = response.cookie;
         this.cookieService.set('_ASA', token, undefined, '/', 'localhost', true, 'Strict');
-        window.location.reload()
         this.router.navigate(['home']);
       },
       error: (error) => {
