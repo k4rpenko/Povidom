@@ -29,6 +29,21 @@ export class LoginComponent implements OnInit {
   Error: string = '';
 
   onSubmit(): void {
+    // Очищаємо помилки при натисканні кнопки
+    this.Error = '';
+    
+    // Валідація email
+    if (!this.email || this.email.trim() === '') {
+      this.Error = 'Email is required';
+      return;
+    }
+    
+    // Валідація пароля
+    if (!this.password || this.password.trim() === '') {
+      this.Error = 'Password is required';
+      return;
+    }
+    
     this.Rest.PostLogin(this.email, this.password).subscribe({
       next: (response) => {
         const token = response.cookie;
@@ -44,6 +59,5 @@ export class LoginComponent implements OnInit {
         }
       }
     });
-    this.router.navigate(['home']);
   }
 }

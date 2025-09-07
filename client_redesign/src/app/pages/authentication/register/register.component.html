@@ -50,8 +50,8 @@
     <form (ngSubmit)="onSubmit()" class="auth-form">
       <div class="auth-box-input">
         <input class="auth-input"  [(ngModel)]="email" type="email" placeholder="Email" name="email" maxlength="120"  required/>
-        <input class="auth-input"  [(ngModel)]="password" type="password" placeholder="Password" name="password" required/>
-        <input class="auth-input"  [(ngModel)]="password2" type="password" placeholder="Password" name="password" required/>
+        <input class="auth-input"  [(ngModel)]="password" type="password" placeholder="Password" name="password" (input)="onPasswordChange()" required/>
+        <input class="auth-input"  [(ngModel)]="password2" type="password" placeholder="Password" name="password" (input)="onPasswordChange()" required/>
       </div>
       <div *ngIf="Error" class="auth-error"> <span>{{ Error }}</span> </div>
       <div class="auth-form-button">
