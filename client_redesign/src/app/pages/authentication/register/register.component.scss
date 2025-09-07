@@ -3,6 +3,11 @@
   min-height: 100vh;
 }
 
+// Приховуємо дублікати компонентів (якщо є SSR)
+app-register:not(:first-of-type) {
+  display: none !important;
+}
+
 .auth-title-box {
   font-family: var(--font-sfpro-medium);
   position: relative;

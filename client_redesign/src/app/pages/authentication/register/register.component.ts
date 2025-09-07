@@ -62,24 +62,5 @@ export class RegisterComponent implements OnInit {
       this.Error = 'passwords do not match';
       return; // Не перенаправляємо, якщо паролі не співпадають
     }
-    
-    this.Rest.PostRegister(this.email, this.password).subscribe({
-      next: async (response) => {
-        const token = response.cookie;
-        this.cookieService.set('_ASA', token, undefined, '/', 'localhost', true, 'Strict');
-        this.router.navigate(['home']);
-      },
-      error: (error) => {
-        if (error.status === 429) {
-          this.Error = 'Too many requests. Please try again later.';
-        } else if (error.status === 500) {
-          this.Error = 'Internal Server Error';
-        } else {
-          const errorMessage = error.error?.message || error.message;
-          this.Error = errorMessage;
-        }
-        // Не перенаправляємо при помилці
-      }
-    });
   }
 }
