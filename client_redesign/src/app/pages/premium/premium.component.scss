@@ -78,6 +78,18 @@
   }
 }
 
+.premium-img-about{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  img{
+    width: 100px;
+    height: 100px;
+  }
+
+}
+
 .premium-form{
   display: flex;
   height: 100%;

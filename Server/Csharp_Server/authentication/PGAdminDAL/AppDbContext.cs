@@ -33,6 +33,11 @@ namespace PGAdminDAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.HasDefaultSchema("Povidom");
+
+            modelBuilder.Entity<UserModel>().ToTable("User", schema: "OnePlus");
+            modelBuilder.Entity<Appeal>().ToTable("Appeals", schema: "OnePlus");
+            modelBuilder.Entity<Sessions>().ToTable("Sessions", schema: "OnePlus");
 
             modelBuilder.Entity<UserModel>().Property(x => x.FirstName)
                 .HasMaxLength(100)

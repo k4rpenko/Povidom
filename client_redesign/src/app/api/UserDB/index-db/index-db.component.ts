@@ -13,14 +13,6 @@ export class IndexDBComponent {
   Rest = inject(CheckCoockieService);
 
   constructor(private router: Router, private cookieService: CookieService) {
-    this.Rest.PutCheckCoockie().subscribe({
-      next: (response) => {
-        const token = response.cookie;
-        this.cookieService.set('_ASA', token, undefined, '/', 'localhost', true, 'Strict');
-      },
-      error: (error) => {
-        this.router.navigate(['register']);
-      }
-    });
+
   }
 }

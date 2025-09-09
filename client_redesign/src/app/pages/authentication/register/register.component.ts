@@ -1,10 +1,12 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { jwtDecode } from 'jwt-decode';
 import {NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 import {CookieService} from 'ngx-cookie-service';
 import {RegisterService} from '../../../api/POST/Authentication/Register/Register.service';
+import { JwtPayload } from '../../../data/interface/Post/JwtPayload.interface';
 
 
 @Component({
@@ -30,24 +32,24 @@ export class RegisterComponent implements OnInit {
     this.titleService.setTitle('Authentication');
   }
 
-  // Очистити помилку коли паролі співпадають
+
   onPasswordChange(): void {
     if (this.password === this.password2 && this.password !== '' && this.password2 !== '') {
-      this.Error = ''; // Очищаємо помилку якщо паролі співпадають
+      this.Error = '';
     }
   }
 
   onSubmit(): void {
-    // Очищаємо помилки при натисканні кнопки
+
     this.Error = '';
     
-    // Валідація email
+
     if (!this.email || this.email.trim() === '') {
       this.Error = 'Email is required';
       return;
     }
     
-    // Валідація паролів
+
     if (!this.password || this.password.trim() === '') {
       this.Error = 'Password is required';
       return;
@@ -60,7 +62,51 @@ export class RegisterComponent implements OnInit {
     
     if(this.password != this.password2) {
       this.Error = 'passwords do not match';
-      return; // Не перенаправляємо, якщо паролі не співпадають
+      return;
     }
+
+    if (!this.isValidEmail(this.email)) {
+      this.Error = 'Будь ласка, введіть коректну електронну пошту.';
+    }
+
+    if (!this.isValidPassword(this.password)) {
+      this.Error = 'Пароль має містити принаймні 6 символів, включаючи букви та цифри.';
+    } else if (this.password !== this.password2) {
+      this.Error = 'Паролі не співпадають.';
+    }
+
+    this.Rest.PostRegister(this.email, this.password).subscribe({
+      next: (response) => {
+          const token = response.cookie;
+          this.cookieService.set('authToken', token);
+          const decoded = jwtDecode<JwtPayload>(token);
+          this.cookieService.set('UserId', decoded.sub);
+          this.cookieService.set('Role', decoded.Role);
+          window.location.reload()
+          this.router.navigate(['/home']);
+      },
+      error: (error) => {
+        if (error.status === 429) {
+          this.Error = 'Too many requests. Please try again later.';
+        } else {
+          const errorMessage = error.error?.message || error.message;
+          this.Error = errorMessage;
+        }
+      }
+    });
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+  }
+
+  isValidPassword(password: string): boolean {
+    const hasUpperCase = /[A-Z]/.test(password); 
+    const hasLowerCase = /[a-z]/.test(password); 
+    const hasNumber = /\d/.test(password); 
+    const isLongEnough = password.length >= 6; 
+  
+    return hasUpperCase && hasLowerCase && hasNumber && isLongEnough; 
   }
 }
