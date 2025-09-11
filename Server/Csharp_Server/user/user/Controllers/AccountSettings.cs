@@ -31,21 +31,27 @@ namespace user.Controllers
 
 
 
-        [HttpGet("SessionsUpdate")]
-        public async Task<IActionResult> AccessToken()
+        [HttpPut("SessionsUpdate")]
+        public async Task<IActionResult> SessionsUpdate()
         {
             try
             {
                 if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
                 {
-                    return Unauthorized();
+                    return Unauthorized("No _ASA cookie found");
                 }
-                var sessions = _context.Sessions.FirstOrDefault(u => u.KeyHash == cookieValue);
-                if(sessions == null || sessions.LoginTime < DateTime.UtcNow) { return Unauthorized(); }
 
+                var sessions = await _context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                if (sessions == null || sessions.LoginTime < DateTime.UtcNow)
+                {
+                    return Unauthorized("Session expired or not found");
+                }
                 string token;
                 string key;
-                bool isUnique = false;
+                bool isUnique;
+
                 do
                 {
                     key = _hasher.GenerateKey();
@@ -64,25 +70,29 @@ namespace user.Controllers
 
                 string deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString() ?? "Невідомий пристрій";
 
-                var SessionsData = new Sessions
-                {
-                    UserId = sessions.Id,
-                    DeviceInfo = deviceInfo,
-                    IPAddress = safeIpAddress,
-                    KeyHash = token,
-                    Salt = key,
-                    LoginTime = DateTime.UtcNow
-                };
-
                 sessions.KeyHash = token;
                 sessions.Salt = key;
+                sessions.IPAddress = safeIpAddress;
+                sessions.DeviceInfo = deviceInfo;
+                sessions.LoginTime = DateTime.UtcNow;
+
                 await _context.SaveChangesAsync();
 
-                return Ok(new { cookie = token });
+                Response.Cookies.Append("_ASA", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTimeOffset.UtcNow.AddDays(7),
+                    Path = "/"
+                });
+
+
+                return Ok(new { success = true });
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 

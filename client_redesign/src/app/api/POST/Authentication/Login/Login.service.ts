@@ -15,7 +15,8 @@ export class LoginService {
     };
 
     return this.http.post<{ cookie	: string }>(`api/Auth/login`, json, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
     });
   }
 }

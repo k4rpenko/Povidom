@@ -80,9 +80,8 @@ export class RegisterComponent implements OnInit {
           const token = response.cookie;
           this.cookieService.set('authToken', token);
           const decoded = jwtDecode<JwtPayload>(token);
-          this.cookieService.set('UserId', decoded.sub);
+          this.cookieService.set('_ASA', decoded.sub);
           this.cookieService.set('Role', decoded.Role);
-          window.location.reload()
           this.router.navigate(['/home']);
       },
       error: (error) => {
@@ -108,5 +107,9 @@ export class RegisterComponent implements OnInit {
     const isLongEnough = password.length >= 6; 
   
     return hasUpperCase && hasLowerCase && hasNumber && isLongEnough; 
+  }
+
+  onGoogleLogin(): void {
+    window.location.href = 'api/GoogleAuthentication/GoogleAuth';
   }
 }

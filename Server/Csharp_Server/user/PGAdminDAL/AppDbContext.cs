@@ -33,6 +33,11 @@ namespace PGAdminDAL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.HasDefaultSchema("Povidom");
+
+            modelBuilder.Entity<UserModel>().ToTable("User", schema: "Povidom");
+            modelBuilder.Entity<Appeal>().ToTable("Appeals", schema: "Povidom");
+            modelBuilder.Entity<Sessions>().ToTable("Sessions", schema: "Povidom");
 
             modelBuilder.Entity<UserModel>().Property(x => x.FirstName)
                 .HasMaxLength(100)
@@ -48,9 +53,9 @@ namespace PGAdminDAL
 
 
             modelBuilder.Entity<Appeal>()
-                .HasOne(a => a.User) 
-                .WithMany() 
-                .HasForeignKey(a => a.UserId) 
+                .HasOne(a => a.User)
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Sessions>()

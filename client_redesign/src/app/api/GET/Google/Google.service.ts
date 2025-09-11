@@ -9,9 +9,9 @@ export class GoogleService {
   constructor() { }
 
   SignGoogleOAuth() {
-
-    return this.http.get(`api/GoogleAuthentication/GoogleAuth`, {
-      headers: { 'Content-Type': 'application/json' }
+    return this.http.get<{url: string}>(`api/GoogleAuthentication/GoogleAuth`, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
     });
   }
 }

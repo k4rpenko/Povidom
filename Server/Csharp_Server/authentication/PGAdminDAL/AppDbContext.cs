@@ -35,9 +35,9 @@ namespace PGAdminDAL
             base.OnModelCreating(modelBuilder);
             modelBuilder.HasDefaultSchema("Povidom");
 
-            modelBuilder.Entity<UserModel>().ToTable("User", schema: "OnePlus");
-            modelBuilder.Entity<Appeal>().ToTable("Appeals", schema: "OnePlus");
-            modelBuilder.Entity<Sessions>().ToTable("Sessions", schema: "OnePlus");
+            modelBuilder.Entity<UserModel>().ToTable("User", schema: "Povidom");
+            modelBuilder.Entity<Appeal>().ToTable("Appeals", schema: "Povidom");
+            modelBuilder.Entity<Sessions>().ToTable("Sessions", schema: "Povidom");
 
             modelBuilder.Entity<UserModel>().Property(x => x.FirstName)
                 .HasMaxLength(100)

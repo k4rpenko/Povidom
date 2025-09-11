@@ -15,7 +15,8 @@ export class RegisterService {
     };
 
     return this.http.post<{ cookie	: string }>(`api/Auth/registration`, json, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
     });
   }
 }

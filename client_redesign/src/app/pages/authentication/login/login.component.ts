@@ -60,4 +60,9 @@ export class LoginComponent implements OnInit {
       }
     });
   }
+
+  onGoogleLogin(): void {
+    // Прямий редирект на сервер, який поверне Google OAuth URL
+    window.location.href = 'api/GoogleAuthentication/GoogleAuth';
+  }
 }

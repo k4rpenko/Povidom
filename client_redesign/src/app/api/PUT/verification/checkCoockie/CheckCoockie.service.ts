@@ -9,7 +9,7 @@ export class CheckCoockieService {
   constructor() { }
 
   PutCheckCoockie() {
-    return this.http.get<{ cookie: string }>(`api/AccountSettings/SessionsUpdate`, {
+    return this.http.put<{ cookie: string }>(`api/AccountSettings/SessionsUpdate`, {}, {
       headers: { 'Content-Type': 'application/json' },
       withCredentials: true
     });

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "posts", "posts\posts.csproj", "{10D6652F-5BB3-499F-A21C-C86744EF4BAC}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisDAL", "RedisDAL\RedisDAL.csproj", "{BD6750AA-4D8A-4BD3-9FE3-0E952CA59B86}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hash", "Hash\Hash.csproj", "{7AC04B32-3316-4BF4-A780-005F0AFA82CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messages", "Messages\Messages.csproj", "{C576892B-C263-4929-8487-5C398435AEE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{7AC04B32-3316-4BF4-A780-005F0AFA82CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AC04B32-3316-4BF4-A780-005F0AFA82CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AC04B32-3316-4BF4-A780-005F0AFA82CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C576892B-C263-4929-8487-5C398435AEE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C576892B-C263-4929-8487-5C398435AEE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C576892B-C263-4929-8487-5C398435AEE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C576892B-C263-4929-8487-5C398435AEE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

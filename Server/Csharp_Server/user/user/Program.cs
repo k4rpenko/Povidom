@@ -9,14 +9,15 @@ using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*
+
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.Listen(IPAddress.Parse("127.0.0.1"), 5001, listenOptions =>
+    options.Listen(IPAddress.Any, 8083, listenOptions =>
     {
-        listenOptions.UseHttps("../certificate.pfx", "password");
+        listenOptions.UseHttps("certificate.pfx", "password");
     });
-});*/
+});
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetSection("Npgsql:ConnectionString").Value));
@@ -39,10 +40,12 @@ builder.Services.AddCors(options =>
         builder => builder.WithOrigins("http://localhost:4200")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
-                          .AllowCredentials());
+                          .AllowCredentials() 
+                          .SetIsOriginAllowedToAllowWildcardSubdomains());
 });
 
 var app = builder.Build();
+app.UseCors("AllowSpecificOrigin");
 
 app.Use(async (context, next) =>
 {
@@ -76,7 +79,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowSpecificOrigin");
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

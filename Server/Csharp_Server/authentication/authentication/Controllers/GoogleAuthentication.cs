@@ -33,7 +33,7 @@ namespace authentication.Controllers
         public async Task<IActionResult> RedirectOauthServer()
         {
             var scope = "https://mail.google.com/ https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
-            var redirectUrl = $"{Request.Scheme}://{Request.Host}/api/GoogleAuthGetCode";
+            var redirectUrl = $"{Request.Scheme}://{Request.Host}/api/GoogleAuthentication/GoogleAuthGetCode";
             var codeVerifier = GenerateCodeVerifier();
             var codeChallenge = GenerateCodeChallenge(codeVerifier);
             HttpContext.Session.SetString("CodeVerifier", codeVerifier);
@@ -46,7 +46,7 @@ namespace authentication.Controllers
         public async Task<IActionResult> CodeOauthServer(string code)
         {
             string codeVerifier = HttpContext.Session.GetString("CodeVerifier");
-            var redirectUrl = $"{Request.Scheme}://{Request.Host}/api/GoogleAuthGetCode";
+            var redirectUrl = $"{Request.Scheme}://{Request.Host}/api/GoogleAuthentication/GoogleAuthGetCode";
 
             var token = await GoogleOAuth.ExchangeCodeForTokens(code, codeVerifier, redirectUrl);
 

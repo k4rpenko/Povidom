@@ -13,15 +13,16 @@ using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*
+
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.Listen(IPAddress.Parse("127.0.0.1"), 8081, listenOptions =>
+    options.Listen(IPAddress.Any, 8081, listenOptions =>
     {
-        listenOptions.UseHttps("/app/certificate.pfx", "password");
+        listenOptions.UseHttps("certificate.pfx", "password");
     });
 });
-*/
+
+
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
