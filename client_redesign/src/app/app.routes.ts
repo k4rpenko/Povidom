@@ -14,15 +14,15 @@ export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  /*
+  
   { path: 'home', component: HomeComponent },
   { path: 'message', component: MessagesComponent },
   { path: 'premium', component: PremiumComponent },
   { path: 'notification', component: NotificationComponent },
   { path: 'settings', component: SettingsComponent },
   { path: 'saved', component: SavedComponent },
-*/
 
+/*
   { 
     path: 'home', 
     component: HomeComponent,
@@ -47,6 +47,6 @@ export const routes: Routes = [
     path: 'settings', 
     component: SettingsComponent,
     canActivate: [AuthGuard]
-  },
+  },*/
   { path: ':username', component: UserComponent },
 ];
