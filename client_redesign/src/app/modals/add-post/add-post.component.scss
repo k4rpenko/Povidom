@@ -4,11 +4,41 @@
   background: rgba(0,0,0,0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: start;
+  z-index: 100;
 }
-.modal {
-  background: white;
+
+.header {
+  margin-top: 200px;
+  background: var(--grey-dark-15);
   padding: 20px;
   border-radius: 8px;
-  min-width: 300px;
+  min-width: 600px;
+
+  button {
+    border: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: background-color 0.5s ease, svg fill 0.5s ease;
+
+    svg {
+      width: 25px;
+      height: 25px;
+      fill: white;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2); 
+    }
+  }
+}
+
+.main {
+  
 }
