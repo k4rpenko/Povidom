@@ -1,6 +1,0 @@
-@posts_HostAddress = http://localhost:5034
-
-GET {{posts_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

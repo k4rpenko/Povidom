@@ -1,0 +1,6 @@
+services:
+  identification:
+    image: ${DOCKER_REGISTRY-}identification
+    build:
+      context: .
+      dockerfile: Identification/Dockerfile
