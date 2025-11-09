@@ -68,3 +68,9 @@
     border-radius: 10px;
   }
 }
+
+@media (max-width: 1400px) {
+  app-border-main {
+    display: none;
+  }
+}

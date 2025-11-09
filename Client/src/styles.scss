@@ -1,73 +1,54 @@
-
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
-@use '@angular/material' as mat;
-// Plus imports for other components in your app.
-
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
-@include mat.core();
-
-// Define the theme object.
-$Client-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
-    tertiary: mat.$blue-palette,
-  ),
-  density: (
-    scale: 0,
-  )
-));
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
 :root {
-  @include mat.all-component-themes($Client-theme);
+  --white-background: #F2F2F2;
+  --dark-background: #1a1a1a;
+  --grean: #30D158;
+  --yellow: #FFD60A;
+  --read: #FF453A;
+  --blue: #0A84FF;
+  --blue-dark-80: #086acc;
+  --blue-dark-60: #064f99;
+  --blue-dark-40: #043566;
+  --text-color-dark: #1d1d1f;
+  --text-color-white: #fff;
+  --white: #fff;
+  --white-dark: #cccccc;
+  --grey: #3A3A3C;
+  --grey-light-80: #c6c6cc;
+  --grey-light-60: #949499;
+  --grey-light-45: #6f6f73;
+  --grey-light: #545457;
+  --grey-dark-15: #252526;
+  --grey-dark: #19191a;
+  --border-radius: 10px;
+
+  --font-sfpro-black: "SFProDisplay-Black";
+  --font-sfpro-black-italic: "SFProDisplay-BlackItalic";
+  --font-sfpro-bold: "SFProDisplay-Bold";
+  --font-sfpro-bold-italic: "SFProDisplay-BoldItalic";
+  --font-sfpro-heavy: "SFProDisplay-Heavy";
+  --font-sfpro-heavy-italic: "SFProDisplay-HeavyItalic";
+  --font-sfpro-light: "SFProDisplay-Light";
+  --font-sfpro-light-italic: "SFProDisplay-LightItalic";
+  --font-sfpro-medium: "SFProDisplay-Medium";
+  --font-sfpro-medium-italic: "SFProDisplay-MediumItalic";
+  --font-sfpro-regular: "SFProDisplay-Regular";
+  --font-sfpro-regular-italic: "SFProDisplay-RegularItalic";
+  --font-sfpro-semibold: "SFProDisplay-Semibold";
+  --font-sfpro-semibold-italic: "SFProDisplay-SemiboldItalic";
+  --font-sfpro-thin: "SFProDisplay-Thin";
+  --font-sfpro-thin-italic: "SFProDisplay-ThinItalic";
+  --font-sfpro-ultralight: "SFProDisplay-Ultralight";
+  --font-sfpro-ultralight-italic: "SFProDisplay-UltralightItalic";
 }
 
-// Comment out the line below if you want to use the pre-defined typography utility classes.
-// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
-// @include mat.typography-hierarchy($Client-theme);
-
-// Comment out the line below if you want to use the deprecated `color` inputs.
-// @include mat.color-variants-backwards-compatibility($Client-theme);
-body {
-  background-color: rgb(24, 25, 26);
-  display: flex;
-  flex-direction: column;
+*{
+  margin: 0;
+  padding: 0;
 }
-app-root{
+
+
+html,
+body{
   height: 100%;
-}
-.Body{
-  display: flex;
-  height: 100%;
-}
-app-posts, app-users{
-  flex: 1;
-}
-app-side-menu{
-  width: 33%;
-}
-html,body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-
-@media (max-width: 1300px) {
-  app-side-menu{
-    width: 20%;
-  }
-}
-
-@media (max-width: 1300px) {
-  app-side-menu{
-    width: 100px;
-  }
-}
-
-@media (max-width: 768px) {
-
+  background-color: var(--dark-background);
 }
