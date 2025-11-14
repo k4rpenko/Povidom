@@ -4,6 +4,8 @@ Spacegram is a social network pet project that combines:
 - Ease of publishing and interacting, similar to Twitter and Instagram: users can easily create posts, edit them, comment, repost, and interact with the community.  
 
 ---
+## Figma 
+https://www.figma.com/design/9AB2n1nmHDC40VpjOpRnaK/Spacegram?node-id=0-1&t=nyJxmrwRSrmDSIEz-1
 
 ## Launching the project  
 
