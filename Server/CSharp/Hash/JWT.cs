@@ -54,7 +54,7 @@ namespace Hash
                 var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub);
                 if (userIdClaim != null)
                 {
-                    var user = context.User.FirstOrDefault(u => u.Id == userIdClaim.Value);
+                    var user = context.Users.FirstOrDefault(u => u.Id == userIdClaim.Value);
                     if (user != null)
                     {
                         var key = Encoding.UTF8.GetBytes(user.ConcurrencyStamp);

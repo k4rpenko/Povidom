@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace PGAdminDAL
 {
-    public class AppDbContext : IdentityDbContext
+    public class AppDbContext : IdentityDbContext<UserModel>
     {
         private readonly IConfiguration _configuration;
 
@@ -18,7 +18,6 @@ namespace PGAdminDAL
         public AppDbContext GetDbContext() => (AppDbContext)_configuration;
 
 
-        public DbSet<UserModel> User { get; set; }
         public DbSet<Appeal> Appeals { get; set; }
         public DbSet<Sessions> Sessions { get; set; }
 
@@ -35,7 +34,7 @@ namespace PGAdminDAL
             base.OnModelCreating(modelBuilder);
             modelBuilder.HasDefaultSchema("Povidom");
 
-            modelBuilder.Entity<UserModel>().ToTable("User", schema: "Povidom");
+            modelBuilder.Entity<UserModel>().ToTable("AspNetUsers", schema: "Povidom");
             modelBuilder.Entity<Appeal>().ToTable("Appeals", schema: "Povidom");
             modelBuilder.Entity<Sessions>().ToTable("Sessions", schema: "Povidom");
 

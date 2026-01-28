@@ -40,10 +40,11 @@ namespace Identification.Sending
 
         public async Task<OAuthResultModel> ExchangeCodeForTokens(string code, string codeVerifier, string redirectUrl)
         {
+            if (string.IsNullOrWhiteSpace(code)) throw new ArgumentException("code is required", nameof(code));
+            if (string.IsNullOrWhiteSpace(codeVerifier)) throw new ArgumentException("codeVerifier is required", nameof(codeVerifier));
             using (var client = new HttpClient())
             {
                 var tokenEndPoint = "https://oauth2.googleapis.com/token";
-
                 var authParams = new Dictionary<string, string>
                 {
                     {"client_id", ClientID},
@@ -53,14 +54,18 @@ namespace Identification.Sending
                     {"grant_type", "authorization_code"},
                     {"redirect_uri", redirectUrl}
                 };
+                if (!string.IsNullOrEmpty(ClientSecret))
+                {
+                    authParams["client_secret"] = ClientSecret;
+                }
+
                 var content = new FormUrlEncodedContent(authParams);
-
                 var response = await client.PostAsync(tokenEndPoint, content);
-
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<OAuthResultModel>(responseContent);
+                    var token = JsonConvert.DeserializeObject<OAuthResultModel>(responseContent);
+                    return token;
                 }
                 else
                 {

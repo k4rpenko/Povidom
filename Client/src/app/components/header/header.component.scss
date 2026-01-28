@@ -4,6 +4,8 @@ $font-family-Black: 'SFProDisplay-Black', sans-serif;
 $font-family-Bold: 'SFProDisplay-Bold', sans-serif;
 
 .sidebar {
+  margin-left: 100px;
+  position: fixed;
   font-family: "SFProDisplay-Regular", sans-serif;
   width: 350px;
   height: 100%;
@@ -12,6 +14,7 @@ $font-family-Bold: 'SFProDisplay-Bold', sans-serif;
   padding: 20px 20px 30px 20px;
   box-sizing: border-box;
   border-right: 1px solid var(--grey-light);
+  z-index: 1000;
 }
 
 .sidebar-header {

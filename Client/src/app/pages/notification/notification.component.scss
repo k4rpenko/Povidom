@@ -4,7 +4,6 @@
   width: 100%;
   color: var(--text-color-white);
   font-family: var(--font-sfpro-regular);
-  justify-content: center;
 }
 
 .main{
@@ -14,6 +13,7 @@
 }
 
 .noti-box{
+  margin-left: 450px;
   width: 610px;
   height: 100%;
   border-right: 1px solid var(--grey-light);

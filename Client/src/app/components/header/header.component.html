@@ -23,7 +23,7 @@
   </div>
 
   <nav class="menu">
-    <a href="home" class="menu-item">
+    <a [routerLink]="['/home']" class="menu-item">
       <ng-container *ngIf="url === 'home'; else otherUrl1">
         <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M2.5192 7.82274C2 8.77128 2 9.91549 2 12.2039V13.725C2 17.6258 2 19.5763 3.17157 20.7881C4.34315 22 6.22876 22 10 22H14C17.7712 22 19.6569 22 20.8284 20.7881C22 19.5763 22 17.6258 22 13.725V12.2039C22 9.91549 22 8.77128 21.4808 7.82274C20.9616 6.87421 20.0131 6.28551 18.116 5.10812L16.116 3.86687C14.1106 2.62229 13.1079 2 12 2C10.8921 2 9.88939 2.62229 7.88403 3.86687L5.88403 5.10813C3.98695 6.28551 3.0384 6.87421 2.5192 7.82274ZM9 17.25C8.58579 17.25 8.25 17.5858 8.25 18C8.25 18.4142 8.58579 18.75 9 18.75H15C15.4142 18.75 15.75 18.4142 15.75 18C15.75 17.5858 15.4142 17.25 15 17.25H9Z" fill="#fff"/>
@@ -37,7 +37,7 @@
       </ng-template>
       <span>Головна</span>
     </a>
-    <a href="notification" class="menu-item">
+    <a [routerLink]="['/notification']" class="menu-item">
       <ng-container *ngIf="url === 'notification'; else otherUrl2">
         <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -54,7 +54,7 @@
       </ng-template>
       <span>Повідомлення</span>
     </a>
-    <a href="message" class="menu-item">
+    <a [routerLink]="['/message']" class="menu-item">
       <ng-container *ngIf="url === 'message'; else otherUrl3">
         <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -71,7 +71,7 @@
       </ng-template>
       <span>Чат</span>
     </a>
-    <a href="saved" class="menu-item">
+    <a [routerLink]="['/saved']" class="menu-item">
         <ng-container *ngIf="url === 'saved'; else otherUrl4">
           <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="menu-svg">
             <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -88,7 +88,7 @@
         </ng-template>
       <span>Збережені</span>
     </a>
-    <a href="profile" class="menu-item">
+    <a [routerLink]="['/profile']" class="menu-item">
       <ng-container *ngIf="url === 'profile'; else otherUrl5">
         <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g id="SVGRepo_bgCarrier" stroke-width="0"/>
@@ -121,10 +121,11 @@
     <app-add-post *ngIf="isAddPostOpen" (closed)="closeAddPost()"></app-add-post>
     <a class="user-profile">
       <div class="profile-info">
-        <img src="https://pbs.twimg.com/profile_images/1742667463207055360/UYNxKd3H_400x400.jpg" alt="" class="profile-icon">
+        <img [src]="user.avatar || 'https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg'"
+          alt="" class="profile-icon">
         <div class="user-details">
-          <span class="user-name">First name Last name</span>
-          <span class="user-handle">User name</span>
+          <span class="user-name">{{user.firstName}}{{user.lastName}}</span>
+          <span class="user-handle">{{user.userName}}</span>
         </div>
       </div>
       <button class="more-options"><samp>•••</samp></button>

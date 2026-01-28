@@ -27,6 +27,10 @@ namespace posts.Models.Post
         public bool? YouComment { get; set; }
         public int? CommentAmount { get; set; }
         public int? Views { get; set; }
+        public int ViewsAmount { get; set; } 
         public bool? SPublished { get; set; }
+        public bool? ShaveAnswer { get; set; }
+        public string? Ansver { get; set; }
+
     }
 }

@@ -4,9 +4,7 @@
   width: 100%;
   color: var(--text-color-white);
   font-family: var(--font-sfpro-regular);
-  justify-content: center;
 }
-
 
 .main{
   display: flex;
@@ -14,7 +12,9 @@
   max-width: 1140px;
 }
 
+
 .user-box{
+  margin-left: 450px;
   display: flex;
   border-right: 1px solid var(--grey-light);
   width: 610px;
@@ -270,6 +270,8 @@
     }
   }
 }
+
+
 
 
 @media (max-width: 1400px) {

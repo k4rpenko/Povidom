@@ -1,3 +1,8 @@
+$font-family-Regular: 'SFProDisplay-Regular', sans-serif;
+$font-family-Medium: 'SFProDisplay-Medium', sans-serif;
+$font-family-Black: 'SFProDisplay-Black', sans-serif;
+$font-family-Bold: 'SFProDisplay-Bold', sans-serif;
+
 .overlay {
   position: fixed;
   inset: 0;
@@ -8,12 +13,25 @@
   z-index: 100;
 }
 
-.header {
+.BOX {
+  z-index: 200;
+  gap: 30px;
   margin-top: 200px;
   background: var(--grey-dark-15);
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 13px;
   min-width: 600px;
+  max-width: 600px;
+  min-height: 350px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.header {
+  width: 100%;
+  display: flex;
 
   button {
     border: none;
@@ -25,7 +43,7 @@
     background-color: transparent;
     border-radius: 13px;
     cursor: pointer;
-    transition: background-color 0.5s ease, svg fill 0.5s ease;
+    transition: 0.3s;
 
     svg {
       width: 25px;
@@ -39,6 +57,112 @@
   }
 }
 
-.main {
-  
+.main{
+  width: 100%;
+  display: flex;
+
+  .Post{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 13px;
+
+    .write_post{
+      width: 100%;
+      min-height: 250px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      flex-direction: row;
+
+      
+      img{
+        width: 40px;
+        height: 40px;
+        border-radius: 100px;
+      }
+
+      .textbox{
+        padding: 10px;
+        width: 87%;
+        height: 200px;
+        max-height: 380px;
+      }
+
+      .overflow {
+        background: rgba(255, 0, 0, 0.4);
+        color: white;
+      }
+
+      .textbox:empty:before {
+        content: "What's new?";
+        color: #888;
+      }
+
+      .textbox:focus {
+        outline: none;
+      }
+
+    }
+
+    .send_post{
+      display: flex;
+      justify-content: space-between;
+
+      .buttons{
+        display: flex;
+        gap: 10px;
+
+        .Line{
+          background-color: rgb(62, 65, 68);
+          width: 2px;
+          border-radius: 3px;
+          height: 100%;
+        }
+
+        .circle-wrapper {
+          transition: stroke-dasharray 0.3s, stroke 0.3s;
+          width: 40px;
+          height: 40px;
+          position: relative;
+
+
+          .circle {
+            transition: stroke-dasharray 0.3s, stroke 0.3s;
+            width: 100%;
+            height: 100%;
+          }
+
+          .circle-bg {
+            fill: none;
+            stroke-width: 3.8;
+          }
+
+          .circle-progress {
+            fill: none;
+            stroke-width: 3.8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.3s, stroke 0.3s;
+          }
+
+          .circle-text {
+            font-family: $font-family-Medium;
+            font-size: 0.6em;
+            fill: #888;
+            dominant-baseline: middle;
+          }
+        }
+
+        .SendButton{
+          text-decoration: none;
+          background-color: white;
+          text-align: center;
+          color: black;
+          padding: 10px 30px 10px 30px;
+          border-radius: 20px;
+          font-family: $font-family-Bold;
+        }
+      }
+    }
+  }
 }

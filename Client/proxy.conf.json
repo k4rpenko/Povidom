@@ -1,10 +1,7 @@
 {
   "/api": {
-    "target": {
-      "host": "localhost",
-      "protocol": "https:",
-      "port": 443
-    },
-    "secure": false
+    "target": "https://localhost",
+    "secure": false,
+    "changeOrigin": true
   }
 }

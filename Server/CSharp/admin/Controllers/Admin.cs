@@ -51,7 +51,7 @@ namespace Admin.Controllers
         {
             if (_admin.Id != null)
             {
-                var user = await _context.User.FirstOrDefaultAsync(u => u.Id == _admin.Id);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == _admin.Id);
                 if (user.LockoutEnabled)
                 {
                     user.LockoutEnd = _admin.block;
@@ -73,7 +73,7 @@ namespace Admin.Controllers
         {
             if (_admin.Id != null)
             {
-                var user = await _context.User.FirstOrDefaultAsync(u => u.Id == _admin.Id);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == _admin.Id);
                 if (user != null)
                 {
                     await _emailSend.Writing(user.Email, _admin.SendMail);
@@ -86,7 +86,7 @@ namespace Admin.Controllers
         [HttpGet("{nickname}")]
         public async Task<IActionResult> GetUser([FromRoute] string nickname)
         {
-            var user = await _context.User.FirstOrDefaultAsync(u => u.UserName == nickname);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == nickname);
             if (user != null)
             {
                 return Ok(new { User = user });

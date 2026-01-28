@@ -4,3 +4,17 @@ services:
     build:
       context: .
       dockerfile: Identification/Dockerfile
+
+  user:
+    image: ${DOCKER_REGISTRY-}user
+    build:
+      context: .
+      dockerfile: user/Dockerfile
+
+
+  post:
+    image: ${DOCKER_REGISTRY-}post
+    build:
+      context: .
+      dockerfile: post/Dockerfile
+

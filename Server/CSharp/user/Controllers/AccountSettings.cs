@@ -46,48 +46,11 @@ namespace user.Controllers
 
                 if (sessions == null || sessions.LoginTime < DateTime.UtcNow)
                 {
+                    _context.Sessions.Remove(sessions);
+                    await _context.SaveChangesAsync();
                     return Unauthorized("Session expired or not found");
                 }
-                string token;
-                string key;
-                bool isUnique;
-
-                do
-                {
-                    key = _hasher.GenerateKey();
-                    token = _hasher.GenerateHash(sessions.Id, key);
-
-                    var find = await _context.User
-                        .Where(u => u.Sessions.Any(s => s.KeyHash == token))
-                        .FirstOrDefaultAsync();
-
-                    isUnique = (find == null);
-
-                } while (!isUnique);
-
-                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-                string safeIpAddress = string.IsNullOrEmpty(ipAddress) ? "Невідома IP" : ipAddress;
-
-                string deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString() ?? "Невідомий пристрій";
-
-                sessions.KeyHash = token;
-                sessions.Salt = key;
-                sessions.IPAddress = safeIpAddress;
-                sessions.DeviceInfo = deviceInfo;
-                sessions.LoginTime = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync();
-
-                Response.Cookies.Append("_ASA", token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTimeOffset.UtcNow.AddDays(7),
-                    Path = "/"
-                });
-
-
+                
                 return Ok(new { success = true });
             }
             catch (Exception ex)
@@ -104,7 +67,7 @@ namespace user.Controllers
                 if (Account.Password != null  && _jwt.ValidateToken(Account.Token, _context))
                 {
                     var id = _jwt.GetUserIdFromToken(Account.Token);
-                    var user = await _context.User.FindAsync(id);
+                    var user = await _context.Users.FindAsync(id);
                     if (user != null)
                     {
                         string HashNewPassword = _hash.Encrypt(Account.NewPassword, user.ConcurrencyStamp);
@@ -131,8 +94,16 @@ namespace user.Controllers
         {
             try
             {
-                var id = _jwt.GetUserIdFromToken(model.Token);
-                var user = await _context.User.FindAsync(id);
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized("No _ASA cookie found");
+                }
+
+                var sessions = await _context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await _context.Users.FindAsync(id);
 
                 if (user == null) { return NotFound(new { message = "User not found" }); }
 
@@ -158,7 +129,7 @@ namespace user.Controllers
         {
             try
             {
-                var mainUser = await _context.User.FirstOrDefaultAsync(u => u.Id == model.Id);
+                var mainUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == model.Id);
 
                 if (mainUser == null)
                 {
@@ -167,6 +138,33 @@ namespace user.Controllers
 
                 var additionalNicknames = new UserName().GenerateAdditionalNicknames(model.NickName, _context);
                 return Ok(new { modUserName = additionalNicknames });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("ID")]
+        public async Task<IActionResult> GetUserID()
+        {
+            try
+            {
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized("No _ASA cookie found");
+                }
+
+                var sessions = await _context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                if (sessions == null || sessions.LoginTime < DateTime.UtcNow)
+                {
+                    return Unauthorized("Session expired or not found");
+                }
+
+                return Ok(new { id = sessions.UserId });
 
             }
             catch (Exception ex)

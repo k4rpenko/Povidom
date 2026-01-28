@@ -37,7 +37,26 @@ namespace PGAdminDAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Avatar = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: true),
+                    Location = table.Column<string>(type: "text", nullable: true),
+                    ConnectionId = table.Column<string>(type: "text", nullable: true),
+                    StoriesId = table.Column<List<string>>(type: "text[]", nullable: false),
+                    Subscribers = table.Column<List<string>>(type: "text[]", nullable: false),
+                    Followers = table.Column<List<string>>(type: "text[]", nullable: false),
+                    LikePostID = table.Column<List<string>>(type: "text[]", nullable: false),
+                    CommentPostID = table.Column<List<string>>(type: "text[]", nullable: false),
+                    RetweetPostID = table.Column<List<string>>(type: "text[]", nullable: false),
+                    PostID = table.Column<List<string>>(type: "text[]", nullable: false),
+                    RecallPostId = table.Column<List<string>>(type: "text[]", nullable: false),
+                    ChatsID = table.Column<List<string>>(type: "text[]", nullable: false),
+                    LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsVerified = table.Column<bool>(type: "boolean", nullable: false),
+                    IsOnline = table.Column<bool>(type: "boolean", nullable: false),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -76,6 +95,28 @@ namespace PGAdminDAL.Migrations
                         column: x => x.RoleId,
                         principalSchema: "Povidom",
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Appeals",
+                schema: "Povidom",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Appeals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Appeals_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "Povidom",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -175,66 +216,6 @@ namespace PGAdminDAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
-                schema: "Povidom",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Avatar = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: true),
-                    Location = table.Column<string>(type: "text", nullable: true),
-                    ConnectionId = table.Column<string>(type: "text", nullable: true),
-                    StoriesId = table.Column<List<string>>(type: "text[]", nullable: false),
-                    Subscribers = table.Column<List<string>>(type: "text[]", nullable: false),
-                    Followers = table.Column<List<string>>(type: "text[]", nullable: false),
-                    LikePostID = table.Column<List<string>>(type: "text[]", nullable: false),
-                    CommentPostID = table.Column<List<string>>(type: "text[]", nullable: false),
-                    RetweetPostID = table.Column<List<string>>(type: "text[]", nullable: false),
-                    PostID = table.Column<List<string>>(type: "text[]", nullable: false),
-                    RecallPostId = table.Column<List<string>>(type: "text[]", nullable: false),
-                    ChatsID = table.Column<List<string>>(type: "text[]", nullable: false),
-                    LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsVerified = table.Column<bool>(type: "boolean", nullable: false),
-                    IsOnline = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_User_AspNetUsers_Id",
-                        column: x => x.Id,
-                        principalSchema: "Povidom",
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Appeals",
-                schema: "Povidom",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Appeals", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Appeals_User_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "Povidom",
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Sessions",
                 schema: "Povidom",
                 columns: table => new
@@ -251,10 +232,10 @@ namespace PGAdminDAL.Migrations
                 {
                     table.PrimaryKey("PK_Sessions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Sessions_User_UserId",
+                        name: "FK_Sessions_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalSchema: "Povidom",
-                        principalTable: "User",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -349,10 +330,6 @@ namespace PGAdminDAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles",
-                schema: "Povidom");
-
-            migrationBuilder.DropTable(
-                name: "User",
                 schema: "Povidom");
 
             migrationBuilder.DropTable(

@@ -33,7 +33,7 @@ namespace posts.Models.Post
         public ObjectId Id { get; set; }
 
         [BsonElement("UserId")]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
 
         [BsonElement("Content")]
         public string? Content { get; set; }
@@ -73,6 +73,12 @@ namespace posts.Models.Post
 
         [BsonElement("SPublished")]
         public bool SPublished { get; set; }
+
+        [BsonElement("ShaveAnswer")]
+        public bool ShaveAnswer { get; set; }
+
+        [BsonElement("Ansver")]
+        public string? Ansver { get; set; }
 
     }
 }

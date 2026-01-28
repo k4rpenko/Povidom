@@ -13,6 +13,7 @@ export interface Like {
 export interface Post {
   id?: string;
   user?: User;
+  userId: string;
   content?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -30,7 +31,10 @@ export interface Post {
   commentAmount?: number;
   youComment?: boolean;
   views?: string[];
+  viewsAmount: number;
   sPublished?: boolean;
+  shaveAnswer: boolean;
+  ansver: Post;
 }
 
 export interface PostArray {

@@ -20,7 +20,7 @@ namespace posts.Models.Post
         public string? UserAvatar { get; set; }
 
         [BsonElement("Content")]
-        public string? Content { get; set; }
+        public string Content { get; set; }
 
         [BsonElement("CreatedAt")]
         public DateTime? CreatedAt { get; set; }

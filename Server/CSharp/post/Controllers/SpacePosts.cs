@@ -1,4 +1,4 @@
-﻿using Hash;
+﻿    using Hash;
 using Hash.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,34 +20,52 @@ namespace posts.Controllers
         private readonly IJwt _jwt;
 
         public SpacePosts(AppMongoContext _Mongo, IJwt jwt,  IConfiguration _configuration, AppDbContext _context) 
-        { 
-            _customers = _Mongo.Database?.GetCollection<SpacePostModel>(_configuration.GetSection("MongoDB:MongoDbDatabase").Value); 
+        {
+            var postCollectionName = _configuration["MongoDB:MongoDbDatabasePost"]; 
+            _customers = _Mongo.Database.GetCollection<SpacePostModel>(postCollectionName);
             context = _context; 
         }
 
 
         [HttpPost("AddPost")]
-        public async Task<IActionResult> AddPost(SpacePostModel _data)
+        public async Task<IActionResult> AddPost(SpaceWorkModel _data)
         {
-            try
-            {
-                var id = _jwt.GetUserIdFromToken(_data.UserId);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+            try { 
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized("No _ASA cookie found");
+                }
+
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
                 if (user == null)
                 {
                     return NotFound("User not found.");
                 }
-                _data.UserId = id;
-                _data.CreatedAt = DateTime.UtcNow;
-                _data.UpdatedAt = DateTime.UtcNow;
-                await _customers.InsertOneAsync(_data);
 
-                user.PostID.Add(_data.Id.ToString());
+                var post = new SpacePostModel
+                {
+                    Content = _data.Content,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    SPublished = true,
+                    ShaveAnswer = false
+                };
+
+                await _customers.InsertOneAsync(post);
+
+                user.PostID.Add(post.Id.ToString());
+
                 await context.SaveChangesAsync();
 
                 var postHome = new PostHome
                 {
-                    Id = _data.Id.ToString(),
+                    Id = post.Id.ToString(),
                     User = new UserFind
                     {
                         Id = user.Id,
@@ -55,24 +73,27 @@ namespace posts.Controllers
                         FirstName = user.FirstName,
                         Avatar = user.Avatar
                     },
-                    Content = _data.Content,
-                    CreatedAt = _data.CreatedAt,
-                    UpdatedAt = _data.UpdatedAt,
-                    MediaUrls = _data.MediaUrls,
-                    LikeAmount = _data.Like?.Count ?? 0,
-                    YouLike = user.LikePostID.Contains(_data.Id.ToString()) ? true : false,
-                    Retpost = _data.Retpost?.Count ?? 0,
-                    RetpostAmount = _data.InRetpost?.Count ?? 0,
-                    YouRetpost = user.RetweetPostID.Contains(_data.Id.ToString()) ? true : false,
-                    Hashtags = _data.Hashtags?.Count ?? 0,
-                    Mentions = _data.Mentions?.Count ?? 0,
-                    CommentAmount = _data.Comments?.Count ?? 0,
-                    YouComment = user.CommentPostID.Contains(_data.Id.ToString()) ? true : false,
-                    Views = _data.Views?.Count ?? 0,
-                    SPublished = _data.SPublished
+                    Content = post.Content,
+                    CreatedAt = post.CreatedAt,
+                    UpdatedAt = post.UpdatedAt,
+                    MediaUrls = post.MediaUrls,
+                    LikeAmount = 0,
+                    YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true : false,
+                    Retpost = 0,
+                    RetpostAmount = 0,
+                    YouRetpost = user.RetweetPostID.Contains(post.Id.ToString()) ? true : false,
+                    Hashtags = 0,
+                    Mentions = 0,
+                    CommentAmount = 0,
+                    YouComment = user.CommentPostID.Contains(post.Id.ToString()) ? true : false,
+                    Views = 0,
+                    ViewsAmount = 0,
+                    SPublished = post.SPublished,
+                    ShaveAnswer = post.ShaveAnswer,
+                    Ansver = post.Ansver
                 };
 
-                return Ok(postHome);
+                return Ok(new { Post = postHome });
             }
             catch (Exception ex)
             {
@@ -104,25 +125,38 @@ namespace posts.Controllers
         }
 
         [HttpPut("LikePost")]
-        public async Task<IActionResult> LikePost(SpaceWorkModel _data)
+        public async Task<IActionResult> LikePost([FromQuery] string post_id)
         {
             try
             {
-                var id = _jwt.GetUserIdFromToken(_data.UserId);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user.LikePostID.Contains(_data.Id))
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
                 {
-                    return NotFound();
+                    return Unauthorized("No _ASA cookie found");
                 }
-                
+
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    return NotFound(false);
+                }
+
+                if (user.LikePostID.FindIndex(id => id == post_id) >= 0)
+                {
+                    return Conflict(false);
+                }
+
                 var newLike = new Like()
                 {
                     UserId = id,
                     CreatedAt = DateTime.UtcNow
                 };
 
-                var objectId = ObjectId.Parse(_data.Id);
+                var objectId = ObjectId.Parse(post_id);
 
                 var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.Like, newLike);
                 var updateResult = await _customers.UpdateOneAsync(
@@ -132,15 +166,15 @@ namespace posts.Controllers
 
                 if (updateResult.MatchedCount == 0)
                 {
-                    return NotFound("Post not found.");
+                    return NotFound(false);
                 }
                 
 
-                user.LikePostID.Add(_data.Id);
+                user.LikePostID.Add(post_id);
 
                 await context.SaveChangesAsync();
 
-                return Ok("Post liked successfully.");
+                return Ok(true);
 
             }
             catch (Exception ex)
@@ -150,28 +184,36 @@ namespace posts.Controllers
         }
 
         [HttpDelete("LikePost")]
-        public async Task<IActionResult> DeleteLikePost([FromQuery] string id, [FromQuery] string userId)
+        public async Task<IActionResult> DeleteLikePost([FromQuery] string post_id)
         {
             try
             {
-                var userIdFromToken = _jwt.GetUserIdFromToken(userId);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == userIdFromToken);
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized(false);
+                }
+
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound(false);
                 }
 
-                if (!user.LikePostID.Contains(id))
+                if (!user.LikePostID.Contains(post_id))
                 {
-                    return NotFound("Like not found for this post.");
+                    return NotFound(false);
                 }
 
-                var objectId = ObjectId.Parse(id);
+                var objectId = ObjectId.Parse(post_id);
 
                 var updateDefinition = Builders<SpacePostModel>.Update.PullFilter(
                     post => post.Like,
-                    like => like.UserId == userIdFromToken
+                    like => like.UserId == user.Id
                 );
 
                 var updateResult = await _customers.UpdateOneAsync(
@@ -181,13 +223,13 @@ namespace posts.Controllers
 
                 if (updateResult.MatchedCount == 0)
                 {
-                    return NotFound("Post not found.");
+                    return NotFound(false);
                 }
 
-                user.LikePostID.Remove(id);
+                user.LikePostID.Remove(post_id);
                 await context.SaveChangesAsync();
 
-                return Ok("Delete Like");
+                return Ok(true);
             }
             catch (Exception ex)
             {
@@ -202,7 +244,7 @@ namespace posts.Controllers
             try
             {
                 var id = _jwt.GetUserIdFromToken(_data.UserId);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
                 var objectId = ObjectId.Parse(_data.Id);
                 var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
 
@@ -244,7 +286,7 @@ namespace posts.Controllers
             try
             {
                 var id = _jwt.GetUserIdFromToken(_data.UserId);
-                var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
                 var objectId = ObjectId.Parse(_data.Id);
 
@@ -292,87 +334,89 @@ namespace posts.Controllers
             }
         }
 
-        [HttpGet("Home")]
+        [HttpGet("GetPosts")]
         public async Task<IActionResult> Home()
         {
-            //var filter = Builders<SpacePostModel>.Filter.ElemMatch(post => post.Views, Builders<string>.Filter.Ne(view => view, _data.Id.ToString()));
-            //var posts = await _customers.Find(filter).Limit(30).ToListAsync();
-
-            if (!Request.Cookies.TryGetValue("authToken", out string cookieValue))
-            {
-                return Unauthorized();
-            }
-            var id = _jwt.GetUserIdFromToken(cookieValue);
-            var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
 
             List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
-
-            foreach (var item in posts)
-            {
-                if (!item.Views.Contains(id))
-                {
-                    item.Views.Add(id);
-                    await _customers.ReplaceOneAsync(
-                        filter => filter.Id == item.Id,
-                        item 
-                    );
-                }
-            }
-
             List<PostHome> postHomeList = new List<PostHome>();
 
-            foreach (var post in posts)
+            if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
             {
-                var users = context.User.FirstOrDefault(u => u.Id == post.UserId);
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
 
-                var postHome = new PostHome
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+
+                foreach (var item in posts)
                 {
-                    Id = post.Id.ToString(),
-                    User = new UserFind
+                    if (!item.Views.Contains(id))
                     {
-                        Id = post.UserId,
-                        UserName = users?.UserName,
-                        FirstName = users?.FirstName,
-                        Avatar = users?.Avatar
-                    },
-                    Content = post.Content,
-                    CreatedAt = post.CreatedAt,
-                    UpdatedAt = post.UpdatedAt,
-                    MediaUrls = post.MediaUrls,
-                    LikeAmount = post.Like?.Count ?? 0,
-                    YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true: false,
-                    Retpost = post.Retpost?.Count ?? 0,
-                    RetpostAmount = post.InRetpost?.Count ?? 0,
-                    YouRetpost = user.RetweetPostID.Contains(post.Id.ToString()) ? true : false,
-                    Hashtags = post.Hashtags?.Count ?? 0,
-                    Mentions = post.Mentions?.Count ?? 0,
-                    CommentAmount = post.Comments?.Count ?? 0,
-                    YouComment = user.CommentPostID.Contains(post.Id.ToString()) ? true : false,
-                    Views = post.Views?.Count ?? 0,
-                    SPublished = post.SPublished
-                };
+                        item.Views.Add(id);
+                        await _customers.ReplaceOneAsync(
+                            filter => filter.Id == item.Id,
+                            item
+                        );
+                    }
+                    //var filter = Builders<SpacePostModel>.Filter.ElemMatch(post => post.Views, Builders<string>.Filter.Ne(view => view, _data.Id.ToString()));
+                    //var posts = await _customers.Find(filter).Limit(30).ToListAsync();
+                }
 
-                postHomeList.Add(postHome);
+                foreach (var post in posts)
+                {
+                    var users = context.Users.FirstOrDefault(u => u.Id == post.UserId);
+
+                    var postHome = new PostHome
+                    {
+                        Id = post.Id.ToString(),
+                        User = new UserFind
+                        {
+                            Id = post.UserId,
+                            UserName = users?.UserName,
+                            FirstName = users?.FirstName,
+                            Avatar = users?.Avatar
+                        },
+                        Content = post.Content,
+                        CreatedAt = post.CreatedAt,
+                        UpdatedAt = post.UpdatedAt,
+                        MediaUrls = post.MediaUrls,
+                        LikeAmount = post.Like?.Count ?? 0,
+                        YouLike = user != null ? user.LikePostID.Contains(post.Id.ToString()) ? true : false : false,
+                        Retpost = post.Retpost?.Count ?? 0,
+                        RetpostAmount = post.InRetpost?.Count ?? 0,
+                        YouRetpost = user != null ?  user.RetweetPostID.Contains(post.Id.ToString()) ? true : false : false,
+                        Hashtags = post.Hashtags?.Count ?? 0,
+                        Mentions = post.Mentions?.Count ?? 0,
+                        CommentAmount = post.Comments?.Count ?? 0,
+                        YouComment = user != null ? user.CommentPostID.Contains(post.Id.ToString()) ? true : false : false,
+                        Views = post.Views?.Count ?? 0,
+                        SPublished = post.SPublished
+                    };
+
+                    postHomeList.Add(postHome);
+                }
             }
 
             return Ok(new { Post = postHomeList });
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Home(string UserID)
+        public async Task<IActionResult> UserAccounts(string UserID)
         {
-            if (!Request.Cookies.TryGetValue("authToken", out string cookieValue))
+            if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
             {
                 return Unauthorized();
             }
             var id = new JWT().GetUserIdFromToken(cookieValue);
-            var user = await context.User.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
 
-            var users = await context.User.FirstOrDefaultAsync(u => u.Id == UserID);
+            var users = await context.Users.FirstOrDefaultAsync(u => u.Id == UserID);
             var filter = Builders<SpacePostModel>.Filter.Eq(post => post.UserId, UserID);
             List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
-            var userTask = await context.User.FirstOrDefaultAsync(u => u.Id == UserID);
+            var userTask = await context.Users.FirstOrDefaultAsync(u => u.Id == UserID);
 
 
             List<PostHome> postHomeList = posts.Select(post => new PostHome

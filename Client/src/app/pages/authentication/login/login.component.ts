@@ -29,16 +29,15 @@ export class LoginComponent implements OnInit {
   Error: string = '';
 
   onSubmit(): void {
-    // Очищаємо помилки при натисканні кнопки
     this.Error = '';
     
-    // Валідація email
+
     if (!this.email || this.email.trim() === '') {
       this.Error = 'Email is required';
       return;
     }
     
-    // Валідація пароля
+
     if (!this.password || this.password.trim() === '') {
       this.Error = 'Password is required';
       return;
@@ -62,7 +61,6 @@ export class LoginComponent implements OnInit {
   }
 
   onGoogleLogin(): void {
-    // Прямий редирект на сервер, який поверне Google OAuth URL
     window.location.href = 'api/GoogleAuthentication/GoogleAuth';
   }
 }

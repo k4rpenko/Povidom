@@ -4,21 +4,25 @@
   width: 100%;
   color: var(--text-color-white);
   font-family: var(--font-sfpro-regular);
-  justify-content: center;
 }
-
-
 
 .main{
   display: flex;
   width: 100%;
-  max-width: 1140px;
 }
 
 
+
 .user-chat-box{
+  display: flex;
+  margin-left: 450px;
   width: 100%;
-  max-width: 400px;
+  border-right: 1px solid var(--grey-light);
+}
+
+.users-contacts{
+  max-width: 450px;
+  width: 100%;
   border-right: 1px solid var(--grey-light);
 }
 
@@ -110,7 +114,6 @@
 
 .chat-container {
   text-decoration: none;
-  width: 400px;
   display: flex;
   cursor: pointer;
   flex-direction: column;

@@ -9,19 +9,19 @@ import {NotificationComponent} from './pages/notification/notification.component
 import {SettingsComponent} from './pages/settings/settings.component';
 import { SavedComponent } from './pages/saved/saved.component';
 import { AuthGuard } from './guards/auth.guard';
+//import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  /*
-  { path: 'home', component: HomeComponent },
-  { path: 'message', component: MessagesComponent },
-  { path: 'premium', component: PremiumComponent },
-  { path: 'notification', component: NotificationComponent },
-  { path: 'settings', component: SettingsComponent },
-  { path: 'saved', component: SavedComponent },
-*/
+  
+  // { path: 'home', component: HomeComponent },
+  // { path: 'message', component: MessagesComponent },
+  // { path: 'premium', component: PremiumComponent },
+  // { path: 'notification', component: NotificationComponent },
+  // { path: 'settings', component: SettingsComponent },
+  // { path: 'saved', component: SavedComponent },
 
   { 
     path: 'home', 
@@ -42,6 +42,11 @@ export const routes: Routes = [
     path: 'notification', 
     component: NotificationComponent,
     canActivate: [AuthGuard]
+  },
+  { 
+    path: 'saved', 
+    component: SavedComponent, 
+    canActivate: [AuthGuard] 
   },
   { 
     path: 'settings', 

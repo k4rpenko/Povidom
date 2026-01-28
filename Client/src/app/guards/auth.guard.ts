@@ -18,8 +18,6 @@ export class AuthGuard implements CanActivate {
   canActivate(): Observable<boolean> {
     return this.checkCookieService.PutCheckCoockie().pipe(
       map((response) => {
-        const token = response.cookie;
-        this.cookieService.set('_ASA', token, undefined, '/', 'localhost', true, 'Strict');
         return true;
       }),
       catchError((error) => {

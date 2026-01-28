@@ -1,11 +1,49 @@
 <div class="overlay" (click)="close()">
-  <div class="header" (click)="$event.stopPropagation()">
-    <button (click)="close()"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button>
-  </div>
-  <div class="main">
-    <div class="Send_post">
-      <img src="https://pbs.twimg.com/profile_images/1742667463207055360/UYNxKd3H_400x400.jpg" alt="" class="profile-icon">
-      <div role="textbox"></div>
+  <div class="BOX" (click)="$event.stopPropagation()">
+    <div class="header" (click)="$event.stopPropagation()">
+      <button (click)="close()"><svg viewBox="0 0 24 24" aria-hidden="true"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg></button>
+    </div>
+    <div class="main" >
+      <div class="Post">
+        <div class="write_post">
+          <img [src]="user.avatar || 'https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg'" alt="" class="profile-icon">
+          <div 
+            role="textbox" 
+            contenteditable="true" 
+            class="textbox"
+            (input)="autoResize($event)"
+          ></div>
+        </div>
+        <div class="send_post">
+          <div class="supplement">
+          </div>
+          <div class="buttons">
+            <div class="circle-wrapper">
+              <svg class="circle" viewBox="0 0 36 36">
+                <path
+                  class="circle-bg"
+                  d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                <path
+                  class="circle-progress"
+                  [attr.stroke-dasharray]="circleProgress + ', 100'"
+                  [attr.stroke]="circleColor"
+                  d="M18 2.0845
+                    a 15.9155 15.9155 0 0 1 0 31.831
+                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                <text x="18" y="20.35" class="circle-text" text-anchor="middle">
+                  {{MaxLenghtText}}
+                </text>
+              </svg>
+            </div>
+            <div class="Line"></div>
+            <button (click)="SendPost()" class="SendButton">Send</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
