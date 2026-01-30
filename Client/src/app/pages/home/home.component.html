@@ -20,97 +20,126 @@
         <!-- Пост -->
 
         <div class="posts">
-          <div class="post-item" *ngFor="let post of posts; trackBy: updatePost" (click)="navigateToPost(post.id!)">
-            <div class="post-item-box">
-              <div class="post-data">
-
-                <!-- Основний пост -->
-                <div class="post-new">
-                  <img [src]="post.user?.avatar" alt="Profile Picture" class="profile-icon">
-                  <div class="post-content-info">
-                    <div class="post-data-info">
-                      <div class="post-user-info">
-                        <span class="post-author">{{ post.user?.firstName || 'Anonymous' }}</span>
-                        <span class="post-username">{{ post.user?.userName || 'unknown' }}</span>
-                      </div>
-                      <div class="post-content">
-                        <p>{{ post.content || '' }}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Відповідь на пост, якщо є -->
-                <div class="post-reply" *ngIf="post.ansver" (click)="navigateToPost(post.ansver.id!)">
-                  <div class="post-reply-item">
-                    <img [src]="post.ansver.user?.avatar || 'default-avatar-url.jpg'" alt="Reply Profile Picture" class="profile-icon">
-                    <div class="post-data-info">
-                      <div class="post-user-info">
-                        <span class="post-author">{{ post.ansver.user?.firstName || 'Anonymous' }}</span>
-                        <span class="post-username">{{ post.ansver.user?.userName || 'unknown' }}</span>
-                      </div>
-                      <div class="post-content">
-                        <p>{{ post.ansver.content || '' }}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="post-mut">
-                  <div class="post-mut-box">
-                    <p>{{post.retpostAmount}}</p>
-                    <a href="">
-                      <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" transform="rotate(90)">
-                        <path d="M6,14V9A6,6,0,0,1,16.89,5.54" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
-                        <path d="M18,10v5A6,6,0,0,1,7.11,18.46" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
-                        <polyline points="8 12 6 14 4 12" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
-                        <polyline points="16 12 18 10 20 12" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
-                      </svg>
-                    </a>
-                  </div>
-                  <div class="post-mut-box">
-                    <p>{{post.commentAmount}}</p>
-                    <a href="">
-                      <svg fill="#ffffff" width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-                        <g id="SVGRepo_iconCarrier"> <g clip-path="url(#fffclip0_429_11233)"> <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 13.4876 3.36093 14.891 4 16.1272L3 21L7.8728 20C9.10904 20.6391 10.5124 21 12 21Z" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/> </g> <defs> <clipPath id="clip0_429_11233"> <rect width="24" height="24" fill="white"/> </clipPath> </defs> </g>
-                      </svg>
-                    </a>
-                  </div>
-                  <div class="post-mut-box">
-                    <p>{{post.likeAmount}}</p>
-                    <a (click)="!post.youLike ? likePost(post.id!) : DeleteLikePost(post.id!); $event.stopPropagation()">
-                      <ng-container *ngIf="!post.youLike; else liked">
-                        <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" id="Outline" width="24px" height="20px" viewBox="0 0 24 24"><path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"/></svg>
-                      </ng-container>
-                      <ng-template #liked>
-                        <svg class="LikedTrue" xmlns="http://www.w3.org/2000/svg" id="Filled" width="24px" height="20px" viewBox="0 0 24 24">
-                          <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"/>
-                        </svg>
-                      </ng-template>
-                    </a>
-                  </div>
-                  <div class="post-mut-box">
-                    <p>{{post.viewsAmount}}</p>
-                    <a href="">
-                      <svg height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" enable-background="new 0 0 50 50" xml:space="preserve" fill="#000000">
-                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
-                          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
-                          <g id="SVGRepo_iconCarrier">
-                          <path fill="#fff" d="M9.037,40.763h4.286c0.552,0,1-0.447,1-1v-7.314c0-0.553-0.448-1-1-1H9.037c-0.552,0-1,0.447-1,1v7.314 C8.037,40.315,8.485,40.763,9.037,40.763z" />
-                            <path fill="#fff" d="M21.894,40.763c0.552,0,1-0.447,1-1v-20.64c0-0.553-0.448-1-1-1h-4.286c-0.552,0-1,0.447-1,1v20.64 c0,0.553,0.448,1,1,1H21.894z" />
-                            <path fill="#fff" d="M30.465,40.763c0.552,0,1-0.447,1-1V25.96c0-0.553-0.448-1-1-1H26.18c-0.552,0-1,0.447-1,1v13.803 c0,0.553,0.448,1,1,1H30.465z" />
-                            <path fill="#fff" d="M33.751,9.763v30c0,0.553,0.448,1,1,1h4.286c0.552,0,1-0.447,1-1v-30c0-0.553-0.448-1-1-1h-4.286 C34.199,8.763,33.751,9.21,33.751,9.763z" />
-                        </g>
-                      </svg>
-                    </a>
+          <ng-container *ngIf="loading; else load">
+            <div class="posts-skeleton">
+              <div class="skeleton-post" *ngFor="let i of [1,2,3,4,5]">
+                <div class="skeleton-header">
+                  <div class="skeleton-avatar shimmer"></div>
+                  <div class="skeleton-user">
+                    <div class="skeleton-line short shimmer"></div>
+                    <div class="skeleton-line tiny shimmer"></div>
                   </div>
                 </div>
                 
+
+                <div class="skeleton-content">
+                  <div class="skeleton-line shimmer"></div>
+                  <div class="skeleton-line shimmer"></div>
+                  <div class="skeleton-line half shimmer"></div>
+                </div>
+
+                <div class="skeleton-actions">
+                  <div class="skeleton-icon shimmer"></div>
+                  <div class="skeleton-icon shimmer"></div>
+                  <div class="skeleton-icon shimmer"></div>
+                  <div class="skeleton-icon shimmer"></div>
+                </div>
               </div>
             </div>
-          </div>
+          </ng-container>
+          <ng-template #load>
+            <div class="post-item" *ngFor="let post of posts; trackBy: updatePost" (click)="navigateToPost(post.id!)">
+              <div class="post-item-box">
+                <div class="post-data">
+
+                  <!-- Основний пост -->
+                  <div class="post-new">
+                    <img [src]="post.user?.avatar" alt="Profile Picture" class="profile-icon">
+                    <div class="post-content-info">
+                      <div class="post-data-info">
+                        <div class="post-user-info">
+                          <span class="post-author">{{ post.user?.firstName || 'Anonymous' }}</span>
+                          <span class="post-username">{{ post.user?.userName || 'unknown' }}</span>
+                        </div>
+                        <div class="post-content">
+                          <p>{{ post.content || '' }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Відповідь на пост, якщо є -->
+                  <div class="post-reply" *ngIf="post.ansver" (click)="navigateToPost(post.ansver.id!)">
+                    <div class="post-reply-item">
+                      <img [src]="post.ansver.user?.avatar || 'default-avatar-url.jpg'" alt="Reply Profile Picture" class="profile-icon">
+                      <div class="post-data-info">
+                        <div class="post-user-info">
+                          <span class="post-author">{{ post.ansver.user?.firstName || 'Anonymous' }}</span>
+                          <span class="post-username">{{ post.ansver.user?.userName || 'unknown' }}</span>
+                        </div>
+                        <div class="post-content">
+                          <p>{{ post.ansver.content || '' }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="post-mut">
+                    <div class="post-mut-box">
+                      <p>{{post.retpostAmount}}</p>
+                      <a href="">
+                        <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" transform="rotate(90)">
+                          <path d="M6,14V9A6,6,0,0,1,16.89,5.54" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
+                          <path d="M18,10v5A6,6,0,0,1,7.11,18.46" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
+                          <polyline points="8 12 6 14 4 12" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
+                          <polyline points="16 12 18 10 20 12" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
+                        </svg>
+                      </a>
+                    </div>
+                    <div class="post-mut-box">
+                      <p>{{post.commentAmount}}</p>
+                      <a href="">
+                        <svg fill="#ffffff" width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                          <g id="SVGRepo_iconCarrier"> <g clip-path="url(#fffclip0_429_11233)"> <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 13.4876 3.36093 14.891 4 16.1272L3 21L7.8728 20C9.10904 20.6391 10.5124 21 12 21Z" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/> </g> <defs> <clipPath id="clip0_429_11233"> <rect width="24" height="24" fill="white"/> </clipPath> </defs> </g>
+                        </svg>
+                      </a>
+                    </div>
+                    <div class="post-mut-box">
+                      <p>{{post.likeAmount}}</p>
+                      <a (click)="!post.youLike ? likePost(post.id!) : DeleteLikePost(post.id!); $event.stopPropagation()">
+                        <ng-container *ngIf="!post.youLike; else liked">
+                          <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" id="Outline" width="24px" height="20px" viewBox="0 0 24 24"><path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"/></svg>
+                        </ng-container>
+                        <ng-template #liked>
+                          <svg class="LikedTrue" xmlns="http://www.w3.org/2000/svg" id="Filled" width="24px" height="20px" viewBox="0 0 24 24">
+                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"/>
+                          </svg>
+                        </ng-template>
+                      </a>
+                    </div>
+                    <div class="post-mut-box">
+                      <p>{{post.viewsAmount}}</p>
+                      <a href="">
+                        <svg height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" enable-background="new 0 0 50 50" xml:space="preserve" fill="#000000">
+                          <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                            <g id="SVGRepo_iconCarrier">
+                            <path fill="#fff" d="M9.037,40.763h4.286c0.552,0,1-0.447,1-1v-7.314c0-0.553-0.448-1-1-1H9.037c-0.552,0-1,0.447-1,1v7.314 C8.037,40.315,8.485,40.763,9.037,40.763z" />
+                              <path fill="#fff" d="M21.894,40.763c0.552,0,1-0.447,1-1v-20.64c0-0.553-0.448-1-1-1h-4.286c-0.552,0-1,0.447-1,1v20.64 c0,0.553,0.448,1,1,1H21.894z" />
+                              <path fill="#fff" d="M30.465,40.763c0.552,0,1-0.447,1-1V25.96c0-0.553-0.448-1-1-1H26.18c-0.552,0-1,0.447-1,1v13.803 c0,0.553,0.448,1,1,1H30.465z" />
+                              <path fill="#fff" d="M33.751,9.763v30c0,0.553,0.448,1,1,1h4.286c0.552,0,1-0.447,1-1v-30c0-0.553-0.448-1-1-1h-4.286 C34.199,8.763,33.751,9.21,33.751,9.763z" />
+                          </g>
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+          </ng-template>
         </div>
       </div>
 

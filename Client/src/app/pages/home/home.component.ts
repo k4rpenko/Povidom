@@ -5,13 +5,15 @@ import { Post } from '../../data/interface/Post/Post.interface';
 import { PostService } from '../../api/REST/post/Post.service';
 import { PostCacheService } from '../../data/cache/post.service';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   imports: [
     HEADERComponent,
     CommonModule,
-    BorderMainComponent
+    BorderMainComponent,
+    RouterModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
@@ -19,9 +21,10 @@ import { CommonModule } from '@angular/common';
 export class HomeComponent implements OnInit {
   Rest = inject(PostService);
   
-  constructor(private postsService: PostService, private postCache: PostCacheService) {}
+  constructor(private router: Router, private postsService: PostService, private postCache: PostCacheService) {}
 
   posts: Post[] = [];
+  loading: boolean = true;
 
   ngOnInit() {
     if (this.posts.length === 0) {
@@ -32,7 +35,10 @@ export class HomeComponent implements OnInit {
   getPosts() {
     this.postCache.loadPosts();
     this.postCache.postsSubject.subscribe(posts => {
+      if(posts.length === 0) return;
+
       this.posts = posts;
+      this.loading = false;
     });
   }
 
@@ -41,8 +47,9 @@ export class HomeComponent implements OnInit {
     this.postCache.postsSubject.subscribe(posts => { this.posts = posts });
   }
 
+
   navigateToPost(id: string) {
-    console.log(1);
+    this.router.navigate(['/post', id])
   }
 
   navigateToPostreply(id: string) {

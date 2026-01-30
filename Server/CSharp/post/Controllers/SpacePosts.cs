@@ -2,10 +2,12 @@
 using Hash.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using MongoDB;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using PGAdminDAL;
+using PGAdminDAL.Model;
 using posts.Models.MessageChat;
 using posts.Models.Post;
 
@@ -81,12 +83,11 @@ namespace posts.Controllers
                     YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true : false,
                     Retpost = 0,
                     RetpostAmount = 0,
-                    YouRetpost = user.RetweetPostID.Contains(post.Id.ToString()) ? true : false,
+                    YouRetpost = user.RepostPostID.Contains(post.Id.ToString()) ? true : false,
                     Hashtags = 0,
                     Mentions = 0,
                     CommentAmount = 0,
-                    YouComment = user.CommentPostID.Contains(post.Id.ToString()) ? true : false,
-                    Views = 0,
+                    YouComment = user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false,
                     ViewsAmount = 0,
                     SPublished = post.SPublished,
                     ShaveAnswer = post.ShaveAnswer,
@@ -243,8 +244,7 @@ namespace posts.Controllers
         {
             try
             {
-                var id = _jwt.GetUserIdFromToken(_data.UserId);
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == _data.UserId);
                 var objectId = ObjectId.Parse(_data.Id);
                 var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
 
@@ -262,9 +262,29 @@ namespace posts.Controllers
                 };
 
                 post.Comments.Add(newComment);
-                var filter = Builders<SpacePostModel>.Filter.Eq(p => p.Id, post.Id);
 
-                user.CommentPostID.Add(post.Id.ToString());
+                var filter = Builders<SpacePostModel>.Filter.Eq(p => p.Id, post.Id);
+                var postId = post.Id.ToString();
+                var commentId = newComment.Id.ToString();
+
+
+                if (!user.CommentsId.Any(c => c.PostId == post.Id.ToString()))
+                {
+                    user.CommentsId.Add(new Сoments
+                    {
+                        PostId = post.Id.ToString(),
+                        CommentId = new List<string> { _data.Id }
+                    });
+                }
+                else
+                {
+                    var commentContainer = user.CommentsId.FirstOrDefault(c => c.PostId == post.Id.ToString());
+
+                    if (commentContainer != null)
+                    {
+                        commentContainer.CommentId.Add(_data.Id);
+                    }
+                }
 
 
                 await _customers.ReplaceOneAsync(filter, post);
@@ -285,46 +305,7 @@ namespace posts.Controllers
         {
             try
             {
-                var id = _jwt.GetUserIdFromToken(_data.UserId);
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                var objectId = ObjectId.Parse(_data.Id);
-
-                var SpacePostModel = new SpacePostModel()
-                {
-                    UserId = id,
-                    Content = _data.Content,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                    MediaUrls = _data.MediaUrls,
-                    Hashtags = _data.Hashtags,
-                    Mentions = _data.Mentions,
-                };
-                await _customers.InsertOneAsync(SpacePostModel);
-                var RetweetPost = SpacePostModel.Id;
-
-                //OriginalPost
-                var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.InRetpost, RetweetPost.ToString());
-                var updateResult = await _customers.UpdateOneAsync(
-                    post => post.Id == objectId,
-                    updateDefinition
-                );
-
-                //RetweetPost
-                var updateDefinitionRetweet = Builders<SpacePostModel>.Update.AddToSet(post => post.Retpost, objectId.ToString());
-                var updateResultRetweet = await _customers.UpdateOneAsync(
-                    post => post.Id == RetweetPost,
-                    updateDefinitionRetweet
-                );
-
-                if (updateResult.MatchedCount == 0)
-                {
-                    return NotFound("Post not found.");
-                }
-
-                user.RetweetPostID.Add(_data.Id);
-                await context.SaveChangesAsync();
-
+                
                 return Ok("Post liked successfully.");
 
             }
@@ -364,6 +345,14 @@ namespace posts.Controllers
                     //var posts = await _customers.Find(filter).Limit(30).ToListAsync();
                 }
 
+                var UserConst = new UserFind
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    Avatar = user.Avatar
+                };
+
                 foreach (var post in posts)
                 {
                     var users = context.Users.FirstOrDefault(u => u.Id == post.UserId);
@@ -371,13 +360,7 @@ namespace posts.Controllers
                     var postHome = new PostHome
                     {
                         Id = post.Id.ToString(),
-                        User = new UserFind
-                        {
-                            Id = post.UserId,
-                            UserName = users?.UserName,
-                            FirstName = users?.FirstName,
-                            Avatar = users?.Avatar
-                        },
+                        User = UserConst,
                         Content = post.Content,
                         CreatedAt = post.CreatedAt,
                         UpdatedAt = post.UpdatedAt,
@@ -386,20 +369,119 @@ namespace posts.Controllers
                         YouLike = user != null ? user.LikePostID.Contains(post.Id.ToString()) ? true : false : false,
                         Retpost = post.Retpost?.Count ?? 0,
                         RetpostAmount = post.InRetpost?.Count ?? 0,
-                        YouRetpost = user != null ?  user.RetweetPostID.Contains(post.Id.ToString()) ? true : false : false,
+                        YouRetpost = user != null ? user.RepostPostID.Contains(post.Id.ToString()) ? true : false : false,
                         Hashtags = post.Hashtags?.Count ?? 0,
                         Mentions = post.Mentions?.Count ?? 0,
                         CommentAmount = post.Comments?.Count ?? 0,
-                        YouComment = user != null ? user.CommentPostID.Contains(post.Id.ToString()) ? true : false : false,
-                        Views = post.Views?.Count ?? 0,
+                        YouComment = user != null ? user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false : false,
+                        ViewsAmount = post.Views.Count,
                         SPublished = post.SPublished
                     };
 
+                    postHome.YouView = true;
                     postHomeList.Add(postHome);
                 }
             }
 
             return Ok(new { Post = postHomeList });
+        }
+
+        [HttpGet("GetPostsById")]
+        public async Task<IActionResult> PostId([FromQuery] string post_id)
+        {
+            var objectId = ObjectId.Parse(post_id);
+            var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+            var CreatorData = context.Users.FirstOrDefault(u => u.PostID.Contains(post_id));
+            var Creator = new UserFind
+            {
+                Id = CreatorData.Id,
+                UserName = CreatorData.UserName,
+                FirstName = CreatorData.FirstName,
+                Avatar = CreatorData.Avatar
+            };
+
+            var ComentsList = new List<PostHomeComment>();
+
+            foreach (var item in post.Comments)
+            {
+                UserModel commentUserData = context.Users.FirstOrDefault(u => u.Id == item.UserId);
+                UserFind commentUser = new UserFind
+                {
+                    Id = commentUserData.Id,
+                    UserName = commentUserData.UserName,
+                    FirstName = commentUserData.FirstName,
+                    Avatar = commentUserData.Avatar
+                };
+
+                ComentsList.Add(new PostHomeComment
+                {
+                    Id = item.Id.ToString(),
+                    User = commentUser,
+                    Content = item.Content,
+                    YouLike = false,
+                    LikeAmount = item.Like?.Count ?? 0,
+                });
+            }
+
+            var postHome = new PostHome
+            {
+                Id = post.Id.ToString(),
+                User = Creator,
+                Content = post.Content,
+                CreatedAt = post.CreatedAt,
+                UpdatedAt = post.UpdatedAt,
+                MediaUrls = post.MediaUrls,
+                LikeAmount = post.Like?.Count ?? 0,
+                YouLike = false,
+                Retpost = post.Retpost?.Count ?? 0,
+                RetpostAmount = post.InRetpost?.Count ?? 0,
+                YouRetpost = false,
+                Hashtags = post.Hashtags?.Count ?? 0,
+                Mentions = post.Mentions?.Count ?? 0,
+                Comments = ComentsList,
+                CommentAmount = post.Comments?.Count ?? 0,
+                YouComment = false,
+                ViewsAmount = post.Views.Count,
+                SPublished = post.SPublished
+            };
+
+            if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+            {
+                var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+
+                if (!post.Views.Contains(id))
+                {
+                    post.Views.Add(id);
+                    await _customers.ReplaceOneAsync(
+                        filter => filter.Id == post.Id,
+                        post
+                    );
+                }
+
+                var UserConst = new UserFind
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    Avatar = user.Avatar
+                };
+
+                postHome.YouLike = user != null ? user.LikePostID.Contains(post.Id.ToString()) ? true : false : false;
+                postHome.YouRetpost = user != null ? user.RepostPostID.Contains(post.Id.ToString()) ? true : false : false;
+                postHome.YouComment = user != null ? user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false : false;
+                postHome.YouView = true;
+
+                foreach(var comment in postHome.Comments)
+                {
+                    comment.YouLike = user != null && user.LikeComments.FirstOrDefault(c => c.PostId == post.Id.ToString())?.CommentId.Contains(comment.Id.ToString()) == true;
+                }
+            }
+
+            return Ok(new { Post = postHome });
         }
 
         [HttpGet("")]
@@ -437,12 +519,11 @@ namespace posts.Controllers
                 YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true : false,
                 Retpost = post.Retpost?.Count ?? 0,
                 RetpostAmount = post.InRetpost?.Count ?? 0,
-                YouRetpost = user.RetweetPostID.Contains(post.Id.ToString()) ? true : false,
+                YouRetpost = user.RepostPostID.Contains(post.Id.ToString()) ? true : false,
                 Hashtags = post.Hashtags?.Count ?? 0,
                 Mentions = post.Mentions?.Count ?? 0,
                 CommentAmount = post.Comments?.Count ?? 0,
-                YouComment = user.CommentPostID.Contains(post.Id.ToString()) ? true : false,
-                Views = post.Views?.Count ?? 0,
+                YouComment = user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false,
                 SPublished = post.SPublished
             }).ToList();
 

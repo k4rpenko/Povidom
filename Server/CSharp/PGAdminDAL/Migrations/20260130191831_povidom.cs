@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PGAdminDAL.Migrations
 {
     /// <inheritdoc />
-    public partial class Povidom : Migration
+    public partial class povidom : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,8 +48,9 @@ namespace PGAdminDAL.Migrations
                     Subscribers = table.Column<List<string>>(type: "text[]", nullable: false),
                     Followers = table.Column<List<string>>(type: "text[]", nullable: false),
                     LikePostID = table.Column<List<string>>(type: "text[]", nullable: false),
-                    CommentPostID = table.Column<List<string>>(type: "text[]", nullable: false),
-                    RetweetPostID = table.Column<List<string>>(type: "text[]", nullable: false),
+                    CommentsId = table.Column<string>(type: "jsonb", nullable: false),
+                    LikeComments = table.Column<string>(type: "jsonb", nullable: false),
+                    RepostPostID = table.Column<List<string>>(type: "text[]", nullable: false),
                     PostID = table.Column<List<string>>(type: "text[]", nullable: false),
                     RecallPostId = table.Column<List<string>>(type: "text[]", nullable: false),
                     ChatsID = table.Column<List<string>>(type: "text[]", nullable: false),

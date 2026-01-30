@@ -1,7 +1,14 @@
 import { User } from "../Users/User.interface";
 
 export interface Comment {
+  id?: string;
   userId?: string;
+  user?: User;
+  retpostAmount: number;
+  youRetpost?: boolean;
+  likeAmount: number;
+  youLike?: boolean;
+  content?: string;
   createdAt?: string;
 }
 

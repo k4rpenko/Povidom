@@ -2,11 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AddPostComponent } from "../../modals/add-post/add-post.component";
 import { UserCacheService } from '../../data/cache/user.service';
-import { UserREST } from '../../api/GET/User/UserData.service';
-import { Router } from '@angular/router';
 import { UserProfil } from '../../data/interface/Users/UserProfil.interface';
 import { Observable, of } from 'rxjs';
-import { switchMap, tap, catchError, shareReplay, map } from 'rxjs/operators';
 import { RouterModule } from '@angular/router';
 
 
@@ -24,8 +21,6 @@ export class HEADERComponent implements OnInit {
 
   constructor(
     private userCache: UserCacheService,
-    private Rest: UserREST,
-    private router: Router
   ) {}
   
   ngOnInit() { 
@@ -39,8 +34,6 @@ export class HEADERComponent implements OnInit {
   isAddPostOpen = false;
 
   openAddPost() {
-    console.log("TEST");
-    
     this.isAddPostOpen = true;
   }
 

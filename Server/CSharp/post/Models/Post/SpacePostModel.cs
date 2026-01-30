@@ -5,6 +5,10 @@ namespace posts.Models.Post
 {
     public class Comment
     {
+        [BsonId]
+        [BsonElement("_id"), BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId Id { get; set; }
+
         [BsonElement("UserId")]
         public string? UserId { get; set; }
 
@@ -13,6 +17,9 @@ namespace posts.Models.Post
 
         [BsonElement("CreatedAt")]
         public DateTime? CreatedAt { get; set; }
+
+        [BsonElement("Like")]
+        public List<Like>? Like { get; set; } = new List<Like>();
     }
 
     public class Like

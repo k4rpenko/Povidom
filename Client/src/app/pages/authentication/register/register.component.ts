@@ -67,12 +67,15 @@ export class RegisterComponent implements OnInit {
 
     if (!this.isValidEmail(this.email)) {
       this.Error = 'Будь ласка, введіть коректну електронну пошту.';
+      return;
     }
 
     if (!this.isValidPassword(this.password)) {
       this.Error = 'Пароль має містити принаймні 6 символів, включаючи букви та цифри.';
+      return;
     } else if (this.password !== this.password2) {
       this.Error = 'Паролі не співпадають.';
+      return;
     }
 
     this.Rest.PostRegister(this.email, this.password).subscribe({

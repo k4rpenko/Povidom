@@ -1,14 +1,16 @@
-using Hash.Interface;
-using Hash;
-using MongoDB;
-using PGAdminDAL;
 using Admin.Interface.Sending;
 using Admin.Sending;
+using Hash;
+using Hash.Interface;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
+using MongoDB;
+using Npgsql;
+using PGAdminDAL;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
+NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 
 /*
 builder.WebHost.ConfigureKestrel(options =>

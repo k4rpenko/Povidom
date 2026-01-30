@@ -174,11 +174,11 @@ namespace user.Controllers
                                     YouLike = You != null ? You.LikePostID.Contains(post.Id.ToString()) ? true : false : false,
                                     Retpost = post.Retpost?.Count ?? 0,
                                     RetpostAmount = post.InRetpost?.Count ?? 0,
-                                    YouRetpost = You != null ? You.RetweetPostID.Contains(post.Id.ToString()) ? true : false : false,
+                                    YouRetpost = You != null ? You.RepostPostID.Contains(post.Id.ToString()) ? true : false : false,
                                     Hashtags = post.Hashtags?.Count ?? 0,
                                     Mentions = post.Mentions?.Count ?? 0,
                                     CommentAmount = post.Comments?.Count ?? 0,
-                                    YouComment = You != null ? You.CommentPostID.Contains(post.Id.ToString()) ? true : false : false,
+                                    YouComment = You != null ? You.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false : false,
                                     Views = post.Views?.Count ?? 0,
                                     SPublished = post.SPublished
                                 });
@@ -188,7 +188,7 @@ namespace user.Controllers
 
 
                     await AddPosts(user.PostID, post => userAccount.Post.Add(post));
-                    await AddPosts(user.RetweetPostID, post => userAccount.Post.Add(post));
+                    await AddPosts(user.RepostPostID, post => userAccount.Post.Add(post));
                     await AddPosts(user.RecallPostId, post => userAccount.RecallPost.Add(post));
 
                     return Ok(userAccount);

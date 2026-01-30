@@ -1,18 +1,19 @@
+using Hash;
+using Hash.Interface;
 using Identification.Interface.Sending;
 using Identification.Protection;
 using Identification.Sending;
-using Hash;
-using Hash.Interface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MongoDB;
+using Npgsql;
 using PGAdminDAL;
 using RedisDAL;
 using System;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
-
+NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -21,9 +22,6 @@ builder.WebHost.ConfigureKestrel(options =>
         listenOptions.UseHttps("certificate.pfx", "password");
     });
 });
-
-
-
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetSection("Npgsql:ConnectionString").Value));

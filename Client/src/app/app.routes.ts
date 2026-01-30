@@ -9,6 +9,7 @@ import {NotificationComponent} from './pages/notification/notification.component
 import {SettingsComponent} from './pages/settings/settings.component';
 import { SavedComponent } from './pages/saved/saved.component';
 import { AuthGuard } from './guards/auth.guard';
+import { PostID } from './pages/user/post/post';
 //import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -54,4 +55,5 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   { path: ':username', component: UserComponent },
+  { path: 'post/:id', component: PostID },
 ];

@@ -1,15 +1,18 @@
-using Hash.Interface;
 using Hash;
+using Hash.Interface;
 using Microsoft.EntityFrameworkCore;
 using MongoDB;
+using Npgsql;
 using PGAdminDAL;
-using RedisDAL.User;
-using RedisDAL;
-using System.Security.Policy;
 using posts.Interface.Sending;
 using posts.Sending;
+using RedisDAL;
+using RedisDAL.User;
+using System.Security.Policy;
 
 var builder = WebApplication.CreateBuilder(args);
+NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetSection("Npgsql:ConnectionString").Value));

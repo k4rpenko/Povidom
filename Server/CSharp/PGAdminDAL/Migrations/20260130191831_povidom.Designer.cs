@@ -13,8 +13,8 @@ using PGAdminDAL;
 namespace PGAdminDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251117003834_Povidom")]
-    partial class Povidom
+    [Migration("20260130191831_povidom")]
+    partial class povidom
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -234,9 +234,9 @@ namespace PGAdminDAL.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<List<string>>("CommentPostID")
+                    b.Property<string>("CommentsId")
                         .IsRequired()
-                        .HasColumnType("text[]");
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -278,6 +278,10 @@ namespace PGAdminDAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("LikeComments")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
                     b.Property<List<string>>("LikePostID")
                         .IsRequired()
                         .HasColumnType("text[]");
@@ -316,7 +320,7 @@ namespace PGAdminDAL.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<List<string>>("RetweetPostID")
+                    b.Property<List<string>>("RepostPostID")
                         .IsRequired()
                         .HasColumnType("text[]");
 

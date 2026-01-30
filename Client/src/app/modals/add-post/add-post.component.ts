@@ -4,7 +4,7 @@ import { UserCacheService } from '../../data/cache/user.service';
 import { Post } from '../../data/interface/Post/Post.interface';
 import { Router } from '@angular/router';
 import { PostService } from '../../api/REST/post/Post.service';
-import { HomeComponent } from '../../pages/home/home.component';
+import { PostCacheService } from '../../data/cache/post.service';
 
 @Component({
   selector: 'app-add-post',
@@ -32,11 +32,17 @@ export class AddPostComponent {
 
   MaxHeight: number = 380;
   previousLength: number = 0;
+  PrintLenght: number = 300;
   MaxLenghtText: number = 300;
   circleProgress: number = 100;
   circleColor: string = '#4caf50';
 
-  constructor( private userCache: UserCacheService, private home: HomeComponent, private renderer: Renderer2, private router: Router) {}
+  constructor( 
+    private userCache: UserCacheService, 
+    private renderer: Renderer2, 
+    private router: Router,
+    private postCache: PostCacheService
+  ) {}
 
   ngOnInit() {
     var res = this.userCache.loadUser();
@@ -44,15 +50,17 @@ export class AddPostComponent {
       this.user = user;
     });
   }
+
+
   
   updateCircle() {
     const max = 300;
-    const percent = (this.MaxLenghtText / max) * 100;
+    const percent = (this.PrintLenght / max) * 100;
     this.circleProgress = percent;
 
-    if (this.MaxLenghtText <= 0) {
+    if (this.PrintLenght <= 0) {
       this.circleColor = 'red';
-    } else if (this.MaxLenghtText <= 30) {
+    } else if (this.PrintLenght <= 30) {
       this.circleColor = 'yellow';
     } else {
       this.circleColor = 'green';
@@ -64,15 +72,11 @@ export class AddPostComponent {
     const el = event.target as HTMLElement;
     const text = el.innerText;
     this.post.content = el.innerText;
-    const diff = text.length - this.previousLength;
-
+    //const diff = text.length - this.previousLength;
     
+    this.PrintLenght = this.MaxLenghtText - text.length;
+    if(text == "\n"){this.PrintLenght = 300;}
     
-    this.MaxLenghtText -= diff;
-    if(diff == 0){this.MaxLenghtText = 300}
-    
-
-    if (this.MaxLenghtText > 300) this.MaxLenghtText = 300;
 
     this.previousLength = text.length;
     this.updateCircle();
@@ -80,7 +84,7 @@ export class AddPostComponent {
     el.style.height = 'auto';
 
     if(el.scrollHeight >= 400){
-      el.style.height = this.MaxHeight + 'px';
+      el.style.height = this.PrintLenght + 'px';
       el.style.overflowY = 'auto';
     }
     else {
@@ -121,7 +125,8 @@ export class AddPostComponent {
   SendPost(){
     this.Rest.AddPost(this.post).subscribe({
       next: (response) => {
-        this.home.sendPost(response.post);
+        this.postCache.SendPost(response.post);
+        this.router.navigate(['/home'])
       },
       error: (error) => {
         console.log(error);

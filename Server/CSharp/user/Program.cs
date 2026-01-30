@@ -1,14 +1,15 @@
-using Hash.Interface;
 using Hash;
+using Hash.Interface;
 using Microsoft.EntityFrameworkCore;
 using MongoDB;
+using Npgsql;
 using PGAdminDAL;
-using RedisDAL.User;
 using RedisDAL;
+using RedisDAL.User;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
-
+NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
