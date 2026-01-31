@@ -313,11 +313,11 @@ namespace PGAdminDAL.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<List<string>>("RecallPostId")
+                    b.Property<List<string>>("Repost")
                         .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<List<string>>("RepostPostID")
+                    b.Property<List<string>>("SavedPost")
                         .IsRequired()
                         .HasColumnType("text[]");
 

@@ -57,20 +57,20 @@ namespace posts.Models.Post
         [BsonElement("Like")]
         public List<Like>? Like { get; set; } = new List<Like>();
 
-        [BsonElement("Retpost")]
-        public List<string>? Retpost { get; set; } = new List<string>();
+        [BsonElement("Repost")]
+        public List<Like>? Repost { get; set; } = new List<Like>();
 
-        [BsonElement("InRetpost")]
-        public List<string>? InRetpost { get; set; } = new List<string>();
+        [BsonElement("Recall")]
+        public List<SpacePostModel>? Recall { get; set; } = new List<SpacePostModel>();
+
+        [BsonElement("IsRecall")]
+        public bool IsRecall { get; set; }
 
         [BsonElement("Hashtags")]
         public List<string>? Hashtags { get; set; } = new List<string>();
 
         [BsonElement("Mentions")]
         public List<string>? Mentions { get; set; } = new List<string>();
-
-        [BsonElement("Recall")]
-        public List<string>? Recall { get; set; } = new List<string>();
 
         [BsonElement("Comments")]
         public List<Comment>? Comments { get; set; } = new List<Comment>();

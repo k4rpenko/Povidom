@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PGAdminDAL.Migrations
 {
     /// <inheritdoc />
-    public partial class povidom : Migration
+    public partial class Povidom : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,12 +47,12 @@ namespace PGAdminDAL.Migrations
                     StoriesId = table.Column<List<string>>(type: "text[]", nullable: false),
                     Subscribers = table.Column<List<string>>(type: "text[]", nullable: false),
                     Followers = table.Column<List<string>>(type: "text[]", nullable: false),
+                    PostID = table.Column<List<string>>(type: "text[]", nullable: false),
                     LikePostID = table.Column<List<string>>(type: "text[]", nullable: false),
                     CommentsId = table.Column<string>(type: "jsonb", nullable: false),
                     LikeComments = table.Column<string>(type: "jsonb", nullable: false),
-                    RepostPostID = table.Column<List<string>>(type: "text[]", nullable: false),
-                    PostID = table.Column<List<string>>(type: "text[]", nullable: false),
-                    RecallPostId = table.Column<List<string>>(type: "text[]", nullable: false),
+                    Repost = table.Column<List<string>>(type: "text[]", nullable: false),
+                    SavedPost = table.Column<List<string>>(type: "text[]", nullable: false),
                     ChatsID = table.Column<List<string>>(type: "text[]", nullable: false),
                     LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),

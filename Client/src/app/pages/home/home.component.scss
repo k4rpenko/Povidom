@@ -12,6 +12,18 @@
   max-width: 1140px;
 }
 
+.post-bottom{
+  margin-top: 10px;
+  display: flex;
+  width: 100%;
+}
+
+.post-bottom-addition{
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
 .post-main{
   margin-left: 450px;
   width: 610px;
@@ -310,11 +322,38 @@
 }
 
 
-.post-mut-box{
+.post-mut-box {
+  gap: 5px;
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  svg path, svg polyline{
+    transition: stroke 0.3s, fill 0.3s;
+  }
 }
+
+
+.post-mut-box a.repost:hover svg {
+  transition: stroke 0.3s;
+  stroke: var(--yellow);
+}
+
+.post-mut-box a.comment:hover svg path{
+  transition: stroke 0.3s;
+  stroke: var(--grean);
+}
+
+.post-mut-box a.like:hover svg {
+  transition: fill 0.3s;
+  fill: var(--read);
+}
+
+.post-mut-box a.views:hover svg path{
+  transition: fill 0.3s;
+  fill: var(--blue);
+}
+
 
 .LikedTrue path,
 .LikedTrue polyline {

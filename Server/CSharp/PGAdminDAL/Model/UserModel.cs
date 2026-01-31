@@ -16,12 +16,12 @@ namespace PGAdminDAL.Model
         public List<string> StoriesId { get; set; } = new List<string>();
         public List<string> Subscribers { get; set; } = new List<string>();
         public List<string> Followers { get; set; } = new List<string>();
+        public List<string> PostID { get; set; } = new List<string>();
         public List<string> LikePostID { get; set; } = new List<string>();
         public List<Сoments> CommentsId { get; set; } = new();
         public List<Сoments> LikeComments { get; set; } = new();
-        public List<string> RepostPostID { get; set; } = new List<string>();
-        public List<string> PostID { get; set; } = new List<string>();
-        public List<string> RecallPostId { get; set; } = new List<string>();
+        public List<string> Repost { get; set; } = new List<string>();
+        public List<string> SavedPost { get; set; } = new List<string>();
         public List<string> ChatsID { get; set; } = new List<string>();
 
         public DateTime? LastLogin { get; set; }

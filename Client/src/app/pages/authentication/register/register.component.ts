@@ -66,31 +66,32 @@ export class RegisterComponent implements OnInit {
     }
 
     if (!this.isValidEmail(this.email)) {
-      this.Error = 'Будь ласка, введіть коректну електронну пошту.';
+      this.Error = 'Please enter a valid email address.';
       return;
     }
 
     if (!this.isValidPassword(this.password)) {
-      this.Error = 'Пароль має містити принаймні 6 символів, включаючи букви та цифри.';
+      this.Error = 'The password must contain at least 6 characters, including letters and numbers.';
       return;
     } else if (this.password !== this.password2) {
-      this.Error = 'Паролі не співпадають.';
+      this.Error = 'Passwords do not match.';
       return;
     }
 
     this.Rest.PostRegister(this.email, this.password).subscribe({
       next: (response) => {
-          const token = response.cookie;
-          this.cookieService.set('authToken', token);
-          const decoded = jwtDecode<JwtPayload>(token);
-          this.cookieService.set('_ASA', decoded.sub);
-          this.cookieService.set('Role', decoded.Role);
-          this.router.navigate(['/home']);
+        const token = response.cookie;
+        this.cookieService.set('_ASA', token, undefined, '/', 'localhost', true, 'Strict');
+        this.router.navigate(['home']);
       },
       error: (error) => {
         if (error.status === 429) {
           this.Error = 'Too many requests. Please try again later.';
-        } else {
+        } 
+        else if(error.status === 400){
+          this.Error = 'This email address is already taken, please try another one.';
+        }
+        else {
           const errorMessage = error.error?.message || error.message;
           this.Error = errorMessage;
         }

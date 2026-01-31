@@ -10,6 +10,7 @@ using PGAdminDAL;
 using PGAdminDAL.Model;
 using posts.Models.MessageChat;
 using posts.Models.Post;
+using System.ComponentModel.Design;
 
 namespace posts.Controllers
 {
@@ -81,9 +82,9 @@ namespace posts.Controllers
                     MediaUrls = post.MediaUrls,
                     LikeAmount = 0,
                     YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true : false,
-                    Retpost = 0,
-                    RetpostAmount = 0,
-                    YouRetpost = user.RepostPostID.Contains(post.Id.ToString()) ? true : false,
+                    Repost = 0,
+                    RepostAmount = 0,
+                    YouRepost = user.Repost.Contains(post.Id.ToString()) ? true : false,
                     Hashtags = 0,
                     Mentions = 0,
                     CommentAmount = 0,
@@ -238,6 +239,134 @@ namespace posts.Controllers
             }
         }
 
+        [HttpPut("LikeComent")]
+        public async Task<IActionResult> LikeComent([FromQuery] string post_id, [FromQuery] string coment_id)
+        {
+            try
+            {
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized("No _ASA cookie found");
+                }
+
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    return NotFound(false);
+                }
+
+
+                var newLike = new Like()
+                {
+                    UserId = id,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                var objectId = ObjectId.Parse(post_id);
+                var ComentobjectId = ObjectId.Parse(coment_id);
+
+                var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+                var comment = post.Comments.FirstOrDefault(c => c.Id == ComentobjectId);
+
+                if (comment != null)
+                {
+                    comment.Like.Add(newLike);
+                    await _customers.ReplaceOneAsync(p => p.Id == objectId, post);
+                }
+                else
+                {
+                    return NotFound(false);
+                }
+
+
+                if (!user.LikeComments.Any(c => c.PostId == post_id))
+                {
+                    user.LikeComments.Add(new Сoments
+                    {
+                        PostId = post_id,
+                        CommentId = new List<string> { coment_id }
+                    });
+                }
+                else
+                {
+                    var commentContainer = user.LikeComments.FirstOrDefault(c => c.PostId == post_id);
+
+                    if (commentContainer != null)
+                    {
+                        commentContainer.CommentId.Add(coment_id);
+                    }
+                }
+
+                await context.SaveChangesAsync();
+
+                return Ok(true);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
+
+        [HttpDelete("LikeComent")]
+        public async Task<IActionResult> DeleteLikeComent([FromQuery] string post_id, [FromQuery] string coment_id)
+        {
+            try
+            {
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized("No _ASA cookie found");
+                }
+
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    return NotFound(false);
+                }
+
+                var objectId = ObjectId.Parse(post_id);
+                var ComentobjectId = ObjectId.Parse(coment_id);
+
+                var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+                var comment = post.Comments.FirstOrDefault(c => c.Id == ComentobjectId);
+
+                if (comment != null && post != null && user.LikeComments.Any(c => c.PostId == post_id))
+                {
+                    comment.Like.RemoveAll(l => l.UserId == user.Id);
+                    await _customers.ReplaceOneAsync(p => p.Id == objectId, post);
+                }
+                else
+                {
+                    return NotFound(false);
+                }
+
+                var commentContainer = user.LikeComments.FirstOrDefault(c => c.PostId == post_id);
+
+                if (commentContainer != null)
+                {
+                    commentContainer.CommentId.Remove(coment_id);
+                }
+
+                await context.SaveChangesAsync();
+
+                return Ok(true);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
+        }
 
         [HttpPut("Comment")]
         public async Task<IActionResult> AddComment(SpaceWorkModel _data)
@@ -256,6 +385,7 @@ namespace posts.Controllers
 
                 var newComment = new Comment
                 {
+                    Id = ObjectId.GenerateNewId(),
                     UserId = _data.UserId,
                     Content = _data.Content,
                     CreatedAt = DateTime.UtcNow
@@ -299,14 +429,121 @@ namespace posts.Controllers
             }
         }
 
-
-        [HttpPut("Retpost")]
-        public async Task<IActionResult> Retweet(SpaceWorkModel _data)
+        [HttpPut("SavedPost")]
+        public async Task<IActionResult> SavedPost([FromQuery] string post_id)
         {
             try
             {
-                
-                return Ok("Post liked successfully.");
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized(false);
+                }
+
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    NotFound(false);
+                }
+
+                user.SavedPost.Add(post_id);
+                await context.SaveChangesAsync();
+
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while removing the like: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("SavedPost")]
+        public async Task<IActionResult> DeleteSavedPost([FromQuery] string post_id)
+        {
+            try
+            {
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized(false);
+                }
+
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    return NotFound(false);
+                }
+
+                user.SavedPost.Remove(post_id);
+                await context.SaveChangesAsync();
+
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while removing the like: {ex.Message}");
+            }
+        }
+
+        [HttpPut("Retpost")]
+        public async Task<IActionResult> Retweet([FromQuery] string post_id)
+        {
+            try
+            {
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized("No _ASA cookie found");
+                }
+
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    return NotFound(false);
+                }
+
+                if (user.LikePostID.FindIndex(id => id == post_id) >= 0)
+                {
+                    return Conflict(false);
+                }
+
+                var newLike = new Like()
+                {
+                    UserId = id,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                var objectId = ObjectId.Parse(post_id);
+
+                var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.Like, newLike);
+                var updateResult = await _customers.UpdateOneAsync(
+                    post => post.Id == objectId,
+                    updateDefinition
+                );
+
+                if (updateResult.MatchedCount == 0)
+                {
+                    return NotFound(false);
+                }
+
+
+                user.LikePostID.Add(post_id);
+
+                await context.SaveChangesAsync();
+
+                return Ok(true);
 
             }
             catch (Exception ex)
@@ -367,9 +604,10 @@ namespace posts.Controllers
                         MediaUrls = post.MediaUrls,
                         LikeAmount = post.Like?.Count ?? 0,
                         YouLike = user != null ? user.LikePostID.Contains(post.Id.ToString()) ? true : false : false,
-                        Retpost = post.Retpost?.Count ?? 0,
-                        RetpostAmount = post.InRetpost?.Count ?? 0,
-                        YouRetpost = user != null ? user.RepostPostID.Contains(post.Id.ToString()) ? true : false : false,
+                        Repost = post.Repost?.Count ?? 0,
+                        RepostAmount = post.Repost?.Count ?? 0,
+                        YouRepost = user != null ? user.Repost.Contains(post.Id.ToString()) ? true : false : false,
+                        YouSaved = user != null ? user.SavedPost.Contains(post.Id.ToString()) ? true : false : false,
                         Hashtags = post.Hashtags?.Count ?? 0,
                         Mentions = post.Mentions?.Count ?? 0,
                         CommentAmount = post.Comments?.Count ?? 0,
@@ -389,6 +627,8 @@ namespace posts.Controllers
         [HttpGet("GetPostsById")]
         public async Task<IActionResult> PostId([FromQuery] string post_id)
         {
+            if(post_id == null) return NotFound(false);
+
             var objectId = ObjectId.Parse(post_id);
             var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
             var CreatorData = context.Users.FirstOrDefault(u => u.PostID.Contains(post_id));
@@ -433,9 +673,9 @@ namespace posts.Controllers
                 MediaUrls = post.MediaUrls,
                 LikeAmount = post.Like?.Count ?? 0,
                 YouLike = false,
-                Retpost = post.Retpost?.Count ?? 0,
-                RetpostAmount = post.InRetpost?.Count ?? 0,
-                YouRetpost = false,
+                Repost = post.Repost?.Count ?? 0,
+                RepostAmount = post.Repost?.Count ?? 0,
+                YouRepost = false,
                 Hashtags = post.Hashtags?.Count ?? 0,
                 Mentions = post.Mentions?.Count ?? 0,
                 Comments = ComentsList,
@@ -471,17 +711,75 @@ namespace posts.Controllers
                 };
 
                 postHome.YouLike = user != null ? user.LikePostID.Contains(post.Id.ToString()) ? true : false : false;
-                postHome.YouRetpost = user != null ? user.RepostPostID.Contains(post.Id.ToString()) ? true : false : false;
+                postHome.YouRepost = user != null ? user.Repost.Contains(post.Id.ToString()) ? true : false : false;
                 postHome.YouComment = user != null ? user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false : false;
                 postHome.YouView = true;
+                postHome.YouSaved = user.SavedPost.Contains(post.Id.ToString()) ? true : false;
 
-                foreach(var comment in postHome.Comments)
+                foreach (var comment in postHome.Comments)
                 {
                     comment.YouLike = user != null && user.LikeComments.FirstOrDefault(c => c.PostId == post.Id.ToString())?.CommentId.Contains(comment.Id.ToString()) == true;
                 }
             }
 
             return Ok(new { Post = postHome });
+        }
+
+        [HttpGet("GetSavedPosts")]
+        public async Task<IActionResult> GetSavedPosts()
+        {
+            if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+            {
+                return Unauthorized();
+            }
+            var sessions = await context.Sessions
+                .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+            var id = sessions.UserId;
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            List<PostHome> postSavedList = new List<PostHome>();
+
+            foreach (var item in user.SavedPost)
+            {
+                var objectId = ObjectId.Parse(item);
+                var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+
+                var CreatorData = context.Users.FirstOrDefault(u => u.PostID.Contains(item));
+                var Creator = new UserFind
+                {
+                    Id = CreatorData.Id,
+                    UserName = CreatorData.UserName,
+                    FirstName = CreatorData.FirstName,
+                    Avatar = CreatorData.Avatar
+                };
+
+                var NewPost = new PostHome
+                {
+                    Id = post.Id.ToString().ToString(),
+                    User = Creator,
+                    Content = post.Content,
+                    CreatedAt = post.CreatedAt,
+                    UpdatedAt = post.UpdatedAt,
+                    MediaUrls = post.MediaUrls,
+                    LikeAmount = post.Like?.Count ?? 0,
+                    ViewsAmount = post.Views.Count,
+                    YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true : false,
+                    Repost = post.Repost?.Count ?? 0,
+                    RepostAmount = post.Repost?.Count ?? 0,
+                    YouRepost = user.Repost.Contains(post.Id.ToString()) ? true : false,
+                    YouSaved = user.SavedPost.Contains(post.Id.ToString()) ? true : false,
+                    Hashtags = post.Hashtags?.Count ?? 0,
+                    Mentions = post.Mentions?.Count ?? 0,
+                    CommentAmount = post.Comments?.Count ?? 0,
+                    YouComment = user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false,
+                    SPublished = post.SPublished
+                };
+
+                postSavedList.Add(NewPost);
+            }
+
+            return Ok(new { Post = postSavedList });
         }
 
         [HttpGet("")]
@@ -517,9 +815,10 @@ namespace posts.Controllers
                 MediaUrls = post.MediaUrls,
                 LikeAmount = post.Like?.Count ?? 0,
                 YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true : false,
-                Retpost = post.Retpost?.Count ?? 0,
-                RetpostAmount = post.InRetpost?.Count ?? 0,
-                YouRetpost = user.RepostPostID.Contains(post.Id.ToString()) ? true : false,
+                Repost = post.Repost?.Count ?? 0,
+                RepostAmount = post.Repost?.Count ?? 0,
+                YouRepost = user.Repost.Contains(post.Id.ToString()) ? true : false,
+                YouSaved = user.SavedPost.Contains(post.Id.ToString()) ? true : false,
                 Hashtags = post.Hashtags?.Count ?? 0,
                 Mentions = post.Mentions?.Count ?? 0,
                 CommentAmount = post.Comments?.Count ?? 0,

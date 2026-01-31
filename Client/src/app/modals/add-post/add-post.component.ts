@@ -22,7 +22,7 @@ export class AddPostComponent {
     userId: "0",
     likeAmount: 0,
     commentAmount: 0,
-    retpostAmount: 0,
+    repostAmount: 0,
     viewsAmount: 0,
     shaveAnswer: false,
     ansver: null as any

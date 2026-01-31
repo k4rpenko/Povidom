@@ -13,8 +13,8 @@ using PGAdminDAL;
 namespace PGAdminDAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260130191831_povidom")]
-    partial class povidom
+    [Migration("20260131133933_Povidom")]
+    partial class Povidom
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -316,11 +316,11 @@ namespace PGAdminDAL.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<List<string>>("RecallPostId")
+                    b.Property<List<string>>("Repost")
                         .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<List<string>>("RepostPostID")
+                    b.Property<List<string>>("SavedPost")
                         .IsRequired()
                         .HasColumnType("text[]");
 

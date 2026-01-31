@@ -21,10 +21,9 @@ import { Router, RouterModule } from '@angular/router';
 export class HomeComponent implements OnInit {
   Rest = inject(PostService);
   
-  constructor(private router: Router, private postsService: PostService, private postCache: PostCacheService) {}
+  constructor(private router: Router, private postsService: PostService, public postCache: PostCacheService) {}
 
   posts: Post[] = [];
-  loading: boolean = true;
 
   ngOnInit() {
     if (this.posts.length === 0) {
@@ -38,8 +37,8 @@ export class HomeComponent implements OnInit {
       if(posts.length === 0) return;
 
       this.posts = posts;
-      this.loading = false;
     });
+    
   }
 
   sendPost(post: Post){
@@ -57,33 +56,77 @@ export class HomeComponent implements OnInit {
   }
 
   likePost(id: string) {
+    const updatePost = this.posts.find(post => post.id === id)!;
+    updatePost.likeAmount = (updatePost?.likeAmount || 0) + 1;
+    updatePost.youLike = true;
+
+    this.posts = this.posts.map(post => post.id === id ? updatePost : post);
+    this.postCache.changPost(updatePost);
     this.Rest.LikePost(id).subscribe({
-      next: () => {
-        const updatePost = this.posts.find(post => post.id === id)!;
-        updatePost.likeAmount = (updatePost?.likeAmount || 0) + 1;
-        updatePost.youLike = true;
-
-        this.posts = this.posts.map(post => post.id === id ? updatePost : post);
-        this.postCache.changPost(updatePost);
-      },
+      next: () => {},
       error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  DeleteLikePost(id: string) {
-    this.Rest.DeleteLikePost(id).subscribe({
-      next: () => {
         const updatePost = this.posts.find(post => post.id === id)!;
         updatePost.likeAmount = (updatePost?.likeAmount || 0) - 1;
         updatePost.youLike = false;
 
         this.posts = this.posts.map(post => post.id === id ? updatePost : post);
         this.postCache.changPost(updatePost);
-      },
+      }
+    });
+  }
+
+  DeleteLikePost(id: string) {
+    const updatePost = this.posts.find(post => post.id === id)!;
+    updatePost.likeAmount = (updatePost?.likeAmount || 0) - 1;
+    updatePost.youLike = false;
+
+    this.posts = this.posts.map(post => post.id === id ? updatePost : post);
+    this.postCache.changPost(updatePost);
+    this.Rest.DeleteLikePost(id).subscribe({
+      next: () => {},
       error: (error) => {
-        console.error(error);
+        const updatePost = this.posts.find(post => post.id === id)!;
+        updatePost.likeAmount = (updatePost?.likeAmount || 0) + 1;
+        updatePost.youLike = true;
+
+        this.posts = this.posts.map(post => post.id === id ? updatePost : post);
+        this.postCache.changPost(updatePost);
+      }
+    });
+  }
+
+  savedPost(id: string) {
+    const updatePost = this.posts.find(post => post.id === id)!;
+    updatePost.youSaved = true;
+
+    this.posts = this.posts.map(post => post.id === id ? updatePost : post);
+    this.postCache.changPost(updatePost);
+    this.Rest.SavedPost(id).subscribe({
+      next: () => {},
+      error: (error) => {
+        const updatePost = this.posts.find(post => post.id === id)!;
+        updatePost.youSaved = false;
+
+        this.posts = this.posts.map(post => post.id === id ? updatePost : post);
+        this.postCache.changPost(updatePost);
+      }
+    });
+  }
+
+  UnsavedPost(id: string) {
+    const updatePost = this.posts.find(post => post.id === id)!;
+    updatePost.youSaved = false;
+
+    this.posts = this.posts.map(post => post.id === id ? updatePost : post);
+    this.postCache.changPost(updatePost);
+    this.Rest.DeleteSavedPost(id).subscribe({
+      next: () => {},
+      error: (error) => {
+        const updatePost = this.posts.find(post => post.id === id)!;
+        updatePost.youSaved = true;
+
+        this.posts = this.posts.map(post => post.id === id ? updatePost : post);
+        this.postCache.changPost(updatePost);
       }
     });
   }

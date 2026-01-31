@@ -42,6 +42,16 @@ export class LoginComponent implements OnInit {
       this.Error = 'Password is required';
       return;
     }
+
+    if (!this.isValidEmail(this.email)) {
+      this.Error = 'Please enter a valid email address.';
+      return;
+    }
+
+    if (!this.isValidPassword(this.password)) {
+      this.Error = 'The password must contain at least 6 characters, including letters and numbers.';
+      return;
+    }
     
     this.Rest.PostLogin(this.email, this.password).subscribe({
       next: (response) => {
@@ -58,6 +68,20 @@ export class LoginComponent implements OnInit {
         }
       }
     });
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+  }
+
+  isValidPassword(password: string): boolean {
+    const hasUpperCase = /[A-Z]/.test(password); 
+    const hasLowerCase = /[a-z]/.test(password); 
+    const hasNumber = /\d/.test(password); 
+    const isLongEnough = password.length >= 6; 
+  
+    return hasUpperCase && hasLowerCase && hasNumber && isLongEnough; 
   }
 
   onGoogleLogin(): void {

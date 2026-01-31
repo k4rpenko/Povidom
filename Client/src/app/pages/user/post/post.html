@@ -79,7 +79,7 @@
 
                             <div class="post-mut">
                                 <div class="post-mut-box">
-                                <p>{{post.retpostAmount}}</p>
+                                <p>{{post.repostAmount}}</p>
                                 <a href="">
                                     <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" transform="rotate(90)">
                                     <path d="M6,14V9A6,6,0,0,1,16.89,5.54" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
@@ -164,21 +164,21 @@
                             </div>
                         </div>
                     </div>
-                        <div class="post-item" *ngFor="let post of post.comments;">
+                        <div class="post-item" *ngFor="let coment of post.comments;">
                             <div class="post-item-box">
                                 <div class="post-data">
 
                                 <!-- Основний пост -->
                                 <div class="post-new">
-                                    <img [src]="post.user?.avatar" alt="Profile Picture" class="profile-icon">
+                                    <img [src]="coment.user?.avatar" alt="Profile Picture" class="profile-icon">
                                     <div class="post-content-info">
                                     <div class="post-data-info">
                                         <div class="post-user-info">
-                                        <span class="post-author">{{ post.user?.firstName || 'Anonymous' }}</span>
-                                        <span class="post-username">{{ post.user?.userName || 'unknown' }}</span>
+                                        <span class="post-author">{{ coment.user?.firstName || 'Anonymous' }}</span>
+                                        <span class="post-username">{{ coment.user?.userName || 'unknown' }}</span>
                                         </div>
                                         <div class="post-content">
-                                        <p>{{ post.content || '' }}</p>
+                                        <p>{{ coment.content || '' }}</p>
                                         </div>
                                     </div>
                                     </div>
@@ -186,9 +186,9 @@
 
                                 <div class="post-mut-coments">
                                     <div class="post-mut-box">
-                                    <p>{{post.likeAmount}}</p>
-                                    <a (click)="!post.youLike ? likeComentPost(post.id!) : DeleteLikeComentPost(post.id!); $event.stopPropagation()">
-                                        <ng-container *ngIf="!post.youLike; else liked">
+                                    <p>{{coment.likeAmount}}</p>
+                                    <a (click)="!coment.youLike ? likeComent(post.id!, coment.id!) : DeletelikeComent(post.id!, coment.id!); $event.stopPropagation()">
+                                        <ng-container *ngIf="!coment.youLike; else liked">
                                         <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" id="Outline" width="24px" height="20px" viewBox="0 0 24 24"><path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"/></svg>
                                         </ng-container>
                                         <ng-template #liked>

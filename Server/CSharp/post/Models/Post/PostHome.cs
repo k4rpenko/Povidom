@@ -28,12 +28,14 @@ namespace posts.Models.Post
         public List<Like>? LikeArray { get; set; } = new List<Like>();
         public bool? YouLike { get; set; }
         public int? LikeAmount { get; set; }
-        public int? Retpost { get; set; }
-        public bool? YouRetpost { get; set; }
-        public int? RetpostAmount { get; set; }
+        public int? Repost { get; set; }
+        public bool? YouRepost { get; set; }
+        public int? RepostAmount { get; set; }
+        public bool? YouSaved { get; set; }
         public int? Hashtags { get; set; }
         public int? Mentions { get; set; }
-        public List<UserFind>? Recall { get; set; } = new List<UserFind>();
+        public List<PostHome>? Recall { get; set; } = new List<PostHome>();
+        public bool? IsRecall { get; set; }
         public List<PostHomeComment>? Comments { get; set; } = new List<PostHomeComment>();
         public bool? YouComment { get; set; }
         public int? CommentAmount { get; set; }

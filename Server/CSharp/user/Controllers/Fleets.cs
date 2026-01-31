@@ -174,7 +174,7 @@ namespace user.Controllers
                                     YouLike = You != null ? You.LikePostID.Contains(post.Id.ToString()) ? true : false : false,
                                     Retpost = post.Retpost?.Count ?? 0,
                                     RetpostAmount = post.InRetpost?.Count ?? 0,
-                                    YouRetpost = You != null ? You.RepostPostID.Contains(post.Id.ToString()) ? true : false : false,
+                                    YouRetpost = You != null ? You.Repost.Contains(post.Id.ToString()) ? true : false : false,
                                     Hashtags = post.Hashtags?.Count ?? 0,
                                     Mentions = post.Mentions?.Count ?? 0,
                                     CommentAmount = post.Comments?.Count ?? 0,
@@ -188,8 +188,8 @@ namespace user.Controllers
 
 
                     await AddPosts(user.PostID, post => userAccount.Post.Add(post));
-                    await AddPosts(user.RepostPostID, post => userAccount.Post.Add(post));
-                    await AddPosts(user.RecallPostId, post => userAccount.RecallPost.Add(post));
+                    await AddPosts(user.Repost, post => userAccount.Post.Add(post));
+                    await AddPosts(user.Repost, post => userAccount.RecallPost.Add(post));
 
                     return Ok(userAccount);
                 }

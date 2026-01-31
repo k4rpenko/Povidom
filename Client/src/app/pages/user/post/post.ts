@@ -32,7 +32,7 @@ export class PostID {
     userId: "0",
     likeAmount: 0,
     commentAmount: 0,
-    retpostAmount: 0,
+    repostAmount: 0,
     viewsAmount: 0,
     shaveAnswer: false,
     ansver: null as any
@@ -65,15 +65,6 @@ export class PostID {
     console.log(2);
   }
 
-  
-
-  likeComentPost(id: string) {
-
-  }
-
-  DeleteLikeComentPost(id: string) {
-
-  }
 
   likePost(id: string) {
     this.Rest.LikePost(id).subscribe({
@@ -94,6 +85,37 @@ export class PostID {
       next: () => {
         this.post.likeAmount = (this.post?.likeAmount || 0) - 1;
         this.post.youLike = false;
+
+        this.postCache.changPost(this.post);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  
+  likeComent(id: string, id_coment: string) {
+    this.Rest.LikeComent(id, id_coment).subscribe({
+      next: () => {
+        let coment = this.post.comments?.find(u => u.id === id_coment)!;
+        coment.likeAmount++;
+        coment.youLike = true;
+
+        this.postCache.changPost(this.post);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  DeletelikeComent(id: string, id_coment: string) {
+    this.Rest.DeleteLikeComent(id, id_coment).subscribe({
+      next: () => {
+        let coment = this.post.comments?.find(u => u.id === id_coment)!;
+        coment.likeAmount--;
+        coment.youLike = false;
 
         this.postCache.changPost(this.post);
       },
@@ -192,16 +214,16 @@ export class PostID {
       content: this.Coment.content,
       createdAt: new Date().toISOString(),
       user: this.user,
-      retpostAmount: 0,
+      repostAmount: 0,
       likeAmount: 0
     });
 
     this.Rest.AddComents(this.Coment).subscribe({
       next: () => {
         this.post.commentAmount = (this.post?.likeAmount || 0) + 1;
-        this.post.youComment = true;
-
+        this.post.youComment = true; 
         this.postCache.changPost(this.post);
+        this.Coment.content = ""
       },
       error: (error) => {
         console.error(error);

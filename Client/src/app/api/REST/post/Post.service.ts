@@ -22,6 +22,13 @@ export class PostService {
       withCredentials: true
     });
   }
+  
+  GetSavedPost() {
+    return this.http.get<{post: Post[]}>(`api/SpacePosts/GetSavedPosts`, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+    });
+  }
 
   LikePost(post_id: string) {
     return this.http.put<{ cookie: string }>(
@@ -37,6 +44,34 @@ export class PostService {
     );
   }
 
+  LikeComent(post_id: string, coment_id: string) {
+    return this.http.put<{ cookie: string }>(
+      `api/SpacePosts/LikeComent?post_id=${post_id}&coment_id=${coment_id}`,
+      null,
+      { withCredentials: true }
+    );
+  }
+
+  DeleteLikeComent(post_id: string, coment_id: string) {
+    return this.http.delete<{ cookie: string }>(
+      `api/SpacePosts/LikeComent?post_id=${post_id}&coment_id=${coment_id}`,
+    );
+  }
+
+  SavedPost(post_id: string) {
+    return this.http.put<{ cookie: string }>(
+      `api/SpacePosts/SavedPost?post_id=${post_id}`,
+      null,
+      { withCredentials: true }
+    );
+  }
+
+  DeleteSavedPost(post_id: string) {
+    return this.http.delete<{ cookie: string }>(
+      `api/SpacePosts/SavedPost?post_id=${post_id}`,
+    );
+  }
+  
   AddPost(post: Post) {    
     return this.http.post<{ post: Post }>(`api/SpacePosts/AddPost`, post, {
       headers: { 'Content-Type': 'application/json' },

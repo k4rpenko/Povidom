@@ -7,16 +7,16 @@ import { PostService } from '../../api/REST/post/Post.service';
 export class PostCacheService {
 
   public postsSubject = new BehaviorSubject<Post[]>([]);
-  public isLoaded = false;
+  public isLoaded = true;
 
   constructor(private Rest: PostService) {}
 
 
   loadPosts(): void {
-    if (!this.isLoaded) {
+    if (this.isLoaded) {
       this.Rest.GetPost().subscribe(res => {
         this.postsSubject.next(res.post);
-        this.isLoaded = true;
+        this.isLoaded = false;
       });
     }
   }

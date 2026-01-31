@@ -4,7 +4,7 @@ export interface Comment {
   id?: string;
   userId?: string;
   user?: User;
-  retpostAmount: number;
+  repostAmount: number;
   youRetpost?: boolean;
   likeAmount: number;
   youLike?: boolean;
@@ -28,10 +28,11 @@ export interface Post {
   like?: Like[];
   youLike?: boolean;
   likeAmount?: number;
-  retpost?: string[];
-  inRetpost?: string[];
-  youRetpost?: boolean;
-  retpostAmount?: number;
+  repost?: string[];
+  inRepost?: string[];
+  youRepost?: boolean;
+  repostAmount?: number;
+  youSaved?: boolean;
   hashtags?: string[];
   mentions?: string[];
   comments?: Comment[];
