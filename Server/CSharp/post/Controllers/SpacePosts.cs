@@ -11,6 +11,7 @@ using PGAdminDAL.Model;
 using posts.Models.MessageChat;
 using posts.Models.Post;
 using System.ComponentModel.Design;
+using System.Linq;
 
 namespace posts.Controllers
 {
@@ -554,74 +555,86 @@ namespace posts.Controllers
 
         [HttpGet("GetPosts")]
         public async Task<IActionResult> Home()
-        {
+        { 
 
             List<SpacePostModel> posts = await _customers.Find(_ => true).Limit(30).ToListAsync();
-            List<PostHome> postHomeList = new List<PostHome>();
+            var PostList = new List<PostHome>();
+
+            foreach (var post in posts)
+            {
+                var CreatorData = context.Users.FirstOrDefault(u => u.Id == post.UserId);
+                var Creator = new UserFind
+                {
+                    Id = CreatorData.Id,
+                    UserName = CreatorData.UserName,
+                    FirstName = CreatorData.FirstName,
+                    Avatar = CreatorData.Avatar
+                };
+
+                var postHome = new PostHome
+                {
+                    Id = post.Id.ToString(),
+                    User = Creator,
+                    Content = post.Content,
+                    CreatedAt = post.CreatedAt,
+                    UpdatedAt = post.UpdatedAt,
+                    MediaUrls = post.MediaUrls,
+                    LikeAmount = post.Like?.Count ?? 0,
+                    YouLike = false,
+                    Repost = post.Repost?.Count ?? 0,
+                    RepostAmount = post.Repost?.Count ?? 0,
+                    YouRepost = false,
+                    Hashtags = post.Hashtags?.Count ?? 0,
+                    Mentions = post.Mentions?.Count ?? 0,
+                    CommentAmount = post.Comments?.Count ?? 0,
+                    YouComment = false,
+                    ViewsAmount = post.Views.Count,
+                    SPublished = post.SPublished
+                };
+
+                PostList.Add(postHome);
+            }
 
             if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
             {
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+                var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
 
                 var id = sessions.UserId;
                 var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
 
-                foreach (var item in posts)
+
+                foreach (var post in PostList)
                 {
-                    if (!item.Views.Contains(id))
+                    foreach (var item in posts)
                     {
-                        item.Views.Add(id);
-                        await _customers.ReplaceOneAsync(
-                            filter => filter.Id == item.Id,
-                            item
-                        );
+                        if (!item.Views.Contains(id))
+                        {
+                            item.Views.Add(id);
+                            await _customers.ReplaceOneAsync(
+                                filter => filter.Id == item.Id,
+                                item
+                            );
+                        }
                     }
-                    //var filter = Builders<SpacePostModel>.Filter.ElemMatch(post => post.Views, Builders<string>.Filter.Ne(view => view, _data.Id.ToString()));
-                    //var posts = await _customers.Find(filter).Limit(30).ToListAsync();
-                }
 
-                var UserConst = new UserFind
-                {
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    FirstName = user.FirstName,
-                    Avatar = user.Avatar
-                };
-
-                foreach (var post in posts)
-                {
-                    var users = context.Users.FirstOrDefault(u => u.Id == post.UserId);
-
-                    var postHome = new PostHome
+                    var UserConst = new UserFind
                     {
-                        Id = post.Id.ToString(),
-                        User = UserConst,
-                        Content = post.Content,
-                        CreatedAt = post.CreatedAt,
-                        UpdatedAt = post.UpdatedAt,
-                        MediaUrls = post.MediaUrls,
-                        LikeAmount = post.Like?.Count ?? 0,
-                        YouLike = user != null ? user.LikePostID.Contains(post.Id.ToString()) ? true : false : false,
-                        Repost = post.Repost?.Count ?? 0,
-                        RepostAmount = post.Repost?.Count ?? 0,
-                        YouRepost = user != null ? user.Repost.Contains(post.Id.ToString()) ? true : false : false,
-                        YouSaved = user != null ? user.SavedPost.Contains(post.Id.ToString()) ? true : false : false,
-                        Hashtags = post.Hashtags?.Count ?? 0,
-                        Mentions = post.Mentions?.Count ?? 0,
-                        CommentAmount = post.Comments?.Count ?? 0,
-                        YouComment = user != null ? user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false : false,
-                        ViewsAmount = post.Views.Count,
-                        SPublished = post.SPublished
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        Avatar = user.Avatar
                     };
 
-                    postHome.YouView = true;
-                    postHomeList.Add(postHome);
+                    post.YouLike = user != null ? user.LikePostID.Contains(post.Id.ToString()) ? true : false : false;
+                    post.YouRepost = user != null ? user.Repost.Contains(post.Id.ToString()) ? true : false : false;
+                    post.YouComment = user != null ? user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false : false;
+                    post.YouView = true;
+                    post.YouSaved = user.SavedPost.Contains(post.Id.ToString()) ? true : false;
                 }
             }
 
-            return Ok(new { Post = postHomeList });
+            return Ok(new { Post = PostList });
         }
 
         [HttpGet("GetPostsById")]
@@ -780,6 +793,91 @@ namespace posts.Controllers
             }
 
             return Ok(new { Post = postSavedList });
+        }
+
+        [HttpGet("GetUserPost")]
+        public async Task<IActionResult> GetUserPost([FromQuery] string user_name)
+        {
+            if (user_name == null) return NotFound(false);
+
+            var CreatorData = context.Users.FirstOrDefault(u => u.UserName == user_name);
+            var Creator = new UserFind
+            {
+                Id = CreatorData.Id,
+                UserName = CreatorData.UserName,
+                FirstName = CreatorData.FirstName,
+                Avatar = CreatorData.Avatar
+            };
+
+            List<SpacePostModel> posts = await _customers.Find(p => p.UserId == CreatorData.Id).Limit(30).ToListAsync();
+            var PostList = new List<PostHome>();
+
+            foreach (var post in posts)
+            {
+                var postHome = new PostHome
+                {
+                    Id = post.Id.ToString(),
+                    User = Creator,
+                    Content = post.Content,
+                    CreatedAt = post.CreatedAt,
+                    UpdatedAt = post.UpdatedAt,
+                    MediaUrls = post.MediaUrls,
+                    LikeAmount = post.Like?.Count ?? 0,
+                    YouLike = false,
+                    Repost = post.Repost?.Count ?? 0,
+                    RepostAmount = post.Repost?.Count ?? 0,
+                    YouRepost = false,
+                    Hashtags = post.Hashtags?.Count ?? 0,
+                    Mentions = post.Mentions?.Count ?? 0,
+                    CommentAmount = post.Comments?.Count ?? 0,
+                    YouComment = false,
+                    ViewsAmount = post.Views.Count,
+                    SPublished = post.SPublished
+                };
+
+                PostList.Add(postHome);
+            }
+
+            if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+            {
+                var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+
+
+                foreach (var post in PostList)
+                {
+                    foreach (var item in posts)
+                    {
+                        if (!item.Views.Contains(id))
+                        {
+                            item.Views.Add(id);
+                            await _customers.ReplaceOneAsync(
+                                filter => filter.Id == item.Id,
+                                item
+                            );
+                        }
+                    }
+
+                    var UserConst = new UserFind
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        Avatar = user.Avatar
+                    };
+
+                    post.YouLike = user != null ? user.LikePostID.Contains(post.Id.ToString()) ? true : false : false;
+                    post.YouRepost = user != null ? user.Repost.Contains(post.Id.ToString()) ? true : false : false;
+                    post.YouComment = user != null ? user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false : false;
+                    post.YouView = true;
+                    post.YouSaved = user.SavedPost.Contains(post.Id.ToString()) ? true : false;
+                }
+            }
+
+            return Ok(new { Post = PostList });
         }
 
         [HttpGet("")]

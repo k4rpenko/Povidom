@@ -54,7 +54,7 @@ namespace Identification.Controllers
                         EmailConfirmed = false,
                         ConcurrencyStamp = KeyG,
                         PasswordHash = _hash.Encrypt(_user.Password, KeyG),
-                        UserName = $"User{nextUserNumber}",
+                        UserName = $"user{nextUserNumber}",
                         FirstName = "User",
                         LastName = "",
                         Avatar = "https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg",

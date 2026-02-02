@@ -6,6 +6,9 @@ import { Post } from '../../../data/interface/Post/Post.interface';
   providedIn: 'root'
 })
 export class PostService {
+  GetUserPost(user: string) {
+    throw new Error('Method not implemented.');
+  }
   http = inject(HttpClient)
   constructor() { }
 

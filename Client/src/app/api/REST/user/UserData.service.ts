@@ -23,22 +23,18 @@ export class UserREST {
         withCredentials: true
         });
     }
-    // GetAnotherUserData() {
-    //     return this.http.get<{post: Post[]}>(`api/SpacePosts/GetPosts`, {
-    //     headers: { 'Content-Type': 'application/json' },
-    //     withCredentials: true
-    //     });
-    // }
-    // GetUserSearch() {
-    //     return this.http.get<{post: Post[]}>(`api/SpacePosts/GetPosts`, {
-    //     headers: { 'Content-Type': 'application/json' },
-    //     withCredentials: true
-    //     });
-    // }
-    // GetUserPremium() {
-    //     return this.http.get<{post: Post[]}>(`api/SpacePosts/GetPosts`, {
-    //     headers: { 'Content-Type': 'application/json' },
-    //     withCredentials: true
-    //     });
-    // }
+
+    GetUserDataNick(nick: string) {
+      return this.http.get<{user: UserProfil}>(`api/Fleets/Profile?Nick=${nick}`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true
+      });
+    }
+    
+    GetUserPosts(user: string) {
+      return this.http.get<{post: Post[]}>(`api/SpacePosts/GetUserPost?user_name=${user}`, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+      });
+    }
 }

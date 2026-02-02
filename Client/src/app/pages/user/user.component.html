@@ -4,139 +4,232 @@
     <app-header class="app-header" [url]="'profile'"/>
     
     <div class="user-box">
-      <div class="user-profile">
-        <div class="profile-infoo" >
-            <img 
-              [src]="user.avatar || 'https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg'"
-              alt="" 
-              class="profile-icon"
-            >
-            <div class="profile-text">
-              <span class="profile-author">{{ user.firstName }} {{ user.lastName }}</span>
-              <span class="profile-username">{{ user.userName }}</span>
-            </div>
-            <div class="profile-actions">
-              <button class="btn-following">Following</button>
-              <button class="btn-write">Write</button>
-            </div>
-        </div>
-        <div class="user-biography">
-          <div class="uset-for" *ngIf="user.title">
-            <div class="user-svg">
-              <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ffffff">
-                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-                <g id="SVGRepo_iconCarrier">  <title>ic_fluent_app_title_24_filled</title> <desc>Created with Sketch.</desc> <g id="🔍-Product-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="ic_fluent_app_title_24_filled" fill="#fff" fill-rule="nonzero"> <path d="M4.75,20.5 L19.25,20.5 C19.6642136,20.5 20,20.8357864 20,21.25 C20,21.6296958 19.7178461,21.943491 19.3517706,21.9931534 L19.25,22 L4.75,22 C4.33578644,22 4,21.6642136 4,21.25 C4,20.8703042 4.28215388,20.556509 4.64822944,20.5068466 L4.75,20.5 L19.25,20.5 L4.75,20.5 Z M16.25,3 C18.3210678,3 20,4.67893219 20,6.75 L20,15.25 C20,17.3210678 18.3210678,19 16.25,19 L7.75,19 C5.67893219,19 4,17.3210678 4,15.25 L4,6.75 C4,4.67893219 5.67893219,3 7.75,3 L16.25,3 Z" id="🎨-Color"> </path> </g> </g> </g>
-              </svg>
-            </div>
-            <div class="user-biography-text">
-              <samp>{{ user.title }}</samp>
-            </div>
-          </div>
-          <div class="uset-for" *ngIf="user.phoneNumber">
-            <div class="user-svg">
-              <svg width="19px" height="19px" viewBox="0 -0.5 21 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ffffff">
-                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-                <g id="SVGRepo_iconCarrier"> <title>url [#fffff]</title> <desc>Created with Sketch.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Dribbble-Light-Preview" transform="translate(-299.000000, -600.000000)" fill="#fff"> <g id="icons" transform="translate(56.000000, 160.000000)"> <path d="M246.400111,448.948654 C244.519883,447.158547 244.754644,444.106996 247.102248,442.631229 C248.809889,441.557573 251.103895,441.880078 252.551048,443.257869 L253.222099,443.896756 C253.641237,444.295804 254.319791,444.295804 254.737858,443.896756 C255.156996,443.498727 255.156996,442.852696 254.737858,442.453648 L254.170788,441.913758 C251.680612,439.542937 247.589992,439.302079 245.025851,441.600438 C242.372737,443.979423 242.32557,447.956645 244.884352,450.391762 L245.642231,451.113316 C246.060298,451.512365 246.739924,451.512365 247.15799,451.113316 C247.577129,450.715288 247.577129,450.069257 247.15799,449.670208 L246.400111,448.948654 Z M261.976841,449.345662 L261.430138,448.825163 C261.011,448.426114 260.332446,448.426114 259.914379,448.825163 C259.495241,449.223192 259.495241,449.869222 259.914379,450.268271 L260.585429,450.907158 C262.032583,452.284948 262.370252,454.469002 261.243616,456.094794 C259.693554,458.329877 256.487306,458.552364 254.60815,456.763278 L253.850271,456.041724 C253.431132,455.642675 252.752578,455.642675 252.334511,456.041724 C251.915373,456.439752 251.915373,457.085783 252.334511,457.484832 L253.092391,458.206386 C255.643669,460.63538 259.806111,460.597618 262.305934,458.09106 C264.742511,455.648799 264.478808,451.727709 261.976841,449.345662 L261.976841,449.345662 Z M257.639668,455.32017 L247.91587,446.062438 C247.497803,445.663389 247.497803,445.017358 247.91587,444.61831 C248.335008,444.220281 249.013562,444.220281 249.431629,444.61831 L259.156499,453.876041 C259.574566,454.27509 259.574566,454.921121 259.156499,455.32017 C258.737361,455.718198 258.058807,455.718198 257.639668,455.32017 L257.639668,455.32017 Z" id="url-[#fffff]"> </path> </g> </g> </g> </g>
-              </svg>
-            </div>
-            <div class="user-biography-text">
-              <samp>{{ user.phoneNumber }}</samp>
-            </div>
-          </div>
-        </div>
-          <div class="user-tracking">
-            <a class="user-followers">
-              <samp>{{ user.followersAmount || 0 }}</samp>
-              <samp>Followers</samp>
-            </a>
-            <a class="user-following">
-              <samp>{{ user.subscribersAmount || 0 }}</samp>
-              <samp>Subscriber</samp>
-            </a>
-          </div>
+      <div *ngIf="loadingUser; else userContent" class="user-profile-skeleton">
+        <div class="skeleton-avatar shimmer"></div>
+        <div class="skeleton-text shimmer" style="width: 150px; height: 20px;"></div>
+        <div class="skeleton-text shimmer" style="width: 100px; height: 16px;"></div>
+        <div class="skeleton-button shimmer" style="width: 110px; height: 30px;"></div>
+        <div class="skeleton-button shimmer" style="width: 330px; height: 30px;"></div>
       </div>
-
-      <div class="profile-posts">
-        <ng-container *ngIf="user?.post?.length; else noPosts">
-          <div *ngFor="let post of user.post" class="post-item" (click)="navigateToPost()">
-            <div class="post-item-box">
-              <div class="post-data">
-                <div class="post-new">
-                  <img [src]="post.user?.avatar || 'https://via.placeholder.com/40'" alt="" class="profile-icon">
-                  <div class="post-content-info">
-                    <div class="post-data-info">
-                      <div class="post-user-info">
-                        <span class="post-author">{{ post.user?.firstName }} {{ post.user?.lastName }}</span>
-                        <span class="post-username">{{ post.user?.userName }}</span>
-                      </div>
-                      <div class="post-content">
-                        <p>{{ post.content || 'No content' }}</p>
-                      </div>
-                    </div>
-                  </div>
+      <ng-template #userContent>
+        <ng-container *ngIf="user?.userName; else noUser">
+          <div class="user-profile">
+            <div class="profile-infoo" >
+                <img 
+                  [src]="user.avatar || 'https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg'"
+                  alt="" 
+                  class="profile-icon"
+                >
+                <div class="profile-text">
+                  <span class="profile-author">{{ user.firstName }} {{ user.lastName }}</span>
+                  <span class="profile-username">{{ user.userName }}</span>
                 </div>
-
-                <div *ngFor="let comment of post.comments" class="post-reply">
-                  <div class="post-reply-item">
-                    <img [src]="comment.userId ? 'https://via.placeholder.com/40' : 'https://via.placeholder.com/40'" alt="" class="profile-icon">
-                    <div class="post-data-info">
-                      <div class="post-user-info">
-                        <span class="post-author">User {{ comment.userId || 'Unknown' }}</span>
-                        <span class="post-username">@unknown</span>
-                      </div>
-                      <div class="post-content">
-                        <p>Comment content here</p>
-                      </div>
-                    </div>
-                  </div>
+                <div class="profile-actions">
+                  <button class="btn-following">Following</button>
+                  <button class="btn-write">Write</button>
                 </div>
-
-                <div class="post-mut">
-                  <a href="">
-                    <svg fill="#fff" width="20px" height="20px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" transform="rotate(90)">
-                      <path d="M6,14V9A6,6,0,0,1,16.89,5.54" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
-                      <path d="M18,10v5A6,6,0,0,1,7.11,18.46" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
-                      <polyline points="8 12 6 14 4 12" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
-                      <polyline points="16 12 18 10 20 12" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill="fff"/>
-                    </svg>
-                  </a>
-                  <a href="">
-                    <svg fill="#ffffff" width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-                      <g id="SVGRepo_iconCarrier"> <g clip-path="url(#fffclip0_429_11233)"> <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 13.4876 3.36093 14.891 4 16.1272L3 21L7.8728 20C9.10904 20.6391 10.5124 21 12 21Z" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/> </g> <defs> <clipPath id="clip0_429_11233"> <rect width="24" height="24" fill="white"/> </clipPath> </defs> </g>
-                    </svg>
-                  </a>
-                  <a href="">
-                    <svg fill="#ffffff" height="19px" width="19px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512.37 512.37" xml:space="preserve">
+            </div>
+            <div class="user-biography">
+              <div class="uset-for" *ngIf="user.title">
+                <div class="user-svg">
+                  <svg width="20px" height="20px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ffffff">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-                      <g id="SVGRepo_iconCarrier"> <g> <g> <path d="M475.524,72.933c-33.872-36.293-72.122-56.78-115.583-56.78c-42.308,0-79.083,19.333-103.742,52.277 c-24.591-32.968-61.208-52.277-103.49-52.277c-43.164,0-80.774,20.275-115.429,56.616 c-51.87,54.357-52.062,155.013,14.925,221.999c13.003,13.003,45.393,46.322,91.094,93.615 c21.934,22.7,44.674,46.277,67.387,69.854c7.95,8.252,15.328,15.915,21.947,22.792c6.806,7.073,6.806,7.073,8.317,8.643 c8.393,8.726,22.357,8.726,30.751,0c1.51-1.57,1.51-1.57,8.316-8.643c6.619-6.877,13.997-14.539,21.947-22.792 c22.713-23.577,45.453-47.154,66.715-69.158c46.373-47.99,78.763-81.308,91.766-94.312 C527.176,228.038,526.702,127.752,475.524,72.933z M430.275,264.599c-13.253,13.253-45.689,46.619-91.606,94.137 c-21.952,22.718-44.706,46.31-67.433,69.902c-5.236,5.435-10.224,10.615-14.91,15.482c-4.687-4.868-9.675-10.047-14.911-15.482 c-22.727-23.592-45.482-47.184-66.76-69.205c-46.591-48.215-79.026-81.58-92.279-94.833C31.961,214.185,32.102,140,68.154,102.22 c27.31-28.64,54.69-43.4,84.555-43.4c37.759,0,68.431,22.518,83.608,61.191c7.085,18.053,32.633,18.053,39.718,0 c15.143-38.586,46.063-61.191,83.907-61.191c30.166,0,57.925,14.868,84.393,43.228 C480.097,140.355,480.447,214.426,430.275,264.599z"/> </g> </g> </g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                    <g id="SVGRepo_iconCarrier">  <title>ic_fluent_app_title_24_filled</title> <desc>Created with Sketch.</desc> <g id="🔍-Product-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="ic_fluent_app_title_24_filled" fill="#fff" fill-rule="nonzero"> <path d="M4.75,20.5 L19.25,20.5 C19.6642136,20.5 20,20.8357864 20,21.25 C20,21.6296958 19.7178461,21.943491 19.3517706,21.9931534 L19.25,22 L4.75,22 C4.33578644,22 4,21.6642136 4,21.25 C4,20.8703042 4.28215388,20.556509 4.64822944,20.5068466 L4.75,20.5 L19.25,20.5 L4.75,20.5 Z M16.25,3 C18.3210678,3 20,4.67893219 20,6.75 L20,15.25 C20,17.3210678 18.3210678,19 16.25,19 L7.75,19 C5.67893219,19 4,17.3210678 4,15.25 L4,6.75 C4,4.67893219 5.67893219,3 7.75,3 L16.25,3 Z" id="🎨-Color"> </path> </g> </g> </g>
                   </svg>
-                  </a>
-                  <a href="">
-                    <svg height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" enable-background="new 0 0 50 50" xml:space="preserve" fill="#000000">
-                      <g id="SVGRepo_bgCarrier" stroke-width="0" />
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
-                        <g id="SVGRepo_iconCarrier">
-                        <path fill="#fff" d="M9.037,40.763h4.286c0.552,0,1-0.447,1-1v-7.314c0-0.553-0.448-1-1-1H9.037c-0.552,0-1,0.447-1,1v7.314 C8.037,40.315,8.485,40.763,9.037,40.763z" />
-                          <path fill="#fff" d="M21.894,40.763c0.552,0,1-0.447,1-1v-20.64c0-0.553-0.448-1-1-1h-4.286c-0.552,0-1,0.447-1,1v20.64 c0,0.553,0.448,1,1,1H21.894z" />
-                          <path fill="#fff" d="M30.465,40.763c0.552,0,1-0.447,1-1V25.96c0-0.553-0.448-1-1-1H26.18c-0.552,0-1,0.447-1,1v13.803 c0,0.553,0.448,1,1,1H30.465z" />
-                          <path fill="#fff" d="M33.751,9.763v30c0,0.553,0.448,1,1,1h4.286c0.552,0,1-0.447,1-1v-30c0-0.553-0.448-1-1-1h-4.286 C34.199,8.763,33.751,9.21,33.751,9.763z" />
-                      </g>
-                    </svg>
-                  </a>
+                </div>
+                <div class="user-biography-text">
+                  <samp>{{ user.title }}</samp>
+                </div>
+              </div>
+              <div class="uset-for" *ngIf="user.phoneNumber">
+                <div class="user-svg">
+                  <svg width="19px" height="19px" viewBox="0 -0.5 21 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ffffff">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                    <g id="SVGRepo_iconCarrier"> <title>url [#fffff]</title> <desc>Created with Sketch.</desc> <defs> </defs> <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="Dribbble-Light-Preview" transform="translate(-299.000000, -600.000000)" fill="#fff"> <g id="icons" transform="translate(56.000000, 160.000000)"> <path d="M246.400111,448.948654 C244.519883,447.158547 244.754644,444.106996 247.102248,442.631229 C248.809889,441.557573 251.103895,441.880078 252.551048,443.257869 L253.222099,443.896756 C253.641237,444.295804 254.319791,444.295804 254.737858,443.896756 C255.156996,443.498727 255.156996,442.852696 254.737858,442.453648 L254.170788,441.913758 C251.680612,439.542937 247.589992,439.302079 245.025851,441.600438 C242.372737,443.979423 242.32557,447.956645 244.884352,450.391762 L245.642231,451.113316 C246.060298,451.512365 246.739924,451.512365 247.15799,451.113316 C247.577129,450.715288 247.577129,450.069257 247.15799,449.670208 L246.400111,448.948654 Z M261.976841,449.345662 L261.430138,448.825163 C261.011,448.426114 260.332446,448.426114 259.914379,448.825163 C259.495241,449.223192 259.495241,449.869222 259.914379,450.268271 L260.585429,450.907158 C262.032583,452.284948 262.370252,454.469002 261.243616,456.094794 C259.693554,458.329877 256.487306,458.552364 254.60815,456.763278 L253.850271,456.041724 C253.431132,455.642675 252.752578,455.642675 252.334511,456.041724 C251.915373,456.439752 251.915373,457.085783 252.334511,457.484832 L253.092391,458.206386 C255.643669,460.63538 259.806111,460.597618 262.305934,458.09106 C264.742511,455.648799 264.478808,451.727709 261.976841,449.345662 L261.976841,449.345662 Z M257.639668,455.32017 L247.91587,446.062438 C247.497803,445.663389 247.497803,445.017358 247.91587,444.61831 C248.335008,444.220281 249.013562,444.220281 249.431629,444.61831 L259.156499,453.876041 C259.574566,454.27509 259.574566,454.921121 259.156499,455.32017 C258.737361,455.718198 258.058807,455.718198 257.639668,455.32017 L257.639668,455.32017 Z" id="url-[#fffff]"> </path> </g> </g> </g> </g>
+                  </svg>
+                </div>
+                <div class="user-biography-text">
+                  <samp>{{ user.phoneNumber }}</samp>
                 </div>
               </div>
             </div>
+              <div class="user-tracking">
+                <a class="user-followers">
+                  <samp>{{ user.followersAmount || 0 }}</samp>
+                  <samp>Followers</samp>
+                </a>
+                <a class="user-following">
+                  <samp>{{ user.subscribersAmount || 0 }}</samp>
+                  <samp>Subscriber</samp>
+                </a>
+              </div>
           </div>
         </ng-container>
-
-        <ng-template #noPosts>
-          <p>Not found post</p>
+        <ng-template #noUser>
+          <div class="user-not-found">
+            <h2>This account doesn’t exist</h2>
+            <p>Try searching for another.</p>
+          </div>
         </ng-template>
+      </ng-template>
+
+      <div class="profile-posts">
+        
+          <div class="posts">
+            <ng-container *ngIf="this.loading; else load">
+              <div class="posts-skeleton">
+                <div class="skeleton-post" *ngFor="let i of [1,2,3,4,5]">
+                  <div class="skeleton-header">
+                    <div class="skeleton-avatar shimmer"></div>
+                    <div class="skeleton-user">
+                      <div class="skeleton-line short shimmer"></div>
+                      <div class="skeleton-line tiny shimmer"></div>
+                    </div>
+                  </div>
+                  
+
+                  <div class="skeleton-content">
+                    <div class="skeleton-line shimmer"></div>
+                    <div class="skeleton-line shimmer"></div>
+                    <div class="skeleton-line half shimmer"></div>
+                  </div>
+
+                  <div class="skeleton-actions">
+                    <div class="skeleton-icon shimmer"></div>
+                    <div class="skeleton-icon shimmer"></div>
+                    <div class="skeleton-icon shimmer"></div>
+                    <div class="skeleton-icon shimmer"></div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #load>
+              <ng-container *ngIf="posts.length >= 0; else noPosts">
+                <div class="post-item" *ngFor="let post of posts; trackBy: updatePost" (click)="navigateToPost(post.id!)">
+                  <div class="post-item-box">
+                    <div class="post-data">
+
+                      <!-- Основний пост -->
+                      <div class="post-new">
+                        <img [src]="post.user?.avatar" alt="Profile Picture" class="profile-icon">
+                        <div class="post-content-info">
+                          <div class="post-data-info">
+                            <div class="post-user-info">
+                              <span class="post-author">{{ post.user?.firstName || 'Anonymous' }}</span>
+                              <span class="post-username">{{ post.user?.userName || 'unknown' }}</span>
+                            </div>
+                            <div class="post-content">
+                              <p>{{ post.content || '' }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Відповідь на пост, якщо є -->
+                      <div class="post-reply" *ngIf="post.ansver" (click)="navigateToPost(post.ansver.id!)">
+                        <div class="post-reply-item">
+                          <img [src]="post.ansver.user?.avatar || 'default-avatar-url.jpg'" alt="Reply Profile Picture" class="profile-icon">
+                          <div class="post-data-info">
+                            <div class="post-user-info">
+                              <span class="post-author">{{ post.ansver.user?.firstName || 'Anonymous' }}</span>
+                              <span class="post-username">{{ post.ansver.user?.userName || 'unknown' }}</span>
+                            </div>
+                            <div class="post-content">
+                              <p>{{ post.ansver.content || '' }}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="post-bottom">
+                        <div class="post-mut">
+                          <div class="post-mut-box">
+                            <p>{{post.repostAmount}}</p>
+                            <a href="" class="repost">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" id="repost-round" data-name="Flat Line" class="icon flat-line" stroke="#ffffff" fill="none">
+                                <g transform="rotate(90 12 12)">
+                                  <path id="primary" d="M6,14V9A6,6,0,0,1,16.89,5.54" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                  <path id="primary-2" d="M18,10v5A6,6,0,0,1,7.11,18.46" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                  <polyline id="primary-3" points="8 12 6 14 4 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                  <polyline id="primary-4" points="16 12 18 10 20 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                </g>
+                              </svg>
+                            </a>
+                          </div>
+                          <div class="post-mut-box">
+                            <p>{{post.commentAmount}}</p>
+                            <a href="" class="comment">
+                              <svg fill="#ffffff" width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                                <g id="SVGRepo_iconCarrier"> <g clip-path="url(#fffclip0_429_11233)"> <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 13.4876 3.36093 14.891 4 16.1272L3 21L7.8728 20C9.10904 20.6391 10.5124 21 12 21Z" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/> </g> <defs> <clipPath id="clip0_429_11233"> <rect width="24" height="24" fill="white"/> </clipPath> </defs> </g>
+                              </svg>
+                            </a>
+                          </div>
+                          <div class="post-mut-box">
+                            <p>{{post.likeAmount}}</p>
+                            <a (click)="!post.youLike ? likePost(post.id!) : DeleteLikePost(post.id!); $event.stopPropagation()" class="like">
+                              <ng-container *ngIf="!post.youLike; else liked">
+                                <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" id="Outline" width="24px" height="20px" viewBox="0 0 24 24"><path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"/></svg>
+                              </ng-container>
+                              <ng-template #liked>
+                                <svg class="LikedTrue" xmlns="http://www.w3.org/2000/svg" id="Filled" width="24px" height="20px" viewBox="0 0 24 24">
+                                  <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"/>
+                                </svg>
+                              </ng-template>
+                            </a>
+                          </div>
+                          <div class="post-mut-box">
+                            <p>{{post.viewsAmount}}</p>
+                            <a href="" class="views">
+                              <svg height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" enable-background="new 0 0 50 50" xml:space="preserve" fill="#000000">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                                  <g id="SVGRepo_iconCarrier">
+                                  <path fill="#fff" d="M9.037,40.763h4.286c0.552,0,1-0.447,1-1v-7.314c0-0.553-0.448-1-1-1H9.037c-0.552,0-1,0.447-1,1v7.314 C8.037,40.315,8.485,40.763,9.037,40.763z" />
+                                    <path fill="#fff" d="M21.894,40.763c0.552,0,1-0.447,1-1v-20.64c0-0.553-0.448-1-1-1h-4.286c-0.552,0-1,0.447-1,1v20.64 c0,0.553,0.448,1,1,1H21.894z" />
+                                    <path fill="#fff" d="M30.465,40.763c0.552,0,1-0.447,1-1V25.96c0-0.553-0.448-1-1-1H26.18c-0.552,0-1,0.447-1,1v13.803 c0,0.553,0.448,1,1,1H30.465z" />
+                                    <path fill="#fff" d="M33.751,9.763v30c0,0.553,0.448,1,1,1h4.286c0.552,0,1-0.447,1-1v-30c0-0.553-0.448-1-1-1h-4.286 C34.199,8.763,33.751,9.21,33.751,9.763z" />
+                                </g>
+                              </svg>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="post-bottom-addition">
+                          <div class="post-mut">
+                            <a (click)="!post.youSaved ? savedPost(post.id!) : UnsavedPost(post.id!); $event.stopPropagation()" class="saved">
+                              <ng-container *ngIf="!post.youSaved; else UnSaved">
+                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M19 19.2674V7.84496C19 5.64147 17.4253 3.74489 15.2391 3.31522C13.1006 2.89493 10.8994 2.89493 8.76089 3.31522C6.57467 3.74489 5 5.64147 5 7.84496V19.2674C5 20.6038 6.46752 21.4355 7.63416 20.7604L10.8211 18.9159C11.5492 18.4945 12.4508 18.4945 13.1789 18.9159L16.3658 20.7604C17.5325 21.4355 19 20.6038 19 19.2674Z" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                              </ng-container>
+                              <ng-template #UnSaved>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none" stroke="#FFD60A">
+                                  <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+                                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <g id="SVGRepo_iconCarrier"> <path d="M15.0309 3.30271C13.0299 2.8991 10.9701 2.8991 8.96913 3.30271C6.66186 3.76809 5 5.82231 5 8.20894V18.6292C5 20.4579 6.9567 21.596 8.51221 20.6721L11.3451 18.9895C11.7496 18.7492 12.2504 18.7492 12.6549 18.9895L15.4878 20.6721C17.0433 21.596 19 20.4579 19 18.6292V8.20894C19 5.82231 17.3381 3.76809 15.0309 3.30271Z" fill="#FFD60A"/> </g>
+                                </svg>
+                              </ng-template>
+                              
+                            </a>
+                          </div>
+                          <div class="post-mut">
+                            <a href="" class="saved">
+                              <svg  width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.35000000000000003"></g><g id="SVGRepo_iconCarrier"> <path d="M12.5 6.25C12.9142 6.25 13.25 5.91421 13.25 5.5C13.25 5.08579 12.9142 4.75 12.5 4.75V6.25ZM20.25 12.5C20.25 12.0858 19.9142 11.75 19.5 11.75C19.0858 11.75 18.75 12.0858 18.75 12.5H20.25ZM19.5 6.25C19.9142 6.25 20.25 5.91421 20.25 5.5C20.25 5.08579 19.9142 4.75 19.5 4.75V6.25ZM15.412 4.75C14.9978 4.75 14.662 5.08579 14.662 5.5C14.662 5.91421 14.9978 6.25 15.412 6.25V4.75ZM20.25 5.5C20.25 5.08579 19.9142 4.75 19.5 4.75C19.0858 4.75 18.75 5.08579 18.75 5.5H20.25ZM18.75 9.641C18.75 10.0552 19.0858 10.391 19.5 10.391C19.9142 10.391 20.25 10.0552 20.25 9.641H18.75ZM20.0303 6.03033C20.3232 5.73744 20.3232 5.26256 20.0303 4.96967C19.7374 4.67678 19.2626 4.67678 18.9697 4.96967L20.0303 6.03033ZM11.9697 11.9697C11.6768 12.2626 11.6768 12.7374 11.9697 13.0303C12.2626 13.3232 12.7374 13.3232 13.0303 13.0303L11.9697 11.9697ZM12.5 4.75H9.5V6.25H12.5V4.75ZM9.5 4.75C6.87665 4.75 4.75 6.87665 4.75 9.5H6.25C6.25 7.70507 7.70507 6.25 9.5 6.25V4.75ZM4.75 9.5V15.5H6.25V9.5H4.75ZM4.75 15.5C4.75 18.1234 6.87665 20.25 9.5 20.25V18.75C7.70507 18.75 6.25 17.2949 6.25 15.5H4.75ZM9.5 20.25H15.5V18.75H9.5V20.25ZM15.5 20.25C18.1234 20.25 20.25 18.1234 20.25 15.5H18.75C18.75 17.2949 17.2949 18.75 15.5 18.75V20.25ZM20.25 15.5V12.5H18.75V15.5H20.25ZM19.5 4.75H15.412V6.25H19.5V4.75ZM18.75 5.5V9.641H20.25V5.5H18.75ZM18.9697 4.96967L11.9697 11.9697L13.0303 13.0303L20.0303 6.03033L18.9697 4.96967Z" fill="#ffffff"></path> </g></svg>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-template #noPosts>
+                <p style="margin-top: 25px; text-align: center; width: 100%;">Not found post</p>
+              </ng-template>
+            </ng-template>
+          </div>
       </div>
     </div>
 

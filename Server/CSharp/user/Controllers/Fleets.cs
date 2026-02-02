@@ -109,8 +109,8 @@ namespace user.Controllers
         }
 
 
-        [HttpGet("{Nick}")]
-        public async Task<IActionResult> UserGet(string Nick)
+        [HttpGet("Profile")]
+        public async Task<IActionResult> UserGet([FromQuery] string Nick)
         {
             try
             {
@@ -191,7 +191,7 @@ namespace user.Controllers
                     await AddPosts(user.Repost, post => userAccount.Post.Add(post));
                     await AddPosts(user.Repost, post => userAccount.RecallPost.Add(post));
 
-                    return Ok(userAccount);
+                    return Ok(new { User = userAccount });
                 }
 
                 return NotFound();

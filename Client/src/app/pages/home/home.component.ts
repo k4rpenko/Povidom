@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { HEADERComponent } from '../../components/header/header.component';
 import { BorderMainComponent } from '../../components/border-main/border-main.component';
 import { Post } from '../../data/interface/Post/Post.interface';
@@ -20,6 +20,9 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
   Rest = inject(PostService);
+  openedRepostMenuId: string | null = null;
+  MessageText: string = "";
+  MessageAction: boolean = false;
   
   constructor(private router: Router, private postsService: PostService, public postCache: PostCacheService) {}
 
@@ -135,11 +138,43 @@ export class HomeComponent implements OnInit {
 
   }
 
-  toggleRepost(id: string){
+  RepostMenu(event: MouseEvent, postId: string) {
+    event.stopPropagation();
 
+    this.openedRepostMenuId =
+      this.openedRepostMenuId === postId ? null : postId;
   }
+
+  CopyUrlPost(postId: string){
+    const copy = `${window.location.origin}/post/${postId}`;
+
+    navigator.clipboard.writeText(copy).then(async () => {
+
+      this.MessageAction = true;
+      this.MessageText = "link post copied";
+
+      await delay(2000);
+      this.MessageAction = false;
+      await delay(1000);
+
+      this.MessageText = "";
+
+    }).catch(err => {
+      console.error('Помилка при копіюванні:', err);
+    });
+  }
+
+  @HostListener('document:click')
+  closeMenus() {
+    this.openedRepostMenuId = null;
+  }
+
 
   updatePost(i: number, post: Post){
     return post.id
   }
+}
+
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
 }
