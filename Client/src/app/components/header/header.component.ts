@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AddPostComponent } from "../../modals/add-post/add-post.component";
+import { AddPostComponent } from "../add-post/add-post.component";
 import { UserCacheService } from '../../data/cache/user.service';
 import { UserProfil } from '../../data/interface/Users/UserProfil.interface';
 import { Observable, of } from 'rxjs';

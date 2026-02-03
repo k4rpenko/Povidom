@@ -31,7 +31,7 @@ namespace user.Controllers
         }
 
         [HttpGet("FindPeople")]
-        public async Task<IActionResult> FindPeople(string query)
+        public async Task<IActionResult> FindPeople([FromQuery]  string query)
         {
             try
             {
@@ -64,8 +64,8 @@ namespace user.Controllers
             }
         }
 
-        [HttpGet("chat/{nick}")]
-        public async Task<IActionResult> GetUsers(string nick)
+        [HttpGet("chat")]
+        public async Task<IActionResult> GetUsers([FromQuery]  string user_name)
         {
             try
             {
@@ -81,7 +81,12 @@ namespace user.Controllers
 
 
                 var users = await context.Users
-                    .Where(u => (u.UserName.ToLower().Contains(nick) && u.Followers.Contains(id)  || u.FirstName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.LastName.ToLower().Contains(nick) && u.Followers.Contains(id) || u.UserName.ToLower().Contains(nick) || u.FirstName.ToLower().Contains(nick) || u.LastName.ToLower().Contains(nick)) && u.Id != id)
+                    .Where(u => (u.UserName.ToLower().Contains(user_name) && u.Followers.Contains(id)  
+                    || u.FirstName.ToLower().Contains(user_name) && u.Followers.Contains(id) 
+                    || u.LastName.ToLower().Contains(user_name) && u.Followers.Contains(id) 
+                    || u.UserName.ToLower().Contains(user_name) 
+                    || u.FirstName.ToLower().Contains(user_name) 
+                    || u.LastName.ToLower().Contains(user_name)) && u.Id != id)
                     .Take(7)
                     .ToListAsync();
 
@@ -110,11 +115,11 @@ namespace user.Controllers
 
 
         [HttpGet("Profile")]
-        public async Task<IActionResult> UserGet([FromQuery] string Nick)
+        public async Task<IActionResult> UserGet([FromQuery] string user_name)
         {
             try
             {
-                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == Nick);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
                 if (user != null)
                 {
                     var userAccount = new UserAccount
@@ -130,8 +135,6 @@ namespace user.Controllers
                         SubscribersAmount = user.Subscribers.Count,
                     };
 
-                    UserModel You = null;
-
                     if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
                     {
                         return Unauthorized("No _ASA cookie found");
@@ -141,6 +144,7 @@ namespace user.Controllers
                         .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
 
                     var id = sessions.UserId;
+                    var You = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
                     if (You != null)
                     {
@@ -204,7 +208,7 @@ namespace user.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> UserGetToken()
+        public async Task<IActionResult> User()
         {
             try
             {
@@ -241,14 +245,9 @@ namespace user.Controllers
                             Avatar = user.Avatar,
                             Title = user.Title,
                             PostID = user.PostID,
+                            SubscribersAmount = user.Subscribers.Count,
+                            FollowersAmount = user.Followers.Count,
                         };
-
-                        
-                        if (id != null)
-                        {
-                            fleetsUser.SubscribersBool = user.Subscribers.Contains(id);
-                            fleetsUser.FollowersBool = user.Followers.Contains(id);
-                        }
                         return Ok(new { User = fleetsUser });
                     }                    
                 
@@ -260,12 +259,12 @@ namespace user.Controllers
             }
         }
 
-        [HttpGet("Subscribers/{Nick}")]
-        public async Task<IActionResult> Subscribers(string Nick, int size)
+        [HttpGet("Subscribers")]
+        public async Task<IActionResult> Subscribers([FromQuery] string user_name, [FromQuery] int size)
         {
             try
             {
-                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == Nick);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
                 if (user != null)
                 {
                     List<FleetsUserFModel> UsersSubscribers = new List<FleetsUserFModel>();
@@ -294,7 +293,7 @@ namespace user.Controllers
                         }
                     }
 
-                    return Ok(new { UsersSubscribers = UsersSubscribers });
+                    return Ok(new { Users = UsersSubscribers });
                 }
                 return NotFound();
             }
@@ -304,12 +303,12 @@ namespace user.Controllers
             }
         }
 
-        [HttpGet("Followers/{Nick}")]
-        public async Task<IActionResult> Followers(string Nick, int size)
+        [HttpGet("Followers")]
+        public async Task<IActionResult> Followers([FromQuery] string user_name, [FromQuery] int size)
         {
             try
             {
-                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == Nick);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
                 if (user != null)
                 {
                     List<FleetsUserFModel> UsersFollowers = new List<FleetsUserFModel>();
@@ -338,7 +337,7 @@ namespace user.Controllers
                         }
                     }
 
-                    return Ok(new { UsersFollowers = UsersFollowers });
+                    return Ok(new { Users = UsersFollowers });
 
                 }
                 return NotFound();
@@ -350,7 +349,7 @@ namespace user.Controllers
         }
 
         [HttpPut("Subscribers")]
-        public async Task<IActionResult> Subscribers(AccountSettingsModel Account)
+        public async Task<IActionResult> Subscribers([FromQuery] string user_name)
         {
             try
             {
@@ -363,13 +362,13 @@ namespace user.Controllers
                     .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
 
                 var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == Account.Id);
-                var You = await context.Users.FindAsync(id);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
+                var You = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user != null && You != null)
                 {
                     user.Followers.Add(id);
-                    You.Subscribers.Add(Account.Id);
+                    You.Subscribers.Add(user.Id);
 
                     await context.SaveChangesAsync();
                     return Ok();
@@ -383,11 +382,10 @@ namespace user.Controllers
         }
 
         [HttpDelete("Subscribers")]
-        public async Task<IActionResult> DeleteSubscribers([FromQuery] string NickName, [FromQuery] string userId)
+        public async Task<IActionResult> DeleteSubscribers([FromQuery] string user_name)
         {
             try
             {
-                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == NickName);
                 if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
                 {
                     return NotFound();
@@ -397,11 +395,12 @@ namespace user.Controllers
                     .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
 
                 var id = sessions.UserId;
-                var You = await context.Users.FindAsync(id);
+                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
+                var You = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user != null && You != null)
                 {
-                    user.Followers.Remove(You.Id);
+                    user.Followers.Remove(id);
                     You.Subscribers.Remove(user.Id);
 
                     await context.SaveChangesAsync();

@@ -24,10 +24,24 @@
                   <span class="profile-author">{{ user.firstName }} {{ user.lastName }}</span>
                   <span class="profile-username">{{ user.userName }}</span>
                 </div>
-                <div class="profile-actions">
-                  <button class="btn-following">Following</button>
-                  <button class="btn-write">Write</button>
-                </div>
+                <ng-container *ngIf="You; else anothers">
+                  <div class="profile-actions">
+                    <div class="btn-settings">
+                      <a>Settings Profile</a>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-template #anothers>
+                  <div class="profile-actions">
+                    <ng-container *ngIf="!user.youFollower; else Unfollow">
+                      <button (click)="Subscribers(user.userName!)" class="btn-following">Following</button>
+                    </ng-container>
+                    <ng-template #Unfollow>
+                      <button (click)="UnSubscribers(user.userName!)" class="btn-unfollow">Unfollow</button>
+                    </ng-template>                    
+                    <button class="btn-write">Write</button>
+                  </div>
+                </ng-template>
             </div>
             <div class="user-biography">
               <div class="uset-for" *ngIf="user.title">
@@ -56,15 +70,16 @@
               </div>
             </div>
               <div class="user-tracking">
-                <a class="user-followers">
+                <a class="user-followers" (click)="openUsersArray(2)">
                   <samp>{{ user.followersAmount || 0 }}</samp>
                   <samp>Followers</samp>
                 </a>
-                <a class="user-following">
+                <a class="user-following" (click)="openUsersArray(1)">
                   <samp>{{ user.subscribersAmount || 0 }}</samp>
                   <samp>Subscriber</samp>
                 </a>
               </div>
+              <app-users-know [user]="user" [type]="arrayType" *ngIf="isUsersArray" (closed)="closeUsersArray()"/>
           </div>
         </ng-container>
         <ng-template #noUser>

@@ -49,31 +49,31 @@
                             <div class="post-new">
                                 <img [src]="post.user?.avatar" alt="Profile Picture" class="profile-icon">
                                 <div class="post-content-info">
-                                <div class="post-data-info">
-                                    <div class="post-user-info">
-                                    <span class="post-author">{{ post.user?.firstName || 'Anonymous' }}</span>
-                                    <span class="post-username">{{ post.user?.userName || 'unknown' }}</span>
+                                    <div class="post-data-info">
+                                        <div class="post-user-info">
+                                        <span class="post-author">{{ post.user?.firstName || 'Anonymous' }}</span>
+                                        <span class="post-username">{{ post.user?.userName || 'unknown' }}</span>
+                                        </div>
+                                        <div class="post-content">
+                                        <p>{{ post.content || '' }}</p>
+                                        </div>
                                     </div>
-                                    <div class="post-content">
-                                    <p>{{ post.content || '' }}</p>
-                                    </div>
-                                </div>
                                 </div>
                             </div>
 
                             <!-- Відповідь на пост, якщо є -->
                             <div class="post-reply" *ngIf="post.ansver" (click)="navigateToPost(post.ansver.id!)">
                                 <div class="post-reply-item">
-                                <img [src]="post.ansver.user?.avatar || 'default-avatar-url.jpg'" alt="Reply Profile Picture" class="profile-icon">
-                                <div class="post-data-info">
-                                    <div class="post-user-info">
-                                    <span class="post-author">{{ post.ansver.user?.firstName || 'Anonymous' }}</span>
-                                    <span class="post-username">{{ post.ansver.user?.userName || 'unknown' }}</span>
+                                    <img [src]="post.ansver.user?.avatar || 'default-avatar-url.jpg'" alt="Reply Profile Picture" class="profile-icon">
+                                    <div class="post-data-info">
+                                        <div class="post-user-info">
+                                        <span class="post-author">{{ post.ansver.user?.firstName || 'Anonymous' }}</span>
+                                        <span class="post-username">{{ post.ansver.user?.userName || 'unknown' }}</span>
+                                        </div>
+                                        <div class="post-content">
+                                        <p>{{ post.ansver.content || '' }}</p>
+                                        </div>
                                     </div>
-                                    <div class="post-content">
-                                    <p>{{ post.ansver.content || '' }}</p>
-                                    </div>
-                                </div>
                                 </div>
                             </div>
 

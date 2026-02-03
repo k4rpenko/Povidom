@@ -1,4 +1,4 @@
-﻿    using Hash;
+﻿using Hash;
 using Hash.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +19,13 @@ namespace posts.Controllers
     [Route("api/[controller]")]
     public class SpacePosts : Controller
     {
+
         private readonly IMongoCollection<SpacePostModel> _customers;
+
         private readonly AppDbContext context;
+
         private readonly IJwt _jwt;
+
 
         public SpacePosts(AppMongoContext _Mongo, IJwt jwt,  IConfiguration _configuration, AppDbContext _context) 
         {

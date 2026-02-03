@@ -1,0 +1,18 @@
+<div class="overlay" (click)="close()">
+  <div class="BOX" (click)="$event.stopPropagation()">
+    <div class="header">
+      <button (click)="close()">
+        <svg viewBox="0 0 24 24"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg>
+      </button>
+    </div>
+    <div class="main"> 
+        <div class="user" *ngFor="let user of users">
+            <img [src]="user?.avatar || 'assets/default.png'" class="profile-icon">
+            <div class="user-type">
+                <span class="user-name">{{ user.firstName }}</span>
+                <span class="user-nick">{{ user.userName || 'unknown' }}</span>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>

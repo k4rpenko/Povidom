@@ -11,6 +11,9 @@
 
         public List<string>? Subscribers { get; set; } = new List<string>();
         public List<string>? Followers { get; set; } = new List<string>();
+
+        public int SubscribersAmount { get; set; }
+        public int FollowersAmount { get; set; }
         public bool? SubscribersBool { get; set; }
         public bool? FollowersBool { get; set; }
         public List<string>? PostID { get; set; } = new List<string>();

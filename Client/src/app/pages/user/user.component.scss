@@ -130,6 +130,33 @@
       background: var(--white);
       color: var(--text-color-dark);
     }
+
+    &.btn-unfollow{
+      background: var(--read);
+      color: var(--text-color-white);
+    }
+  }
+
+  .btn-settings {
+    height: 30px;
+    width: 150px;
+    border-radius: 5px;
+    border: none;
+    font-family: var(--font-sfpro-medium);
+    cursor: pointer;
+    background: var(--white);
+    color: var(--text-color-white);
+
+    a {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      text-decoration: none;
+      color: black;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 
@@ -156,37 +183,43 @@
   }
 }
 
-.user-tracking{
+.user-tracking {
+  padding: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 60px;
-  margin-right: 10px;
-}
 
-.user-followers{
-  display: flex;
-  text-decoration: none;
-  flex-direction: column;
-  align-items: center;
+  a {
+    position: relative;
+    display: flex;
+    text-decoration: none;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
 
-  samp{
-    color: var(--white);
-    font-family: var(--font-sfpro-regular);
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background-color: var(--white);
+      transform: scaleX(0);
+    }
+
+    &:hover::after {
+      transform: scaleX(1);
+    }
+
+    samp {
+      color: var(--white);
+      font-family: var(--font-sfpro-regular);
+    }
   }
 }
 
-.user-following{
-  display: flex;
-  text-decoration: none;
-  flex-direction: column;
-  align-items: center;
-
-  samp{
-    color: var(--white);
-    font-family: var(--font-sfpro-regular);
-  }
-}
 
 .profile-posts{
   display: flex;

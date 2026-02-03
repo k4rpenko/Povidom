@@ -1,0 +1,106 @@
+$font-family-Regular: 'SFProDisplay-Regular', sans-serif;
+$font-family-Medium: 'SFProDisplay-Medium', sans-serif;
+$font-family-Black: 'SFProDisplay-Black', sans-serif;
+$font-family-Bold: 'SFProDisplay-Bold', sans-serif;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  z-index: 1000;
+}
+
+.BOX {
+  z-index: 200;
+  gap: 30px;
+  margin-top: 200px;
+  background: var(--grey-dark-15);
+  padding: 20px;
+  border-radius: 13px;
+  min-width: 600px;
+  max-width: 600px;
+  min-height: 250px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+
+  button {
+    border: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    svg {
+      width: 25px;
+      height: 25px;
+      fill: white;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2); 
+    }
+  }
+}
+
+.main {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 10px;
+
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    transition: background 0.2s;
+    cursor: pointer;
+
+    &:hover { 
+        transition: background 0.2s;
+        background-color: rgba(255, 255, 255, 0.006);
+    }
+
+    .profile-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .user-type {
+        display: flex;
+        flex-direction: column;
+
+        .user-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: white;
+        }
+
+        .user-nick {
+            font-size: 14px;
+            font-family: var(--font-sfpro-medium);
+            
+            color: var(--grey-light-45);
+            &::before { content: '@'; }
+        }
+    }
+}

@@ -10,19 +10,22 @@ import { Router, ActivatedRoute  } from '@angular/router';
 import { PostCacheService } from '../../data/cache/post.service';
 import { finalize, firstValueFrom } from 'rxjs';
 import { UserREST } from '../../api/REST/user/UserData.service';
+import { UsersKnow } from "../../components/user/users-know/users-know";
 
 @Component({
   selector: 'app-user',
   imports: [
     CommonModule,
     HEADERComponent,
-    BorderMainComponent
-  ],
+    BorderMainComponent,
+    UsersKnow
+],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss'
 })
 export class UserComponent{
   user!: UserProfil;
+  arrayType: number = 0;
   Rest = inject(PostService);
   UserRest = inject(UserREST);
   loading: boolean = true;
@@ -34,44 +37,42 @@ export class UserComponent{
   constructor( private userCache: UserCacheService, private activatedRoute: ActivatedRoute, private router: Router, private postsService: PostService, public postCache: PostCacheService, private UserServiceRest: UserREST) {}
   
   
-
-  
-  async ngOnInit() {
-    const usernameFromUrl = this.activatedRoute.snapshot.paramMap.get('username')!;
-    const user = await firstValueFrom(this.userCache.loadUser());
-    
-    if (user.userName === usernameFromUrl){
-      this.userCache.getUser().subscribe(user => {
-        if (!user) return;
-        this.user = user;
-        this.loadingUser = false;
-      });
+  ngOnInit() {
+    this.activatedRoute.params.subscribe(async params => {
+      const usernameFromUrl = params['username'];
       
+      this.loadingUser = true;
+      this.posts = [];
+      this.NotFoundUser = false;
 
-      if (this.posts.length === 0) {
-        this.getPosts(user.userName);
-      }
-    }
-    else{
-      this.UserRest.GetUserDataNick(usernameFromUrl).subscribe({
-        next: (res) => {
-          this.user = res.user;
+      const currentUser = await firstValueFrom(this.userCache.loadUser());
+      
+      if (currentUser.userName === usernameFromUrl) {
+        this.You = true;
+        this.userCache.getUser().subscribe(user => {
+          if (!user) return;
+          this.user = user;
           this.loadingUser = false;
-          if (this.posts.length === 0) {
-            this.getPosts(this.user.userName!);
-          }
-        },
-        error: (error) => {
-          if (error.status === 404) {
-            this.NotFoundUser = true;
+          this.getPosts(user.userName!);
+        });
+      } else {
+        this.You = false;
+        this.UserRest.GetUserDataNick(usernameFromUrl).subscribe({
+          next: (res) => {
+            this.user = res.user;
             this.loadingUser = false;
-            this.loading = false;
+            this.getPosts(this.user.userName!);
+          },
+          error: (error) => {
+            if (error.status === 404) {
+              this.NotFoundUser = true;
+              this.loadingUser = false;
+              this.loading = false;
+            }
           }
-
-          //console.error(error);
-        }
-      })
-    }
+        });
+      }
+    });
   }
 
   getPosts(user: string) {
@@ -169,6 +170,28 @@ export class UserComponent{
       }
     });
   }
+
+  Subscribers(user_name: string){
+    this.user.youFollower = !this.user.youFollower
+    this.user.followersAmount!++;
+    this.UserRest.PutSubscribers(user_name).subscribe({
+      error: (error) => {
+        this.user.youFollower = !this.user.youFollower;
+        this.user.followersAmount!--;
+      }
+    })
+  }
+
+  UnSubscribers(user_name: string){
+    this.user.youFollower = !this.user.youFollower
+    this.user.followersAmount!--;
+    this.UserRest.DeleteSubscribers(user_name).subscribe({
+      error: (error) => {
+        this.user.youFollower = !this.user.youFollower;
+        this.user.followersAmount!++;
+      }
+    })
+  }
   
   commentPost(id: string){
 
@@ -180,5 +203,16 @@ export class UserComponent{
 
   updatePost(i: number, post: Post){
     return post.id
+  }
+
+  isUsersArray = false;
+
+  openUsersArray(type: number) {
+    this.arrayType = type;
+    this.isUsersArray = true;
+  }
+
+  closeUsersArray() {
+    this.isUsersArray = false;
   }
 }
