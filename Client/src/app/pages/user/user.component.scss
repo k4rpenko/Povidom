@@ -344,6 +344,7 @@
   flex-direction: column;
 }
 .post-new{
+  gap: 13px;
   display: flex;
   align-items: flex-start;
 }
@@ -396,14 +397,6 @@
   padding: 0.8rem;
   border-radius: 10px;
 }
-
-.profile-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 100px;
-  margin-right: 10px;
-}
-
 
 .post-user-info {
   display: flex;

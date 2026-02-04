@@ -79,7 +79,7 @@
                   <samp>Subscriber</samp>
                 </a>
               </div>
-              <app-users-know [user]="user" [type]="arrayType" *ngIf="isUsersArray" (closed)="closeUsersArray()"/>
+              <app-users-know [user]="user" [type]="arrayType" [YouUserName]="YourUserName" *ngIf="isUsersArray" (closed)="closeUsersArray()"/>
           </div>
         </ng-container>
         <ng-template #noUser>

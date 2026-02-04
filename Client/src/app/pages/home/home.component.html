@@ -53,13 +53,13 @@
 
                   <!-- Основний пост -->
                   <div class="post-new">
-                    <img [src]="post.user?.avatar" alt="Profile Picture" class="profile-icon">
+                    <a [routerLink]="[`/${post.user?.userName}`]"><img [src]="post.user?.avatar" alt="Profile Picture" class="profile-icon"></a>
                     <div class="post-content-info">
                       <div class="post-data-info">
-                        <div class="post-user-info">
+                        <a [routerLink]="[`/${post.user?.userName}`]" class="post-user-info">
                           <span class="post-author">{{ post.user?.firstName || 'Anonymous' }}</span>
                           <span class="post-username">{{ post.user?.userName || 'unknown' }}</span>
-                        </div>
+                        </a>
                         <div class="post-content">
                           <p>{{ post.content || '' }}</p>
                         </div>

@@ -264,12 +264,12 @@ namespace user.Controllers
         {
             try
             {
-                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
-                if (user != null)
+                var profile = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
+                if (profile != null)
                 {
-                    List<FleetsUserFModel> UsersSubscribers = new List<FleetsUserFModel>();
+                    List<UserAccount> UsersSubscribers = new List<UserAccount>();
 
-                    var subscribers = user.Subscribers
+                    var subscribers = profile.Subscribers
                         .Skip(size)
                         .Take(10)
                         .ToList();
@@ -280,7 +280,7 @@ namespace user.Controllers
 
                         if (userF != null)
                         {
-                            UsersSubscribers.Add(new FleetsUserFModel
+                            UsersSubscribers.Add(new UserAccount
                             {
                                 Id = userF.Id,
                                 UserName = userF.UserName,
@@ -288,8 +288,22 @@ namespace user.Controllers
                                 LastName = userF.LastName,
                                 Avatar = userF.Avatar,
                                 Title = userF.Title,
-                                PostID = userF.PostID
                             });
+                        }
+                    }
+
+                    if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                    {
+                        var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                        var id = sessions.UserId;
+                        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                        if (user != null)
+                        {
+                            foreach (var post in UsersSubscribers)
+                            {
+                                post.YouFollower = user.Subscribers.Contains(post.Id);
+                            }
                         }
                     }
 
@@ -308,12 +322,12 @@ namespace user.Controllers
         {
             try
             {
-                var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
-                if (user != null)
+                var porofile = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
+                if (porofile != null)
                 {
-                    List<FleetsUserFModel> UsersFollowers = new List<FleetsUserFModel>();
+                    List<UserAccount> UsersFollowers = new List<UserAccount>();
 
-                    var Followers = user.Followers
+                    var Followers = porofile.Followers
                         .Skip(size)
                         .Take(10)
                         .ToList();
@@ -324,7 +338,7 @@ namespace user.Controllers
 
                         if (userF != null) 
                         {
-                            UsersFollowers.Add(new FleetsUserFModel
+                            UsersFollowers.Add(new UserAccount
                             {
                                 Id = userF.Id,
                                 UserName = userF.UserName,
@@ -332,8 +346,22 @@ namespace user.Controllers
                                 LastName = userF.LastName,
                                 Avatar = userF.Avatar,
                                 Title = userF.Title,
-                                PostID = userF.PostID
                             });
+                        }
+                    }
+
+                    if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                    {
+                        var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                        var id = sessions.UserId;
+                        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                        if (user != null)
+                        {
+                            foreach (var post in UsersFollowers)
+                            {
+                                post.YouFollower = user.Subscribers.Contains(post.Id);
+                            }
                         }
                     }
 

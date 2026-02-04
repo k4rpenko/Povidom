@@ -33,6 +33,7 @@ export class UserComponent{
   You: boolean = false;
   NotFoundUser: boolean = false;
   loadingUser: boolean = true;
+  YourUserName: string = "";
 
   constructor( private userCache: UserCacheService, private activatedRoute: ActivatedRoute, private router: Router, private postsService: PostService, public postCache: PostCacheService, private UserServiceRest: UserREST) {}
   
@@ -46,6 +47,7 @@ export class UserComponent{
       this.NotFoundUser = false;
 
       const currentUser = await firstValueFrom(this.userCache.loadUser());
+      this.YourUserName = currentUser.userName!;
       
       if (currentUser.userName === usernameFromUrl) {
         this.You = true;

@@ -5,14 +5,44 @@
         <svg viewBox="0 0 24 24"><g><path d="M10.59 12L4.54 5.96l1.42-1.42L12 10.59l6.04-6.05 1.42 1.42L13.41 12l6.05 6.04-1.42 1.42L12 13.41l-6.04 6.05-1.42-1.42L10.59 12z"></path></g></svg>
       </button>
     </div>
-    <div class="main"> 
-        <div class="user" *ngFor="let user of users">
-            <img [src]="user?.avatar || 'assets/default.png'" class="profile-icon">
-            <div class="user-type">
-                <span class="user-name">{{ user.firstName }}</span>
-                <span class="user-nick">{{ user.userName || 'unknown' }}</span>
-            </div>
+    <div class="main">
+      <ng-container *ngIf="loading; else usersList">
+        <div class="user skeleton" *ngFor="let i of [1,2,3,4,5]">
+          <div class="avatar"></div>
+          <div class="text">
+            <div class="line short"></div>
+            <div class="line"></div>
+          </div>
         </div>
+      </ng-container>
+
+      <ng-template #usersList>
+        <a class="user" *ngFor="let profile of users" (click)="openAnotherProfile(profile)">
+          <div class="user-box">
+            <img
+              [src]="profile?.avatar || 'assets/default.png'"
+              class="profile-icon"
+            />
+            <div class="user-type">
+              <span class="user-name">{{ profile.firstName }}</span>
+              <span class="user-nick">{{ profile.userName || 'unknown' }}</span>
+            </div>
+          </div>
+          <div class="profile-actions">
+            <ng-container *ngIf="profile.userName != YouUserName; else you">
+                <ng-container *ngIf="!profile.youFollower; else Unfollow">
+                  <button (click)="Subscribers(profile)" class="btn-following">Following</button>
+                </ng-container>
+                <ng-template #Unfollow>
+                  <button (click)="UnSubscribers(profile)" class="btn-unfollow">Unfollow</button>
+                </ng-template>                    
+            </ng-container>
+            <ng-template #you>
+
+            </ng-template>
+          </div>
+        </a>
+      </ng-template>
     </div>
   </div>
 </div>
