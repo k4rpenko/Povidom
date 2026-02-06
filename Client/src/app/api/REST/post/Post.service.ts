@@ -74,6 +74,20 @@ export class PostService {
       `api/SpacePosts/SavedPost?post_id=${post_id}`,
     );
   }
+
+  Repost(post_id: string) {
+    return this.http.put<{ cookie: string }>(
+      `api/SpacePosts/Retpost?post_id=${post_id}`,
+      null,
+      { withCredentials: true }
+    );
+  }
+
+  DeleteRepost(post_id: string) {
+    return this.http.delete<{ cookie: string }>(
+      `api/SpacePosts/Retpost?post_id=${post_id}`,
+    );
+  }
   
   AddPost(post: Post) {    
     return this.http.post<{ post: Post }>(`api/SpacePosts/AddPost`, post, {

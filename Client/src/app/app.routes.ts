@@ -10,7 +10,6 @@ import {SettingsComponent} from './pages/settings/settings.component';
 import { SavedComponent } from './pages/saved/saved.component';
 import { AuthGuard } from './guards/auth.guard';
 import { PostID } from './pages/user/post/post';
-//import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -54,6 +53,6 @@ export const routes: Routes = [
     component: SettingsComponent,
     canActivate: [AuthGuard]
   },
-  { path: ':username', component: UserComponent },
+  { path: ':username', component: UserComponent, canActivate: [AuthGuard] },
   { path: 'post/:id', component: PostID },
 ];

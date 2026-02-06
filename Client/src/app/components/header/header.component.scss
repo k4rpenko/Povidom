@@ -25,6 +25,13 @@ $font-family-Bold: 'SFProDisplay-Bold', sans-serif;
   width: 100%;
 }
 
+.sidebar-main{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
 .sidebar-logo {
   padding: 5px;
   display: flex;
@@ -170,6 +177,7 @@ $font-family-Bold: 'SFProDisplay-Bold', sans-serif;
 
 .profile-info {
   display: flex;
+  gap: 10px;
   align-items: center;
 }
 
@@ -178,7 +186,6 @@ $font-family-Bold: 'SFProDisplay-Bold', sans-serif;
   height: 30px;
   border-radius: 50%;
   background-color: var(--grey-light);
-  margin-right: 10px;
 }
 
 .user-details {
@@ -201,4 +208,40 @@ $font-family-Bold: 'SFProDisplay-Bold', sans-serif;
   border: none;
   color: #fff;
   cursor: pointer;
+}
+
+//skeleton
+.skeleton-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--grey-dark-15);
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150px;
+  width: 150px;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(300%);
+  }
 }

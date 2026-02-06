@@ -3,6 +3,7 @@ import { UserProfil } from '../../../data/interface/Users/UserProfil.interface';
 import { CommonModule } from '@angular/common';
 import { UserREST } from '../../../api/REST/user/UserData.service';
 import { Router, RouterModule } from '@angular/router';
+import { UserCacheService } from '../../../data/cache/user.service';
 
 @Component({
   selector: 'app-users-know',
@@ -21,6 +22,10 @@ export class UsersKnow {
 
   UserRest = inject(UserREST);
 
+  constructor(
+    private userCache: UserCacheService,
+  ) {}
+    
   ngOnInit() {
     const request = this.type === 1
         ? this.UserRest.GetFolowers(this.user.userName!)
@@ -48,6 +53,9 @@ export class UsersKnow {
     user.youFollower = !user.youFollower
     user.followersAmount!++;
     this.UserRest.PutSubscribers(user.userName!).subscribe({
+      next: () => {
+        this.userCache.AddSubscriber(1);
+      },
       error: (error) => {
         user.youFollower = !user.youFollower;
         user.followersAmount!--;
@@ -59,6 +67,9 @@ export class UsersKnow {
     user.youFollower = !user.youFollower
     user.followersAmount!--;
     this.UserRest.DeleteSubscribers(user.userName!).subscribe({
+      next: () => {
+        this.userCache.AddSubscriber(-1);
+      },
       error: (error) => {
         user.youFollower = !user.youFollower;
         user.followersAmount!++;

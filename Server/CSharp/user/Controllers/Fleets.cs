@@ -135,65 +135,19 @@ namespace user.Controllers
                         SubscribersAmount = user.Subscribers.Count,
                     };
 
-                    if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                    if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
                     {
-                        return Unauthorized("No _ASA cookie found");
-                    }
+                        var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
 
-                    var sessions = await context.Sessions
-                        .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+                        var id = sessions.UserId;
+                        var You = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
-                    var id = sessions.UserId;
-                    var You = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                    if (You != null)
-                    {
-                        userAccount.YouSubscriber = user.Subscribers.Contains(id);
-                        userAccount.YouFollower = user.Followers.Contains(id);
-                    }
-
-                    async Task AddPosts(IEnumerable<string> postIds, Action<PostHome> addPost)
-                    {
-                        foreach (var item in postIds)
+                        if (You != null)
                         {
-                            var objectId = ObjectId.Parse(item);
-                            var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
-                            if (post != null)
-                            {
-                                addPost(new PostHome
-                                {
-                                    Id = post.Id.ToString(),
-                                    User = new UserFind
-                                    {
-                                        Id = user.Id,
-                                        UserName = user.UserName,
-                                        FirstName = user.FirstName,
-                                        Avatar = user.Avatar
-                                    },
-                                    Content = post.Content,
-                                    CreatedAt = post.CreatedAt,
-                                    UpdatedAt = post.UpdatedAt,
-                                    MediaUrls = post.MediaUrls,
-                                    LikeAmount = post.Like?.Count ?? 0,
-                                    YouLike = You != null ? You.LikePostID.Contains(post.Id.ToString()) ? true : false : false,
-                                    Retpost = post.Retpost?.Count ?? 0,
-                                    RetpostAmount = post.InRetpost?.Count ?? 0,
-                                    YouRetpost = You != null ? You.Repost.Contains(post.Id.ToString()) ? true : false : false,
-                                    Hashtags = post.Hashtags?.Count ?? 0,
-                                    Mentions = post.Mentions?.Count ?? 0,
-                                    CommentAmount = post.Comments?.Count ?? 0,
-                                    YouComment = You != null ? You.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false : false,
-                                    Views = post.Views?.Count ?? 0,
-                                    SPublished = post.SPublished
-                                });
-                            }
+                            userAccount.YouSubscriber = user.Subscribers.Contains(id);
+                            userAccount.YouFollower = user.Followers.Contains(id);
                         }
                     }
-
-
-                    await AddPosts(user.PostID, post => userAccount.Post.Add(post));
-                    await AddPosts(user.Repost, post => userAccount.Post.Add(post));
-                    await AddPosts(user.Repost, post => userAccount.RecallPost.Add(post));
 
                     return Ok(new { User = userAccount });
                 }

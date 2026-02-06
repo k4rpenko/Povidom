@@ -53,7 +53,9 @@ export class PostID {
 
     var res = this.userCache.loadUser();
     res.subscribe(user => {
-      this.user = user;
+      if(user != null){
+        this.user = user;
+      }
     });
   }
 

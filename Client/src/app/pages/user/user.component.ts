@@ -11,6 +11,7 @@ import { PostCacheService } from '../../data/cache/post.service';
 import { finalize, firstValueFrom } from 'rxjs';
 import { UserREST } from '../../api/REST/user/UserData.service';
 import { UsersKnow } from "../../components/user/users-know/users-know";
+import { PostComponent } from "../../components/post/post";
 
 @Component({
   selector: 'app-user',
@@ -18,7 +19,8 @@ import { UsersKnow } from "../../components/user/users-know/users-know";
     CommonModule,
     HEADERComponent,
     BorderMainComponent,
-    UsersKnow
+    UsersKnow,
+    PostComponent
 ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss'
@@ -40,6 +42,7 @@ export class UserComponent{
   
   ngOnInit() {
     this.activatedRoute.params.subscribe(async params => {
+      
       const usernameFromUrl = params['username'];
       
       this.loadingUser = true;
@@ -47,9 +50,11 @@ export class UserComponent{
       this.NotFoundUser = false;
 
       const currentUser = await firstValueFrom(this.userCache.loadUser());
-      this.YourUserName = currentUser.userName!;
-      
-      if (currentUser.userName === usernameFromUrl) {
+      if (currentUser) {
+        this.YourUserName = currentUser.userName!;
+      }
+
+      if (this.YourUserName === usernameFromUrl) {
         this.You = true;
         this.userCache.getUser().subscribe(user => {
           if (!user) return;
@@ -88,95 +93,14 @@ export class UserComponent{
     });
   }
 
-  navigateToPost(id: string) {
-    this.router.navigate(['/post', id])
-  }
-
-  navigateToPostreply = () =>{
-    console.log(2)
-  }
-
-  
-  likePost(id: string) {
-    const updatePost = this.posts.find(post => post.id === id)!;
-    updatePost.likeAmount = (updatePost?.likeAmount || 0) + 1;
-    updatePost.youLike = true;
-
-    this.posts = this.posts.map(post => post.id === id ? updatePost : post);
-    this.postCache.changPost(updatePost);
-    this.Rest.LikePost(id).subscribe({
-      next: () => {},
-      error: (error) => {
-        const updatePost = this.posts.find(post => post.id === id)!;
-        updatePost.likeAmount = (updatePost?.likeAmount || 0) - 1;
-        updatePost.youLike = false;
-
-        this.posts = this.posts.map(post => post.id === id ? updatePost : post);
-        this.postCache.changPost(updatePost);
-      }
-    });
-  }
-  
-  DeleteLikePost(id: string) {
-    const updatePost = this.posts.find(post => post.id === id)!;
-    updatePost.likeAmount = (updatePost?.likeAmount || 0) - 1;
-    updatePost.youLike = false;
-
-    this.posts = this.posts.map(post => post.id === id ? updatePost : post);
-    this.postCache.changPost(updatePost);
-    this.Rest.DeleteLikePost(id).subscribe({
-      next: () => {},
-      error: (error) => {
-        const updatePost = this.posts.find(post => post.id === id)!;
-        updatePost.likeAmount = (updatePost?.likeAmount || 0) + 1;
-        updatePost.youLike = true;
-
-        this.posts = this.posts.map(post => post.id === id ? updatePost : post);
-        this.postCache.changPost(updatePost);
-      }
-    });
-  }
-  
-  savedPost(id: string) {
-    const updatePost = this.posts.find(post => post.id === id)!;
-    updatePost.youSaved = true;
-
-    this.posts = this.posts.map(post => post.id === id ? updatePost : post);
-    this.postCache.changPost(updatePost);
-    this.Rest.SavedPost(id).subscribe({
-      next: () => {},
-      error: (error) => {
-        const updatePost = this.posts.find(post => post.id === id)!;
-        updatePost.youSaved = false;
-
-        this.posts = this.posts.map(post => post.id === id ? updatePost : post);
-        this.postCache.changPost(updatePost);
-      }
-    });
-  }
-  
-  UnsavedPost(id: string) {
-    const updatePost = this.posts.find(post => post.id === id)!;
-    updatePost.youSaved = false;
-
-    this.posts = this.posts.map(post => post.id === id ? updatePost : post);
-    this.postCache.changPost(updatePost);
-    this.Rest.DeleteSavedPost(id).subscribe({
-      next: () => {},
-      error: (error) => {
-        const updatePost = this.posts.find(post => post.id === id)!;
-        updatePost.youSaved = true;
-
-        this.posts = this.posts.map(post => post.id === id ? updatePost : post);
-        this.postCache.changPost(updatePost);
-      }
-    });
-  }
 
   Subscribers(user_name: string){
     this.user.youFollower = !this.user.youFollower
     this.user.followersAmount!++;
     this.UserRest.PutSubscribers(user_name).subscribe({
+      next: () => {
+        this.userCache.AddSubscriber(1);
+      },
       error: (error) => {
         this.user.youFollower = !this.user.youFollower;
         this.user.followersAmount!--;
@@ -188,19 +112,14 @@ export class UserComponent{
     this.user.youFollower = !this.user.youFollower
     this.user.followersAmount!--;
     this.UserRest.DeleteSubscribers(user_name).subscribe({
+      next: () => {
+        this.userCache.AddSubscriber(-1);
+      },
       error: (error) => {
         this.user.youFollower = !this.user.youFollower;
         this.user.followersAmount!++;
       }
     })
-  }
-  
-  commentPost(id: string){
-
-  }
-
-  toggleRepost(id: string){
-
   }
 
   updatePost(i: number, post: Post){

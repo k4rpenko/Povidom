@@ -31,10 +31,10 @@
           <div class="profile-actions">
             <ng-container *ngIf="profile.userName != YouUserName; else you">
                 <ng-container *ngIf="!profile.youFollower; else Unfollow">
-                  <button (click)="Subscribers(profile)" class="btn-following">Following</button>
+                  <button (click)="Subscribers(profile); $event.stopPropagation()" class="btn-following">Following</button>
                 </ng-container>
                 <ng-template #Unfollow>
-                  <button (click)="UnSubscribers(profile)" class="btn-unfollow">Unfollow</button>
+                  <button (click)="UnSubscribers(profile); $event.stopPropagation()" class="btn-unfollow">Unfollow</button>
                 </ng-template>                    
             </ng-container>
             <ng-template #you>

@@ -499,13 +499,13 @@ namespace posts.Controllers
         }
 
         [HttpPut("Retpost")]
-        public async Task<IActionResult> Retweet([FromQuery] string post_id)
+        public async Task<IActionResult> Retpost([FromQuery] string post_id)
         {
             try
             {
                 if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
                 {
-                    return Unauthorized("No _ASA cookie found");
+                    return Unauthorized(false);
                 }
 
                 var sessions = await context.Sessions
@@ -516,44 +516,81 @@ namespace posts.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(false);
+                    NotFound(false);
                 }
 
-                if (user.LikePostID.FindIndex(id => id == post_id) >= 0)
-                {
-                    return Conflict(false);
-                }
-
-                var newLike = new Like()
+                var newRepost = new Like()
                 {
                     UserId = id,
                     CreatedAt = DateTime.UtcNow
                 };
 
                 var objectId = ObjectId.Parse(post_id);
+                var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
 
-                var updateDefinition = Builders<SpacePostModel>.Update.AddToSet(post => post.Like, newLike);
-                var updateResult = await _customers.UpdateOneAsync(
-                    post => post.Id == objectId,
-                    updateDefinition
-                );
-
-                if (updateResult.MatchedCount == 0)
+                if (post != null)
+                {
+                    post.Repost.Add(newRepost);
+                    await _customers.ReplaceOneAsync(p => p.Id == objectId, post);
+                }
+                else
                 {
                     return NotFound(false);
                 }
 
-
-                user.LikePostID.Add(post_id);
-
+                user.Repost.Add(post_id);
                 await context.SaveChangesAsync();
 
                 return Ok(true);
-
             }
             catch (Exception ex)
             {
-                throw new Exception("", ex);
+                return StatusCode(500, $"An error occurred while removing the like: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("Retpost")]
+        public async Task<IActionResult> DeleteRetpost([FromQuery] string post_id)
+        {
+            try
+            {
+                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                {
+                    return Unauthorized(false);
+                }
+
+                var sessions = await context.Sessions
+                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+                var id = sessions.UserId;
+                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    NotFound(false);
+                }
+
+                var objectId = ObjectId.Parse(post_id);
+                var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+
+                if (post != null)
+                {
+                    post.Repost.RemoveAll(p => p.UserId == id);
+                    await _customers.ReplaceOneAsync(p => p.Id == objectId, post);
+                }
+                else
+                {
+                    return NotFound(false);
+                }
+
+                user.Repost.Remove(post_id);
+                await context.SaveChangesAsync();
+
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while removing the like: {ex.Message}");
             }
         }
 
@@ -585,7 +622,6 @@ namespace posts.Controllers
                     MediaUrls = post.MediaUrls,
                     LikeAmount = post.Like?.Count ?? 0,
                     YouLike = false,
-                    Repost = post.Repost?.Count ?? 0,
                     RepostAmount = post.Repost?.Count ?? 0,
                     YouRepost = false,
                     Hashtags = post.Hashtags?.Count ?? 0,
