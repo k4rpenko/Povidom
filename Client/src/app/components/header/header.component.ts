@@ -27,10 +27,10 @@ export class HEADERComponent implements OnInit {
   
   ngOnInit() { 
     this.TOKEN = this.guards.token.asObservable();
-    console.log(this.TOKEN);
-    
-    this.user$ = this.userCache.user$;
+
     this.userCache.loadUser().subscribe();
+    this.user$ = this.userCache.user$;
+
   }
 
 

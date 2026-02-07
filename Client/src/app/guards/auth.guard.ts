@@ -35,4 +35,9 @@ export class AuthGuard implements CanActivate {
       })
     );
   }
+
+  Exit(){
+    this.cookieService.delete('_ASA');
+    this.router.navigate(['/register']);
+  }
 }
