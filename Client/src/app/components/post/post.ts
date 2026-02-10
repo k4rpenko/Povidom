@@ -1,19 +1,22 @@
 import { Component, HostListener, inject, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Post } from '../../data/interface/Post/Post.interface';
 import { CommonModule } from '@angular/common';
 import { PostService } from '../../api/REST/post/Post.service';
 import { PostCacheService } from '../../data/cache/post.service';
+import { AddPostComponent } from "../add-post/add-post.component";
 
 @Component({
   selector: 'app-post-component',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule, AddPostComponent],
   templateUrl: './post.html',
   styleUrl: './post.scss',
 })
 export class PostComponent {
   @Input({ required: true }) loading!: boolean;
   @Input({ required: true }) posts!: Post[];
+  @Input({ required: true }) type!: string;
+  
   Rest = inject(PostService);
   openedRepostMenuId: string | null = null;
   MessageText: string = "";
@@ -136,6 +139,7 @@ export class PostComponent {
     }
   
     AddRepost(post: Post){
+      this.openedRepostMenuId = "0";
       post.youRepost = true;
       post.repostAmount!++;
       this.Rest.Repost(post.id!).subscribe({
@@ -150,6 +154,7 @@ export class PostComponent {
     }
   
     DeleteRepost(post: Post){
+      this.openedRepostMenuId = "0";
       post.youRepost = false;
       post.repostAmount!--;
       this.Rest.DeleteRepost(post.id!).subscribe({
@@ -162,7 +167,8 @@ export class PostComponent {
         }
       })
     }
-  
+
+
     CopyUrlPost(postId: string){
       const copy = `${window.location.origin}/post/${postId}`;
   
@@ -185,6 +191,17 @@ export class PostComponent {
   @HostListener('document:click')
   closeMenus() {
     this.openedRepostMenuId = null;
+  }
+
+  isAddPostOpen = false;
+
+  openAddPost() {
+    this.openedRepostMenuId = "0";
+    this.isAddPostOpen = true;
+  }
+
+  closeAddPost() {
+    this.isAddPostOpen = false;
   }
 
 }

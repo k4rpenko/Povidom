@@ -68,7 +68,7 @@ export class UserComponent{
         if (!user) return;
         this.loadingUser = false;
         this.user = { ...user };
-      });
+    });
   }
 
   private loadForeignUser(username: string) {

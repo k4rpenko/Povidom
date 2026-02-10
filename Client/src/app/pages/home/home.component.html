@@ -20,6 +20,7 @@
         <!-- Пост -->
         <div class="posts">
           <app-post-component
+            [type]="'post'"
             [posts]="posts"
             [loading]="postCache.isLoaded"
           />

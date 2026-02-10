@@ -1,7 +1,4 @@
-$font-family-Regular: 'SFProDisplay-Regular', sans-serif;
-$font-family-Medium: 'SFProDisplay-Medium', sans-serif;
-$font-family-Black: 'SFProDisplay-Black', sans-serif;
-$font-family-Bold: 'SFProDisplay-Bold', sans-serif;
+/* OVERLAY / BOX */
 
 .overlay {
   position: fixed;
@@ -10,7 +7,7 @@ $font-family-Bold: 'SFProDisplay-Bold', sans-serif;
   display: flex;
   justify-content: center;
   align-items: start;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .BOX {
@@ -28,149 +25,225 @@ $font-family-Bold: 'SFProDisplay-Bold', sans-serif;
   flex-direction: column;
 }
 
+/* HEADER */
 
 .header {
   width: 100%;
   display: flex;
+}
 
-  button {
-    border: none;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    border-radius: 13px;
-    cursor: pointer;
-    transition: 0.3s;
+.header button {
+  border: none;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
-    svg {
-      width: 25px;
-      height: 25px;
-      fill: white;
-    }
+.header button svg {
+  width: 25px;
+  height: 25px;
+  fill: white;
+}
 
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.2); 
-    }
+.header button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* MAIN */
+
+.main {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+
+  img{
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
   }
 }
 
-.main{
-  width: 100%;
+.Post {
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 13px;
+}
 
-  .Post{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 13px;
+/* WRITE POST */
 
-    .write_post{
-      width: 100%;
-      min-height: 150px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      flex-direction: row;
+.write_post {
+  width: 90%;
+  min-height: 150px;
+  display: flex;
+  gap: 10px;
+}
 
-      
-      img{
-        width: 40px;
-        height: 40px;
-        border-radius: 100px;
-      }
+.write-post-main {
+  display: flex;
+  gap: 10px;
+}
 
-      .textbox{
-        padding: 10px;
-        width: 87%;
-        height: 100px;
-        max-height: 380px;
-      }
+.post-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
 
-      .overflow {
-        background: rgba(255, 0, 0, 0.4);
-        color: white;
-      }
+/* POST INFO */
 
-      .textbox:empty:before {
-        content: "What's new?";
-        color: #888;
-      }
+.post-data-info {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 0.5rem;
+}
 
-      .textbox:focus {
-        outline: none;
-      }
+.post-quote-text {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+}
 
-    }
+.post-text {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 
-    .send_post{
-      display: flex;
-      justify-content: space-between;
+.post-author {
+  font-family: var(--font-sfpro-medium);
+}
 
-      .buttons{
-        display: flex;
-        gap: 10px;
+.post-username {
+  color: var(--grey-light-45);
+}
 
-        .Line{
-          background-color: rgb(62, 65, 68);
-          width: 2px;
-          border-radius: 3px;
-          height: 100%;
-        }
+/* TEXTBOX */
 
-        .circle-wrapper {
-          transition: stroke-dasharray 0.3s, stroke 0.3s;
-          width: 25px;
-          height: 40px;
-          position: relative;
+.overflow {
+  background: rgba(255, 0, 0, 0.4);
+  color: white;
+}
+
+.textbox {
+  height: 22px;
+  max-height: 380px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.textbox:empty::before {
+  content: "What's new?";
+  color: #888;
+}
+
+.textbox:focus {
+  outline: none;
+}
+
+.textbox-overflow {
+  background: rgba(255, 0, 0, 0.4);
+  color: white;
+}
+
+/* SEND POST */
+
+.send_post {
+  display: flex;
+  justify-content: space-between;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.line {
+  background-color: rgb(62, 65, 68);
+  width: 2px;
+  border-radius: 3px;
+}
+
+/* CIRCLE */
+
+.circle-wrapper {
+  width: 25px;
+  height: 40px;
+  position: relative;
+}
+
+.circle {
+  width: 100%;
+  height: 100%;
+}
+
+.circle-bg {
+  fill: none;
+  stroke-width: 3.8;
+}
+
+.circle-progress {
+  fill: none;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+}
+
+.circle-text {
+  font-family: var(--font-sfpro-medium);
+  font-size: 0.6em;
+  fill: #888;
+  dominant-baseline: middle;
+}
+
+/* SEND BUTTON */
+
+.SendButton {
+  border: none;
+  background-color: white;
+  color: black;
+  padding: 10px 30px;
+  border-radius: 20px;
+  font-family: var(--font-sfpro-bold);
+  cursor: pointer;
+}
+
+.SendButton:active {
+  background-color: rgba(255, 255, 255, 0.755);
+}
 
 
-          .circle {
-            transition: stroke-dasharray 0.3s, stroke 0.3s;
-            width: 100%;
-            height: 100%;
-          }
+/* QUOTE POST */
+.post-reply {
+  margin-top: 50px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.3s;
+  width: 100%;
 
-          .circle-bg {
-            fill: none;
-            stroke-width: 3.8;
-          }
-
-          .circle-progress {
-            fill: none;
-            stroke-width: 3.8;
-            stroke-linecap: round;
-            transition: stroke-dasharray 0.3s, stroke 0.3s;
-          }
-
-          .circle-text {
-            font-family: $font-family-Medium;
-            font-size: 0.6em;
-            fill: #888;
-            dominant-baseline: middle;
-          }
-        }
-
-        .SendButton{
-          border: none;
-          outline: none;
-          text-decoration: none;
-          background-color: white;
-          text-align: center;
-          color: black;
-          padding: 10px 30px 10px 30px;
-          border-radius: 20px;
-          font-family: $font-family-Bold;
-          transition: background 0.2s;
-        }
-        
-        .SendButton:active {
-          transition: background 0.2s;
-          background-color: rgba(255, 255, 255, 0.755);
-        }
-      }
-    }
+  &:hover {
+    background-color: var(--grey-dark);
   }
+}
+
+.post-reply-item {
+  display: flex;
+  border: 1px solid var(--grey-light);
+  padding: 0.8rem;
+  border-radius: 10px;
+  gap: 10px;
+}
+
+.post-data-info-quote{
+  display: flex;
+  margin-bottom: 0.5rem;
+  flex-direction: column;
 }

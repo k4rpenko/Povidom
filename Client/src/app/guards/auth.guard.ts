@@ -18,7 +18,6 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
-    const isUsernameRoute = route.paramMap.has('username');
     if (this.cookieService.check('_ASA')) {
       this.token.next(true);
     }
@@ -28,7 +27,7 @@ export class AuthGuard implements CanActivate {
         return true;
       }),
       catchError((error) => {
-        if(isUsernameRoute) return of(true);
+        if(route.paramMap.has('username') || route.paramMap.has('id')) return of(true);
         
         this.router.navigate(['/register']);
         return of(false);

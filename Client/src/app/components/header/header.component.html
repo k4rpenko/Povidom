@@ -140,7 +140,7 @@
         <div class="create-post">
           <button class="create-post-btn" (click)="openAddPost()"><span>Створити пост</span></button>
         </div>
-        <app-add-post *ngIf="isAddPostOpen" (closed)="closeAddPost()"></app-add-post>
+        <app-add-post [type]="'post'" *ngIf="isAddPostOpen" (closed)="closeAddPost()"></app-add-post>
         <a class="user-profile">
           <div class="profile-info">
             <img [src]="user.avatar || 'https://54hmmo3zqtgtsusj.public.blob.vercel-storage.com/avatar/Logo-yEeh50niFEmvdLeI2KrIUGzMc6VuWd-a48mfVnSsnjXMEaIOnYOTWIBFOJiB2.jpg'"
@@ -155,21 +155,7 @@
       </div>
     </ng-container>
     <ng-container *ngIf="!(user$ | async)">
-      <div class="sidebar-bottom">
-        <div class="create-post">
-          <button class="create-post-btn" (click)="null"><span>Створити пост</span></button>
-        </div>
-        <app-add-post *ngIf="isAddPostOpen" (closed)="null"></app-add-post>
-        <a class="user-profile">
-          <div class="profile-info">
-            <div class="skeleton-avatar shimmer"></div>
-            <div class="user-details">
-              <div class="skeleton-text shimmer" style="width: 150px; height: 20px;"></div>
-            </div>
-          </div>
-          <button class="more-options"><samp>•••</samp></button>
-        </a>
-      </div>
+
     </ng-container>
   </div>
 </header>

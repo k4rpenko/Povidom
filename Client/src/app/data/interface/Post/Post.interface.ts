@@ -41,8 +41,8 @@ export interface Post {
   views?: string[];
   viewsAmount: number;
   sPublished?: boolean;
-  shaveAnswer: boolean;
-  ansver: Post;
+  shaveAnswer?: boolean;
+  ansver?: Post;
 }
 
 export interface PostArray {

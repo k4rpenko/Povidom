@@ -54,5 +54,5 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   { path: ':username', component: UserComponent, canActivate: [AuthGuard] },
-  { path: 'post/:id', component: PostID },
+  { path: 'post/:id', component: PostID, canActivate: [AuthGuard] },
 ];

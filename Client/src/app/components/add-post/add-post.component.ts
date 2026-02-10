@@ -5,17 +5,21 @@ import { Post } from '../../data/interface/Post/Post.interface';
 import { Router } from '@angular/router';
 import { PostService } from '../../api/REST/post/Post.service';
 import { PostCacheService } from '../../data/cache/post.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-post',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './add-post.component.html',
   styleUrl: './add-post.component.scss'
 })
 export class AddPostComponent {
   @Output() closed = new EventEmitter<void>();
-  @Input() user!: UserProfil
+  @Input({ required: true }) type!: string;
+  @Input() postQuote?: Post;
+
   Rest = inject(PostService);
+  user!: UserProfil
 
   post: Post = {
     content: '',
@@ -24,10 +28,18 @@ export class AddPostComponent {
     commentAmount: 0,
     repostAmount: 0,
     viewsAmount: 0,
-    shaveAnswer: false,
-    ansver: null as any
   };
 
+  QuotePost: Post = {
+    content: '',
+    userId: "0",
+    likeAmount: 0,
+    commentAmount: 0,
+    repostAmount: 0,
+    viewsAmount: 0,
+    shaveAnswer: true,
+    ansver: this.postQuote
+  };
 
 
   MaxHeight: number = 380;
@@ -45,14 +57,21 @@ export class AddPostComponent {
   ) {}
 
   ngOnInit() {
+    console.log(this.postQuote);
+    
     var res = this.userCache.loadUser();
     res.subscribe(user => {
       if(user != null){
         this.user = user;
       }
     });
-  }
 
+    this.userCache.getUser()
+      .subscribe(user => {
+        if (!user) return;
+        this.user = user;
+    });
+  }
 
   
   updateCircle() {
@@ -85,12 +104,11 @@ export class AddPostComponent {
 
     el.style.height = 'auto';
 
-    if(el.scrollHeight >= 400){
-      el.style.height = this.PrintLenght + 'px';
+    if (el.scrollHeight >= this.MaxHeight) {
+      el.style.height = this.MaxHeight + 'px';
       el.style.overflowY = 'auto';
-    }
-    else {
-      el.style.height = `${el.scrollHeight}px`;
+    } else {
+      el.style.height = el.scrollHeight + 'px';
       el.style.overflowY = 'hidden';
     }
 

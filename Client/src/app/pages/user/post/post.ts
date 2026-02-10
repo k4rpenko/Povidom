@@ -9,10 +9,13 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserCacheService } from '../../../data/cache/user.service';
 import { HomeComponent } from '../../home/home.component';
 import { UserProfil } from '../../../data/interface/Users/UserProfil.interface';
+import { PostComponent } from "../../../components/post/post";
+import { AuthGuard } from '../../../guards/auth.guard';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-post',
-  imports: [BorderMainComponent, CommonModule, HEADERComponent, RouterModule],
+  imports: [BorderMainComponent, CommonModule, HEADERComponent, RouterModule, PostComponent],
   templateUrl: './post.html',
   styleUrl: './post.scss',
 })
@@ -26,6 +29,8 @@ export class PostID {
   circleColor: string = '#4caf50';
   loading: boolean = true;
   post!: Post;
+  postSend: Post[] = [];
+  TOKEN!: Observable<boolean>;
   user!: UserProfil
   Coment: Post = {
     content: '',
@@ -40,14 +45,17 @@ export class PostID {
 
   constructor(
     private ActivatedRouter: ActivatedRoute, 
-    private postsService: PostService, 
     private postCache: PostCacheService, 
     private userCache: UserCacheService, 
     private renderer: Renderer2, 
+    private guards: AuthGuard
   ) {}
 
 
   ngOnInit() {
+    this.TOKEN = this.guards.token.asObservable();
+
+    
     const post_id = this.ActivatedRouter.snapshot.paramMap.get('id')?.toString()!;
     this.GetPost(post_id);
 
@@ -57,45 +65,8 @@ export class PostID {
         this.user = user;
       }
     });
+    
   }
-
-  navigateToPost(id: string) {
-    console.log(1);
-  }
-
-  navigateToPostreply(id: string) {
-    console.log(2);
-  }
-
-
-  likePost(id: string) {
-    this.Rest.LikePost(id).subscribe({
-      next: () => {
-        this.post.likeAmount = (this.post?.likeAmount || 0) + 1;
-        this.post.youLike = true;
-
-        this.postCache.changPost(this.post);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  DeleteLikePost(id: string) {
-    this.Rest.DeleteLikePost(id).subscribe({
-      next: () => {
-        this.post.likeAmount = (this.post?.likeAmount || 0) - 1;
-        this.post.youLike = false;
-
-        this.postCache.changPost(this.post);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
   
   likeComent(id: string, id_coment: string) {
     this.Rest.LikeComent(id, id_coment).subscribe({
@@ -132,6 +103,9 @@ export class PostID {
       next: (res) => {
         this.post = res.post;
         this.loading = false;
+        this.postSend.push(res.post);
+        console.log(this.postSend);
+        
       },
       error: (error) => {
         console.error(error);
@@ -231,14 +205,6 @@ export class PostID {
         console.error(error);
       }
     });
-  }
-
-  commentPost(id: string){
-
-  }
-
-  toggleRepost(id: string){
-
   }
 
   updatePost(i: number, post: Post){
