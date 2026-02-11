@@ -43,9 +43,9 @@
                 </ng-container>
                 <ng-template #load>
                     <app-post-component
-                    [type]="'comment'"
-                    [posts]="postSend"
-                    [loading]="loading"
+                        [type]="'comment'"
+                        [posts]="postSend"
+                        [loading]="loading"
                     />
                     <div class="User-comment" *ngIf="TOKEN | async">
                         <div class="Post" *ngIf="user != null;">

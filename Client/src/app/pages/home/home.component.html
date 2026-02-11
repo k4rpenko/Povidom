@@ -5,12 +5,25 @@
     <div class="post-main">
       <div class="posts-container">
         <div class="post-header-nav">
-          <nav class="nav-menu">
-            <a href="#" class="nav-item active">News</a>
-            <a href="#" class="nav-item">For you</a>
-            <a href="#" class="nav-item">Following</a>
-          </nav>
+<nav class="nav-menu">
+  <a 
+    href="#" 
+    class="nav-item"
+    [class.active]="TypePost === 1"
+    (click)="setTypePost(1); $event.preventDefault()"
+  >
+    <span>For you</span>
+  </a>
 
+  <a 
+    href="#" 
+    class="nav-item"
+    [class.active]="TypePost === 2"
+    (click)="setTypePost(2); $event.preventDefault()"
+  >
+    <span>Following</span>
+  </a>
+</nav>
           <!-- <a class="new-posts">
             <samp>Show new 25 posts</samp>
           </a> -->

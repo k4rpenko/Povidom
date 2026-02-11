@@ -48,7 +48,7 @@
                     </div>
 
                     <!-- Відповідь на пост, якщо є -->
-                    <div class="post-reply" *ngIf="post.answer" (click)="navigateToPost(post.answer.id!)">
+                    <div class="post-reply" *ngIf="post.answer" (click)="navigateToPost(post.answer.id!); $event.stopPropagation()">
                         <div class="post-reply-item">
                             <img [src]="post.answer.user?.avatar || 'default-avatar-url.jpg'" alt="Reply Profile Picture" class="profile-icon">
                             <div class="post-data-info">

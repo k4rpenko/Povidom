@@ -48,26 +48,45 @@ export class PostID {
     private postCache: PostCacheService, 
     private userCache: UserCacheService, 
     private renderer: Renderer2, 
-    private guards: AuthGuard
+    private guards: AuthGuard,
+    private route: ActivatedRoute,
   ) {}
 
 
   ngOnInit() {
-    this.TOKEN = this.guards.token.asObservable();
+    this.route.params.subscribe(params => {
+      this.resetState();
+      this.TOKEN = this.guards.token.asObservable();
+      
+      const post_id = this.ActivatedRouter.snapshot.paramMap.get('id')?.toString()!;
+      this.GetPost(post_id);
 
-    
-    const post_id = this.ActivatedRouter.snapshot.paramMap.get('id')?.toString()!;
-    this.GetPost(post_id);
-
-    var res = this.userCache.loadUser();
-    res.subscribe(user => {
-      if(user != null){
-        this.user = user;
-      }
+      var res = this.userCache.loadUser();
+      res.subscribe(user => {
+        if(user != null){
+          this.user = user;
+        }
+      });
     });
-    
   }
   
+  private resetState() {
+    this.loading = true;
+    this.Coment = {
+      content: '',
+      userId: "0",
+      likeAmount: 0,
+      commentAmount: 0,
+      repostAmount: 0,
+      viewsAmount: 0,
+      isAnswer: false,
+      answer: null as any
+    };
+    this.postSend = [];
+    this.post = undefined as any;
+  }
+
+
   likeComent(id: string, id_coment: string) {
     this.Rest.LikeComent(id, id_coment).subscribe({
       next: () => {

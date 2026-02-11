@@ -833,10 +833,47 @@ namespace posts.Controllers
                 SPublished = post.IsPublished
             };
 
+            if (post.IsAnswer)
+            {
+                var objectAnswerId = ObjectId.Parse(post.IdAnswer);
+                var AnswerPost = await _customers.Find(p => p.Id == objectAnswerId).FirstOrDefaultAsync();
+
+                var CreatoAnswerData = context.Users.FirstOrDefault(u => u.PostID.Contains(post.IdAnswer));
+                var CreatorAnswer = new UserFind
+                {
+                    Id = CreatoAnswerData.Id,
+                    UserName = CreatoAnswerData.UserName,
+                    FirstName = CreatoAnswerData.FirstName,
+                    Avatar = CreatoAnswerData.Avatar
+                };
+
+                var postHomeAnswer = new PostHome
+                {
+                    Id = AnswerPost.Id.ToString(),
+                    User = CreatorAnswer,
+                    Content = AnswerPost.Content,
+                    CreatedAt = AnswerPost.CreatedAt,
+                    UpdatedAt = AnswerPost.UpdatedAt,
+                    MediaUrls = AnswerPost.MediaUrls,
+                    LikeAmount = AnswerPost.Like?.Count ?? 0,
+                    YouLike = false,
+                    Repost = AnswerPost.Repost?.Count ?? 0,
+                    RepostAmount = AnswerPost.Repost?.Count ?? 0,
+                    YouRepost = false,
+                    Hashtags = AnswerPost.Hashtags?.Count ?? 0,
+                    Mentions = AnswerPost.Mentions?.Count ?? 0,
+                    CommentAmount = AnswerPost.Comments?.Count ?? 0,
+                    YouComment = false,
+                    ViewsAmount = AnswerPost.Views.Count,
+                    SPublished = AnswerPost.IsPublished
+                };
+
+                postHome.Answer = postHomeAnswer;
+            }
+
             if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
             {
                 var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
                 var id = sessions.UserId;
                 var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 

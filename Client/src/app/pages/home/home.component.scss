@@ -52,29 +52,44 @@
   border-right: 1px solid var(--grey-light);
   z-index: 1000;
 }
+
 .nav-menu {
   display: flex;
   justify-content: space-around;
   border-bottom: 1px solid var(--grey-light);
 }
+
 .nav-item {
-  text-align: center;
-  padding: 25px;
   flex: 1;
+  text-align: center;
+  padding: 20px 0;
   text-decoration: none;
-  color: var(--text-color);
+  color: var(--grey-light-45);
   font-family: "SFProDisplay-Medium";
-  transition: background 0.3s;
+  position: relative;
+  cursor: pointer;
+}
 
-  &.active {
-    background-color: var(--primary-color);
-    color: var(--white);
-  }
+.nav-item span {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 6px;
+}
 
-  &:hover {
-    transition: background 0.3s;
-    background-color: var(--grey-dark-15);
-  }
+.nav-item.active {
+  color: var(--text-color-white);
+}
+
+.nav-item.active span::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 4px;
+  background: var(--primary-color);
+  border-radius: 10px;
 }
 
 .new-posts {

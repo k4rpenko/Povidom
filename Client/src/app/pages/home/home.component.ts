@@ -21,6 +21,7 @@ import { PostComponent } from "../../components/post/post";
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
+  TypePost: number = 1;
   Rest = inject(PostService);
   openedRepostMenuId: string | null = null;
   MessageText: string = "";
@@ -34,6 +35,10 @@ export class HomeComponent implements OnInit {
     if (this.posts.length === 0) {
       this.getPosts();
     }
+  }
+
+  setTypePost(i: number){
+    this.TypePost = i;
   }
 
   getPosts() {
