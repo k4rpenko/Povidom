@@ -24,23 +24,8 @@ export class AddPostComponent {
   post: Post = {
     content: '',
     userId: "0",
-    likeAmount: 0,
-    commentAmount: 0,
-    repostAmount: 0,
-    viewsAmount: 0,
+    isAnswer: false
   };
-
-  QuotePost: Post = {
-    content: '',
-    userId: "0",
-    likeAmount: 0,
-    commentAmount: 0,
-    repostAmount: 0,
-    viewsAmount: 0,
-    shaveAnswer: true,
-    ansver: this.postQuote
-  };
-
 
   MaxHeight: number = 380;
   previousLength: number = 0;
@@ -57,7 +42,6 @@ export class AddPostComponent {
   ) {}
 
   ngOnInit() {
-    console.log(this.postQuote);
     
     var res = this.userCache.loadUser();
     res.subscribe(user => {
@@ -143,6 +127,9 @@ export class AddPostComponent {
   }
 
   SendPost(){
+    if(this.postQuote){ this.post.idAnswer = this.postQuote.id!; this.post.isAnswer = true; }
+    
+    
     this.Rest.AddPost(this.post).subscribe({
       next: (response) => {
         this.postCache.SendPost(response.post);

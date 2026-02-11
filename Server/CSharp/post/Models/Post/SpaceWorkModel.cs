@@ -39,5 +39,11 @@ namespace posts.Models.Post
 
         [BsonElement("SPublished")]
         public bool? SPublished { get; set; }
+
+        [BsonElement("IsAnswer")]
+        public bool IsAnswer { get; set; }
+
+        [BsonElement("IdAnsver")]
+        public string? IdAnswer { get; set; }
     }
 }

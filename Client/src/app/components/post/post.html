@@ -48,16 +48,16 @@
                     </div>
 
                     <!-- Відповідь на пост, якщо є -->
-                    <div class="post-reply" *ngIf="post.ansver" (click)="navigateToPost(post.ansver.id!)">
+                    <div class="post-reply" *ngIf="post.answer" (click)="navigateToPost(post.answer.id!)">
                         <div class="post-reply-item">
-                            <img [src]="post.ansver.user?.avatar || 'default-avatar-url.jpg'" alt="Reply Profile Picture" class="profile-icon">
+                            <img [src]="post.answer.user?.avatar || 'default-avatar-url.jpg'" alt="Reply Profile Picture" class="profile-icon">
                             <div class="post-data-info">
                                 <div class="post-user-info">
-                                <span class="post-author">{{ post.ansver.user?.firstName || 'Anonymous' }}</span>
-                                <span class="post-username">{{ post.ansver.user?.userName || 'unknown' }}</span>
+                                <span class="post-author">{{ post.answer.user?.firstName || 'Anonymous' }}</span>
+                                <span class="post-username">{{ post.answer.user?.userName || 'unknown' }}</span>
                                 </div>
                                 <div class="post-content">
-                                <p>{{ post.ansver.content || '' }}</p>
+                                <p>{{ post.answer.content || '' }}</p>
                                 </div>
                             </div>
                         </div>

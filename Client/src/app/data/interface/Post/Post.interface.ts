@@ -39,10 +39,11 @@ export interface Post {
   commentAmount?: number;
   youComment?: boolean;
   views?: string[];
-  viewsAmount: number;
+  viewsAmount?: number;
   sPublished?: boolean;
-  shaveAnswer?: boolean;
-  ansver?: Post;
+  isAnswer?: boolean;
+  answer?: Post;
+  idAnswer?: string;
 }
 
 export interface PostArray {

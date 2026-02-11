@@ -1,5 +1,6 @@
 ﻿using Hash;
 using Hash.Interface;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -55,15 +56,35 @@ namespace posts.Controllers
                     return NotFound("User not found.");
                 }
 
-                var post = new SpacePostModel
+                SpacePostModel post = new SpacePostModel();
+                PostHome postHome = new PostHome();
+
+                if ((bool)_data.IsAnswer == false)
                 {
-                    Content = _data.Content,
-                    UserId = user.Id,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                    SPublished = true,
-                    ShaveAnswer = false
-                };
+                    post = new SpacePostModel
+                    {
+                        Content = _data.Content,
+                        UserId = user.Id,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        IsPublished = true,
+                        IsAnswer = false
+                    };
+                }
+                else
+                {
+                    post = new SpacePostModel
+                    {
+                        Content = _data.Content,
+                        UserId = user.Id,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        IsPublished = true,
+                        IsAnswer = true,
+                        IdAnswer = _data.IdAnswer
+                    };
+                }
+
 
                 await _customers.InsertOneAsync(post);
 
@@ -71,7 +92,44 @@ namespace posts.Controllers
 
                 await context.SaveChangesAsync();
 
-                var postHome = new PostHome
+                PostHome postHomeAnswer = new PostHome();
+                if (_data.IdAnswer != null)
+                {
+                    var objectId = ObjectId.Parse(post.IdAnswer);
+                    var AnswerPost = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+
+                    var CreatoAnswerData = context.Users.FirstOrDefault(u => u.PostID.Contains(post.IdAnswer));
+                    var CreatorAnswer = new UserFind
+                    {
+                        Id = CreatoAnswerData.Id,
+                        UserName = CreatoAnswerData.UserName,
+                        FirstName = CreatoAnswerData.FirstName,
+                        Avatar = CreatoAnswerData.Avatar
+                    };
+
+                    postHomeAnswer = new PostHome
+                    {
+                        Id = AnswerPost.Id.ToString(),
+                        User = CreatorAnswer,
+                        Content = AnswerPost.Content,
+                        CreatedAt = AnswerPost.CreatedAt,
+                        UpdatedAt = AnswerPost.UpdatedAt,
+                        MediaUrls = AnswerPost.MediaUrls,
+                        LikeAmount = AnswerPost.Like?.Count ?? 0,
+                        YouLike = false,
+                        Repost = AnswerPost.Repost?.Count ?? 0,
+                        RepostAmount = AnswerPost.Repost?.Count ?? 0,
+                        YouRepost = false,
+                        Hashtags = AnswerPost.Hashtags?.Count ?? 0,
+                        Mentions = AnswerPost.Mentions?.Count ?? 0,
+                        CommentAmount = AnswerPost.Comments?.Count ?? 0,
+                        YouComment = false,
+                        ViewsAmount = AnswerPost.Views?.Count ?? 0,
+                        SPublished = AnswerPost.IsPublished
+                    };
+                }
+
+                postHome = new PostHome
                 {
                     Id = post.Id.ToString(),
                     User = new UserFind
@@ -95,9 +153,8 @@ namespace posts.Controllers
                     CommentAmount = 0,
                     YouComment = user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false,
                     ViewsAmount = 0,
-                    SPublished = post.SPublished,
-                    ShaveAnswer = post.ShaveAnswer,
-                    Ansver = post.Ansver
+                    SPublished = post.IsPublished,
+                    Answer = (bool)_data.IsAnswer ? postHomeAnswer : null
                 };
 
                 return Ok(new { Post = postHome });
@@ -629,8 +686,46 @@ namespace posts.Controllers
                     CommentAmount = post.Comments?.Count ?? 0,
                     YouComment = false,
                     ViewsAmount = post.Views.Count,
-                    SPublished = post.SPublished
+                    SPublished = post.IsPublished
                 };
+
+                if (post.IsAnswer)
+                {
+                    var objectId = ObjectId.Parse(post.IdAnswer);
+                    var AnswerPost = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+
+                    var CreatoAnswerData = context.Users.FirstOrDefault(u => u.PostID.Contains(post.IdAnswer));
+                    var CreatorAnswer = new UserFind
+                    {
+                        Id = CreatoAnswerData.Id,
+                        UserName = CreatoAnswerData.UserName,
+                        FirstName = CreatoAnswerData.FirstName,
+                        Avatar = CreatoAnswerData.Avatar
+                    };
+
+                    var postHomeAnswer = new PostHome
+                    {
+                        Id = AnswerPost.Id.ToString(),
+                        User = CreatorAnswer,
+                        Content = AnswerPost.Content,
+                        CreatedAt = AnswerPost.CreatedAt,
+                        UpdatedAt = AnswerPost.UpdatedAt,
+                        MediaUrls = AnswerPost.MediaUrls,
+                        LikeAmount = AnswerPost.Like?.Count ?? 0,
+                        YouLike = false,
+                        Repost = AnswerPost.Repost?.Count ?? 0,
+                        RepostAmount = AnswerPost.Repost?.Count ?? 0,
+                        YouRepost = false,
+                        Hashtags = AnswerPost.Hashtags?.Count ?? 0,
+                        Mentions = AnswerPost.Mentions?.Count ?? 0,
+                        CommentAmount = AnswerPost.Comments?.Count ?? 0,
+                        YouComment = false,
+                        ViewsAmount = AnswerPost.Views.Count,
+                        SPublished = AnswerPost.IsPublished
+                    };
+
+                    postHome.Answer = postHomeAnswer;
+                }
 
                 PostList.Add(postHome);
             }
@@ -735,7 +830,7 @@ namespace posts.Controllers
                 CommentAmount = post.Comments?.Count ?? 0,
                 YouComment = false,
                 ViewsAmount = post.Views.Count,
-                SPublished = post.SPublished
+                SPublished = post.IsPublished
             };
 
             if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
@@ -826,7 +921,7 @@ namespace posts.Controllers
                     Mentions = post.Mentions?.Count ?? 0,
                     CommentAmount = post.Comments?.Count ?? 0,
                     YouComment = user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false,
-                    SPublished = post.SPublished
+                    SPublished = post.IsPublished
                 };
 
                 postSavedList.Add(NewPost);
@@ -872,7 +967,7 @@ namespace posts.Controllers
                     CommentAmount = post.Comments?.Count ?? 0,
                     YouComment = false,
                     ViewsAmount = post.Views.Count,
-                    SPublished = post.SPublished
+                    SPublished = post.IsPublished
                 };
 
                 PostList.Add(postHome);
@@ -961,7 +1056,7 @@ namespace posts.Controllers
                 Mentions = post.Mentions?.Count ?? 0,
                 CommentAmount = post.Comments?.Count ?? 0,
                 YouComment = user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false,
-                SPublished = post.SPublished
+                SPublished = post.IsPublished
             }).ToList();
 
             return Ok(new { Post = postHomeList });

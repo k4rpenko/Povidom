@@ -39,8 +39,8 @@ export class PostID {
     commentAmount: 0,
     repostAmount: 0,
     viewsAmount: 0,
-    shaveAnswer: false,
-    ansver: null as any
+    isAnswer: false,
+    answer: null as any
   };
 
   constructor(

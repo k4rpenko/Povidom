@@ -60,11 +60,11 @@ namespace posts.Models.Post
         [BsonElement("Repost")]
         public List<Like>? Repost { get; set; } = new List<Like>();
 
-        [BsonElement("Recall")]
-        public List<SpacePostModel>? Recall { get; set; } = new List<SpacePostModel>();
+        [BsonElement("IdAnswer")]
+        public string? IdAnswer { get; set; }
 
-        [BsonElement("IsRecall")]
-        public bool IsRecall { get; set; }
+        [BsonElement("IsAnswer")]
+        public bool IsAnswer { get; set; }
 
         [BsonElement("Hashtags")]
         public List<string>? Hashtags { get; set; } = new List<string>();
@@ -79,13 +79,7 @@ namespace posts.Models.Post
         public List<string>? Views { get; set; } = new List<string>();
 
         [BsonElement("SPublished")]
-        public bool SPublished { get; set; }
-
-        [BsonElement("ShaveAnswer")]
-        public bool ShaveAnswer { get; set; }
-
-        [BsonElement("Ansver")]
-        public string? Ansver { get; set; }
+        public bool IsPublished { get; set; }
 
     }
 }
