@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
   openedRepostMenuId: string | null = null;
   MessageText: string = "";
   MessageAction: boolean = false;
+  loading: boolean = true;
   
   constructor(public postCache: PostCacheService) {}
 
@@ -33,21 +34,41 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     if (this.posts.length === 0) {
-      this.getPosts();
+      this.getPostsForYou();
     }
+  }
+
+  clean(){
+    this.posts = [];
+    this.loading = true;
   }
 
   setTypePost(i: number){
     this.TypePost = i;
+    this.clean();
+    if (this.TypePost === 1) {
+      this.getPostsForYou();
+    } else if (this.TypePost === 2) {
+      this.getPostsFollowing();
+    }
   }
 
-  getPosts() {
+  getPostsForYou() {
     this.postCache.loadPosts();
     this.postCache.postsSubject.subscribe(posts => {
       if(posts.length === 0) return;
       this.posts = posts;
+      this.loading = false;
     });
-    
+  }
+
+  getPostsFollowing() {
+    this.postCache.loadFollowingPosts();
+    this.postCache.followingPostsSubject.subscribe(posts => {
+      if(posts.length === 0) return;
+      this.posts = posts;
+      this.loading = false;
+    });
   }
 
   sendPost(post: Post){

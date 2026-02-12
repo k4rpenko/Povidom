@@ -33,6 +33,13 @@ export class PostService {
     });
   }
 
+  GetFollowingPosts() {
+    return this.http.get<{post: Post[]}>(`api/SpacePosts/GetFollowingPosts`, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+    });
+  }
+
   LikePost(post_id: string) {
     return this.http.put<{ cookie: string }>(
       `api/SpacePosts/LikePost?post_id=${post_id}`,

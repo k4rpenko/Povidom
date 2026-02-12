@@ -961,6 +961,44 @@ namespace posts.Controllers
                     SPublished = post.IsPublished
                 };
 
+                if (post.IsAnswer)
+                {
+                    var AnswerObjectId = ObjectId.Parse(post.IdAnswer);
+                    var AnswerPost = await _customers.Find(p => p.Id == AnswerObjectId).FirstOrDefaultAsync();
+
+                    var CreatoAnswerData = context.Users.FirstOrDefault(u => u.PostID.Contains(post.IdAnswer));
+                    var CreatorAnswer = new UserFind
+                    {
+                        Id = CreatoAnswerData.Id,
+                        UserName = CreatoAnswerData.UserName,
+                        FirstName = CreatoAnswerData.FirstName,
+                        Avatar = CreatoAnswerData.Avatar
+                    };
+
+                    var postHomeAnswer = new PostHome
+                    {
+                        Id = AnswerPost.Id.ToString(),
+                        User = CreatorAnswer,
+                        Content = AnswerPost.Content,
+                        CreatedAt = AnswerPost.CreatedAt,
+                        UpdatedAt = AnswerPost.UpdatedAt,
+                        MediaUrls = AnswerPost.MediaUrls,
+                        LikeAmount = AnswerPost.Like?.Count ?? 0,
+                        YouLike = false,
+                        Repost = AnswerPost.Repost?.Count ?? 0,
+                        RepostAmount = AnswerPost.Repost?.Count ?? 0,
+                        YouRepost = false,
+                        Hashtags = AnswerPost.Hashtags?.Count ?? 0,
+                        Mentions = AnswerPost.Mentions?.Count ?? 0,
+                        CommentAmount = AnswerPost.Comments?.Count ?? 0,
+                        YouComment = false,
+                        ViewsAmount = AnswerPost.Views.Count,
+                        SPublished = AnswerPost.IsPublished
+                    };
+
+                    NewPost.Answer = postHomeAnswer;
+                }
+
                 postSavedList.Add(NewPost);
             }
 
@@ -1050,6 +1088,106 @@ namespace posts.Controllers
             }
 
             return Ok(new { Post = PostList });
+        }
+
+        [HttpGet("GetFollowingPosts")]
+        public async Task<IActionResult> GetFollowingPosts()
+        {
+            if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+            {
+                return Unauthorized();
+            }
+            var sessions = await context.Sessions
+                .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+
+            var id = sessions.UserId;
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            List<PostHome> FollowingPosts = new List<PostHome>();
+
+            foreach (var IdSubscribers in user.Subscribers)
+            {
+                var Subscriber = await context.Users.FirstOrDefaultAsync(u => u.Id == IdSubscribers);
+
+                foreach (var PostId in Subscriber.PostID)
+                {
+                    var objectId = ObjectId.Parse(PostId);
+                    var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+
+                    if(post == null) continue;
+
+                    var Creator = new UserFind
+                    {
+                        Id = Subscriber.Id,
+                        UserName = Subscriber.UserName,
+                        FirstName = Subscriber.FirstName,
+                        Avatar = Subscriber.Avatar
+                    };
+
+                    var NewPost = new PostHome
+                    {
+                        Id = post.Id.ToString().ToString(),
+                        User = Creator,
+                        Content = post.Content,
+                        CreatedAt = post.CreatedAt,
+                        UpdatedAt = post.UpdatedAt,
+                        MediaUrls = post.MediaUrls,
+                        LikeAmount = post.Like?.Count ?? 0,
+                        ViewsAmount = post.Views.Count,
+                        YouLike = user.LikePostID.Contains(post.Id.ToString()) ? true : false,
+                        Repost = post.Repost?.Count ?? 0,
+                        RepostAmount = post.Repost?.Count ?? 0,
+                        YouRepost = user.Repost.Contains(post.Id.ToString()) ? true : false,
+                        YouSaved = user.SavedPost.Contains(post.Id.ToString()) ? true : false,
+                        Hashtags = post.Hashtags?.Count ?? 0,
+                        Mentions = post.Mentions?.Count ?? 0,
+                        CommentAmount = post.Comments?.Count ?? 0,
+                        YouComment = user.CommentsId.Any(c => c.PostId == post.Id.ToString()) ? true : false,
+                        SPublished = post.IsPublished
+                    };
+
+                    if (post.IsAnswer)
+                    {
+                        var AnswerObjectId = ObjectId.Parse(post.IdAnswer);
+                        var AnswerPost = await _customers.Find(p => p.Id == AnswerObjectId).FirstOrDefaultAsync();
+
+                        var CreatoAnswerData = context.Users.FirstOrDefault(u => u.PostID.Contains(post.IdAnswer));
+                        var CreatorAnswer = new UserFind
+                        {
+                            Id = CreatoAnswerData.Id,
+                            UserName = CreatoAnswerData.UserName,
+                            FirstName = CreatoAnswerData.FirstName,
+                            Avatar = CreatoAnswerData.Avatar
+                        };
+
+                        var postHomeAnswer = new PostHome
+                        {
+                            Id = AnswerPost.Id.ToString(),
+                            User = CreatorAnswer,
+                            Content = AnswerPost.Content,
+                            CreatedAt = AnswerPost.CreatedAt,
+                            UpdatedAt = AnswerPost.UpdatedAt,
+                            MediaUrls = AnswerPost.MediaUrls,
+                            LikeAmount = AnswerPost.Like?.Count ?? 0,
+                            YouLike = false,
+                            Repost = AnswerPost.Repost?.Count ?? 0,
+                            RepostAmount = AnswerPost.Repost?.Count ?? 0,
+                            YouRepost = false,
+                            Hashtags = AnswerPost.Hashtags?.Count ?? 0,
+                            Mentions = AnswerPost.Mentions?.Count ?? 0,
+                            CommentAmount = AnswerPost.Comments?.Count ?? 0,
+                            YouComment = false,
+                            ViewsAmount = AnswerPost.Views.Count,
+                            SPublished = AnswerPost.IsPublished
+                        };
+
+                        NewPost.Answer = postHomeAnswer;
+                    }
+
+                    FollowingPosts.Add(NewPost);
+                }
+            }
+
+            return Ok(new { Post = FollowingPosts});
         }
 
         [HttpGet("")]

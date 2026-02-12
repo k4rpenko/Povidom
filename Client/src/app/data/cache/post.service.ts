@@ -7,7 +7,9 @@ import { PostService } from '../../api/REST/post/Post.service';
 export class PostCacheService {
 
   public postsSubject = new BehaviorSubject<Post[]>([]);
+  public followingPostsSubject = new BehaviorSubject<Post[]>([]);
   public isLoaded = true;
+  public isFollowingLoaded = true;
 
   constructor(private Rest: PostService) {}
 
@@ -17,6 +19,15 @@ export class PostCacheService {
       this.Rest.GetPost().subscribe(res => {
         this.postsSubject.next(res.post);
         this.isLoaded = false;
+      });
+    }
+  }
+
+  loadFollowingPosts(): void{
+    if (this.isFollowingLoaded) {
+      this.Rest.GetFollowingPosts().subscribe(res => {
+        this.followingPostsSubject.next(res.post);
+        this.isFollowingLoaded = false;
       });
     }
   }
@@ -38,4 +49,5 @@ export class PostCacheService {
     const updatePost = currentPosts.map( p => p.id === post.id ? post : p);
     this.postsSubject.next(updatePost);
   }
+
 }
