@@ -7,10 +7,11 @@ import { PostService } from '../../api/REST/post/Post.service';
 import { PostCacheService } from '../../data/cache/post.service';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
+import { PostComponent } from "../../components/post/post";
 
 @Component({
   selector: 'app-saved',
-  imports: [HEADERComponent, CommonModule, BorderMainComponent, RouterModule],
+  imports: [HEADERComponent, CommonModule, BorderMainComponent, RouterModule, PostComponent],
   templateUrl: './saved.component.html',
   styleUrl: './saved.component.scss'
 })
