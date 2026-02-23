@@ -123,8 +123,6 @@ export class PostID {
         this.post = res.post;
         this.loading = false;
         this.postSend.push(res.post);
-        console.log(this.postSend);
-        
       },
       error: (error) => {
         console.error(error);

@@ -34,7 +34,6 @@ builder.Services.AddScoped<IArgon2Hasher, Argon2Hasher>();
 builder.Services.AddSingleton<AppMongoContext>();
 builder.Services.AddSingleton<RedisConfigure>();
 builder.Services.AddScoped<IEmailSeding, EmailSeding>();
-builder.Services.AddScoped<IJwt, JWT>();
 builder.Services.AddScoped<IHASH256, HASH256>();
 builder.Services.AddScoped<IRSAHash, RSAHash>();
 

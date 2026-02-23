@@ -19,15 +19,13 @@ namespace Identification.Controllers
         GoogleOAuth GoogleOAuth = new GoogleOAuth();
         private readonly AppDbContext context;
         private readonly IArgon2Hasher _hasher;
-        private readonly IJwt _jwt;
         private readonly IHASH256 _hash;
         private readonly IRSAHash _rsa;
 
-        public GoogleAuthentication(AppDbContext _context, IArgon2Hasher hasher, IJwt jwt, IHASH256 hash, IRSAHash rsa)
+        public GoogleAuthentication(AppDbContext _context, IArgon2Hasher hasher, IHASH256 hash, IRSAHash rsa)
         {
             context = _context;
             _hasher = hasher;
-            _jwt = jwt;
             _hash = hash;
             _rsa = rsa;
         }

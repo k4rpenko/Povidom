@@ -6,6 +6,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using PGAdminDAL;
 using PGAdminDAL.Model;
+using SessionService;
 using user.Models.MessageChat;
 using user.Models.Post;
 using user.Models.Users;
@@ -20,14 +21,14 @@ namespace user.Controllers
         private readonly AppDbContext context;
         /*private readonly KafkaProducer _kafkaProducer;
         private readonly string bootstrapServers; */
-        private readonly IJwt _jwt;
+        private readonly ISessionService _session;
 
-        public Fleets(AppDbContext _context, AppMongoContext _Mongo,  IConfiguration _configuration, IJwt jwt) 
+        public Fleets(AppDbContext _context, AppMongoContext _Mongo,  IConfiguration _configuration, ISessionService session) 
         {
             //bootstrapServers = _configuration.GetSection("Kafka:bootstrapServers").Value;
             context = _context; 
             _customers = _Mongo.Database?.GetCollection<SpacePostModel>(_configuration.GetSection("MongoDB:MongoDbDatabase").Value);
-            _jwt = jwt;
+            _session = session;
         }
 
         [HttpGet("FindPeople")]
@@ -69,14 +70,7 @@ namespace user.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized("No _ASA cookie found");
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-                var id = sessions.UserId;
+                string id = await _session.GetUserIdAsync(Request);
                 if (id == null) { return Unauthorized(); }
 
 
@@ -120,6 +114,8 @@ namespace user.Controllers
             try
             {
                 var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
+                string id = await _session.GetUserIdAsync(Request);
+
                 if (user != null)
                 {
                     var userAccount = new UserAccount
@@ -135,11 +131,8 @@ namespace user.Controllers
                         SubscribersAmount = user.Subscribers.Count,
                     };
 
-                    if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                    if (id != null)
                     {
-                        var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                        var id = sessions.UserId;
                         var You = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
                         if (You != null)
@@ -166,46 +159,35 @@ namespace user.Controllers
         {
             try
             {
-                    /*
-                    var producer = new KafkaProducer(bootstrapServers);
-                    var postKafka = await producer.SendMessage("post_topic", "key1", id);
-                    SpacePostModel userPost;
-                    if (postKafka != null)
-                    {
-                        userPost = postKafka.ToObject<SpacePostModel>();
-                    }
-                    else
-                    {
-                        userPost = null;
-                    }*/
-                    if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                    {
-                        return Unauthorized("No _ASA cookie found");
-                    }
+                /*
+                var producer = new KafkaProducer(bootstrapServers);
+                var postKafka = await producer.SendMessage("post_topic", "key1", id);
+                SpacePostModel userPost;
+                if (postKafka != null)
+                {
+                    userPost = postKafka.ToObject<SpacePostModel>();
+                }
+                else
+                {
+                    userPost = null;
+                }*/
+                    
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return NotFound();
 
-                    var sessions = await context.Sessions
-                        .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                    var id = sessions.UserId;
-                    var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                    if (user != null)
-                    {
-                        var fleetsUser = new FleetsUserFModel
-                        {
-                            Id = user.Id,
-                            UserName = user.UserName.ToLower(),
-                            FirstName = user.FirstName,
-                            LastName = user.LastName,
-                            Avatar = user.Avatar,
-                            Title = user.Title,
-                            PostID = user.PostID,
-                            SubscribersAmount = user.Subscribers.Count,
-                            FollowersAmount = user.Followers.Count,
-                        };
-                        return Ok(new { User = fleetsUser });
-                    }                    
-                
-                return NotFound();
+                var fleetsUser = new FleetsUserFModel
+                {
+                    Id = user.Id,
+                    UserName = user.UserName.ToLower(),
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Avatar = user.Avatar,
+                    Title = user.Title,
+                    PostID = user.PostID,
+                    SubscribersAmount = user.Subscribers.Count,
+                    FollowersAmount = user.Followers.Count,
+                };
+                return Ok(new { User = fleetsUser });
             }
             catch (Exception ex)
             {
@@ -219,8 +201,10 @@ namespace user.Controllers
             try
             {
                 var profile = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
+
                 if (profile != null)
                 {
+                    UserModel user = await _session.GetUserDataAsync(Request);
                     List<UserAccount> UsersSubscribers = new List<UserAccount>();
 
                     var subscribers = profile.Subscribers
@@ -246,18 +230,13 @@ namespace user.Controllers
                         }
                     }
 
-                    if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                    {
-                        var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
 
-                        var id = sessions.UserId;
-                        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                        if (user != null)
+
+                    if (user != null)
+                    {
+                        foreach (var post in UsersSubscribers)
                         {
-                            foreach (var post in UsersSubscribers)
-                            {
-                                post.YouFollower = user.Subscribers.Contains(post.Id);
-                            }
+                            post.YouFollower = user.Subscribers.Contains(post.Id);
                         }
                     }
 
@@ -279,6 +258,7 @@ namespace user.Controllers
                 var porofile = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
                 if (porofile != null)
                 {
+                    UserModel user = await _session.GetUserDataAsync(Request);
                     List<UserAccount> UsersFollowers = new List<UserAccount>();
 
                     var Followers = porofile.Followers
@@ -304,18 +284,11 @@ namespace user.Controllers
                         }
                     }
 
-                    if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+                    if (user != null)
                     {
-                        var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                        var id = sessions.UserId;
-                        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                        if (user != null)
+                        foreach (var post in UsersFollowers)
                         {
-                            foreach (var post in UsersFollowers)
-                            {
-                                post.YouFollower = user.Subscribers.Contains(post.Id);
-                            }
+                            post.YouFollower = user.Subscribers.Contains(post.Id);
                         }
                     }
 
@@ -335,21 +308,15 @@ namespace user.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return NotFound();
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
+                UserModel You = await _session.GetUserDataAsync(Request);
+                if (You == null) return Unauthorized();
+                
                 var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
-                var You = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+                
 
                 if (user != null && You != null)
                 {
-                    user.Followers.Add(id);
+                    user.Followers.Add(You.Id);
                     You.Subscribers.Add(user.Id);
 
                     await context.SaveChangesAsync();
@@ -368,21 +335,14 @@ namespace user.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return NotFound();
-                }
+                UserModel You = await _session.GetUserDataAsync(Request);
+                if (You == null) return Unauthorized();
 
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
                 var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
-                var You = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
                 if (user != null && You != null)
                 {
-                    user.Followers.Remove(id);
+                    user.Followers.Remove(You.Id);
                     You.Subscribers.Remove(user.Id);
 
                     await context.SaveChangesAsync();

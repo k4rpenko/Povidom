@@ -14,22 +14,32 @@ export class PostCacheService {
   constructor(private Rest: PostService) {}
 
 
-  loadPosts(): void {
-    if (this.isLoaded) {
-      this.Rest.GetPost().subscribe(res => {
-        this.postsSubject.next(res.post);
-        this.isLoaded = false;
-      });
-    }
+  loadPosts(): Promise<void> {
+    return new Promise((resolve) => {
+      if (this.isLoaded) {
+        this.Rest.GetPost().subscribe(res => {
+          this.postsSubject.next(res.post);
+          this.isLoaded = false;
+          resolve(); 
+        });
+      } else {
+        resolve();
+      }
+    });
   }
 
-  loadFollowingPosts(): void{
-    if (this.isFollowingLoaded) {
-      this.Rest.GetFollowingPosts().subscribe(res => {
-        this.followingPostsSubject.next(res.post);
-        this.isFollowingLoaded = false;
-      });
-    }
+  loadFollowingPosts(): Promise<void>{
+    return new Promise((resolve) => {
+      if (this.isFollowingLoaded) {
+        this.Rest.GetFollowingPosts().subscribe(res => {
+          this.followingPostsSubject.next(res.post);
+          this.isFollowingLoaded = false;
+          resolve();
+        });
+      } else {
+        resolve();
+      }
+    });
   }
 
   addPosts(): void {
@@ -45,9 +55,13 @@ export class PostCacheService {
   }
 
   changPost(post: Post): void {
-    const currentPosts = this.postsSubject.value;
-    const updatePost = currentPosts.map( p => p.id === post.id ? post : p);
-    this.postsSubject.next(updatePost);
+    const updateListIfContains = (list: Post[]): Post[] => {
+      if (!list.some(p => p.id === post.id)) return list;
+      return list.map(p => p.id === post.id ? { ...post } : p);
+    };
+
+    this.postsSubject.next(updateListIfContains(this.postsSubject.value));
+    this.followingPostsSubject.next(updateListIfContains(this.followingPostsSubject.value));
   }
 
 }

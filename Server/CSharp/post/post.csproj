@@ -21,6 +21,7 @@
 	</ItemGroup>
 	
   <ItemGroup>
+    <ProjectReference Include="..\..\SessionService\SessionService.csproj" />
     <ProjectReference Include="..\Hash\Hash.csproj" />
     <ProjectReference Include="..\MongoDB\MongoDB.csproj" />
     <ProjectReference Include="..\PGAdminDAL\PGAdminDAL.csproj" />

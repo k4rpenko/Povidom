@@ -1,0 +1,254 @@
+
+.user-profile-skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 25px;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #333;
+}
+
+.skeleton-text {
+  border-radius: 5px;
+  background-color: #333;
+}
+
+.skeleton-button {
+  border-radius: 5px;
+  background-color: #333;
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -150px;
+  height: 100%;
+  width: 150px;
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.3), rgba(255,255,255,0));
+  animation: shimmer 1.5s infinite;
+}
+
+
+.user-profile{
+  gap: 30px;
+  display: flex;
+  padding: 40px 25px 20px 25px;
+  flex-direction: column;
+}
+
+.profile-infoo{
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.profile-icon{
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+}
+
+.profile-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-username{
+    display: flex;
+    gap: 7px;
+    color: var(--grey-light-45);
+}
+
+.profile-actions{
+  display: flex;
+  gap: 60px;
+
+  button {
+    height: 30px;
+    width: 110px;
+    border-radius: 5px;
+    border: none;
+    font-family: var(--font-sfpro-medium);
+    cursor: pointer;
+
+    &.btn-following {
+      background: var(--blue);
+      color: var(--text-color-white);
+    }
+
+    &.btn-write {
+      background: var(--white);
+      color: var(--text-color-dark);
+    }
+
+    &.btn-unfollow{
+      background: var(--read);
+      color: var(--text-color-white);
+    }
+  }
+
+  .btn-settings {
+    height: 30px;
+    width: 150px;
+    border-radius: 5px;
+    border: none;
+    font-family: var(--font-sfpro-medium);
+    cursor: pointer;
+    background: var(--white);
+    color: var(--text-color-white);
+
+    a {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      text-decoration: none;
+      color: black;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.profile-author{
+    display: flex;
+    gap: 7px; 
+    justify-content: space-between;
+}
+
+.profile-avatar {
+  .avatar-wrapper {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    cursor: default;
+
+    &.clickable {
+      cursor: pointer;
+    }
+  }
+
+  .profile-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+  }
+
+  .avatar-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    transition: 0.3s ease;
+  }
+
+  &:hover .avatar-overlay {
+    opacity: 1;
+  }
+}
+
+.profile-input {
+  text-align: center;
+  border: none;
+  background: transparent;
+  color: white;
+  outline: none;
+  width: auto;
+  max-width: 35ch;
+
+  &:read-only {
+    cursor: default;
+  }
+}
+
+.user-biography{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.uset-for{
+  width: 100%;
+  display: flex;
+  gap: 15px;
+}
+
+.user-biography-text{
+  display: flex;
+  width: 100%;
+
+  samp{
+    color: var(--grey-light-45);
+    font-family: var(--font-sfpro-regular);
+    font-size: 15px;
+  }
+}
+
+.user-tracking {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+
+  a {
+    position: relative;
+    display: flex;
+    text-decoration: none;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background-color: var(--white);
+      transform: scaleX(0);
+    }
+
+    &:hover::after {
+      transform: scaleX(1);
+    }
+
+    samp {
+      color: var(--white);
+      font-family: var(--font-sfpro-regular);
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% { left: -150px; }
+  100% { left: 100%; }
+}

@@ -15,7 +15,7 @@ export class UsersKnow {
   @Output() closed = new EventEmitter<void>();
   @Input() user!: UserProfil;
   @Input() type!: number;
-  @Input() YouUserName!: string;
+  @Input() IsYou!: boolean;
   private router = inject(Router);
   users: UserProfil[] = [];
   loading = true;

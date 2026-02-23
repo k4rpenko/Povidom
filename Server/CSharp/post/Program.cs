@@ -8,6 +8,7 @@ using posts.Interface.Sending;
 using posts.Sending;
 using RedisDAL;
 using RedisDAL.User;
+using SessionService;
 using System.Security.Policy;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +24,7 @@ builder.Services.AddSingleton<AppMongoContext>();
 builder.Services.AddSingleton<RedisConfigure>();
 builder.Services.AddSingleton<UsersConnectMessage>();
 builder.Services.AddScoped<IEmailSeding, EmailSeding>();
-builder.Services.AddScoped<IJwt, JWT>();
+builder.Services.AddScoped<ISessionService, SessionServiceImpl>();
 builder.Services.AddScoped<IHASH256, HASH256>();
 builder.Services.AddScoped<IRSAHash, RSAHash>();
 

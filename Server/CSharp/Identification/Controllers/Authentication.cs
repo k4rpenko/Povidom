@@ -19,16 +19,14 @@ namespace Identification.Controllers
     public class Auth : Controller
     {
         private readonly IEmailSeding _emailSend;
-        private readonly IJwt _jwt;
         private readonly IHASH256 _hash;
         private readonly IArgon2Hasher _hasher;
         private readonly AppDbContext _context;
 
-        public Auth(AppDbContext context, IArgon2Hasher hasher, IEmailSeding emailSend, IJwt jwt, IHASH256 hash)
+        public Auth(AppDbContext context, IArgon2Hasher hasher, IEmailSeding emailSend,  IHASH256 hash)
         {
             _context = context;
             _emailSend = emailSend;
-            _jwt = jwt;
             _hasher = hasher;
             _hash = hash;
         }
@@ -122,17 +120,16 @@ namespace Identification.Controllers
                         await _context.SaveChangesAsync();
                         return Ok(new { cookie = token });
                     }
+                    return BadRequest(new { message = "Please try again later." });
                 }
-                if (user.EmailConfirmed == false)
+                else
                 {
-                    return BadRequest();
+                    return Conflict(new { message = "A user with this email already exists." });
                 }
-                return Unauthorized();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("\n\n ERROR: " + ex);
-                return StatusCode(500, new { message = "An internal server error occurred." });
+                throw new Exception("", ex);
             }
         }
 
@@ -193,9 +190,9 @@ namespace Identification.Controllers
         {
             try
             {
-                if (Account.ConfirmationToken != null && _jwt.ValidateToken(Account.ConfirmationToken, _context))
+                if (Account.ConfirmationToken != null)
                 {
-                    var id = _jwt.GetUserIdFromToken(Account.ConfirmationToken);
+                    var id = "0";
                     var user = _context.Users.FirstOrDefault(u => u.Id == id);
                     var userRole = _context.UserRoles.FirstOrDefault(u => u.UserId == id);
                     if (user != null)

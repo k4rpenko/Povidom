@@ -5,13 +5,11 @@ import { UserProfil } from '../../data/interface/Users/UserProfil.interface';
 import {CommonModule } from '@angular/common';
 import { UserCacheService } from '../../data/cache/user.service';
 import { Post } from '../../data/interface/Post/Post.interface';
-import { PostService } from '../../api/REST/post/Post.service';
-import { Router, ActivatedRoute  } from '@angular/router';
-import { PostCacheService } from '../../data/cache/post.service';
-import { empty, finalize, firstValueFrom, take } from 'rxjs';
+import { ActivatedRoute, RouterModule  } from '@angular/router';
+import { finalize, firstValueFrom, take } from 'rxjs';
 import { UserREST } from '../../api/REST/user/UserData.service';
-import { UsersKnow } from "../../components/user/users-know/users-know";
 import { PostComponent } from "../../components/post/post";
+import { Profile } from "../../components/profile/profile";
 
 @Component({
   selector: 'app-user',
@@ -19,8 +17,9 @@ import { PostComponent } from "../../components/post/post";
     CommonModule,
     HEADERComponent,
     BorderMainComponent,
-    UsersKnow,
-    PostComponent
+    PostComponent,
+    RouterModule,
+    Profile
 ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss'
@@ -29,14 +28,11 @@ export class UserComponent{
 
   user!: UserProfil;
   posts: Post[] = [];
-
-  You = false;
+  IsYou = false;
   NotFoundUser = false;
   loadingUser = true;
   loadingPosts = true;
   arrayType = 0;
-
-  YourUserName = '';
 
   constructor(
     private userCache: UserCacheService,
@@ -45,18 +41,15 @@ export class UserComponent{
   ) {}
 
   async ngOnInit() {
-    const currentUser = await firstValueFrom(this.userCache.loadUser());
-    this.YourUserName = currentUser?.userName ?? '';
-
     this.route.params.subscribe(params => {
       const username = params['username'];
 
       this.resetState();
-      this.You = this.YourUserName === username;
+      this.IsYou = this.userCache.checkUserName(username);
 
       this.loadPosts(username);
 
-      this.You ? this.bindCurrentUser() : this.loadForeignUser(username);
+      this.IsYou ? this.bindCurrentUser() : this.loadForeignUser(username);
     });
   }
 

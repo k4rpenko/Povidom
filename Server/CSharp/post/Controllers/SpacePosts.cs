@@ -11,6 +11,7 @@ using PGAdminDAL;
 using PGAdminDAL.Model;
 using posts.Models.MessageChat;
 using posts.Models.Post;
+using SessionService;
 using System.ComponentModel.Design;
 using System.Linq;
 
@@ -22,39 +23,25 @@ namespace posts.Controllers
     {
 
         private readonly IMongoCollection<SpacePostModel> _customers;
-
         private readonly AppDbContext context;
+        private readonly ISessionService _session;
 
-        private readonly IJwt _jwt;
 
-
-        public SpacePosts(AppMongoContext _Mongo, IJwt jwt,  IConfiguration _configuration, AppDbContext _context) 
+        public SpacePosts(AppMongoContext _Mongo,  IConfiguration _configuration, AppDbContext _context, ISessionService session) 
         {
             var postCollectionName = _configuration["MongoDB:MongoDbDatabasePost"]; 
             _customers = _Mongo.Database.GetCollection<SpacePostModel>(postCollectionName);
-            context = _context; 
+            context = _context;
+            _session = session;
         }
 
 
         [HttpPost("AddPost")]
         public async Task<IActionResult> AddPost(SpaceWorkModel _data)
         {
-            try { 
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized("No _ASA cookie found");
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    return NotFound("User not found.");
-                }
+            try {
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
                 SpacePostModel post = new SpacePostModel();
                 PostHome postHome = new PostHome();
@@ -170,21 +157,77 @@ namespace posts.Controllers
         {
             try
             {
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
                 var objectId = ObjectId.Parse(_data.Id);
-                var deleteResult = await _customers.DeleteOneAsync(post => post.Id == objectId);
 
+                var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
+                if (post == null)
+                {
+                    return NotFound("Post not found.");
+                }
+
+                var deleteResult = await _customers.DeleteOneAsync(p => p.Id == objectId);
                 if (deleteResult.DeletedCount == 0)
                 {
                     return NotFound("Post not found.");
                 }
 
-                return Ok();
+                user.PostID.Remove(_data.Id);
 
+                var usersWithLikes = context.Users.Where(u => u.LikePostID.Contains(_data.Id)).ToList();
+                foreach (var u in usersWithLikes)
+                {
+                    u.LikePostID.Remove(_data.Id);
+                }
+
+                var usersWithCommentLikes = context.Users.Where(u => u.LikeComments.Any(c => c.CommentId.Contains(_data.Id))).ToList();
+                foreach (var u in usersWithCommentLikes)
+                {
+                    var commentContainers = u.LikeComments.Where(c => c.CommentId.Contains(_data.Id)).ToList();
+                    foreach (var container in commentContainers)
+                    {
+                        container.CommentId.Remove(_data.Id);
+                        if (!container.CommentId.Any())
+                            u.LikeComments.Remove(container);
+                    }
+                }
+
+                var usersWithReposts = context.Users.Where(u => u.Repost.Contains(_data.Id)).ToList();
+                foreach (var u in usersWithReposts)
+                {
+                    u.Repost.Remove(_data.Id);
+                }
+
+                var usersWithSaved = context.Users.Where(u => u.SavedPost.Contains(_data.Id)).ToList();
+                foreach (var u in usersWithSaved)
+                {
+                    u.SavedPost.Remove(_data.Id);
+                }
+
+                foreach (var comment in post.Comments)
+                {
+                    var usersWithComment = context.Users.Where(u => u.CommentsId.Any(c => c.CommentId.Contains(comment.Id.ToString()))).ToList();
+                    foreach (var u in usersWithComment)
+                    {
+                        var container = u.CommentsId.FirstOrDefault(c => c.CommentId.Contains(comment.Id.ToString()));
+                        if (container != null)
+                        {
+                            container.CommentId.Remove(comment.Id.ToString());
+                            if (!container.CommentId.Any())
+                                u.CommentsId.Remove(container);
+                        }
+                    }
+                }
+
+                await context.SaveChangesAsync();
+
+                return Ok();
             }
             catch (Exception ex)
             {
-                throw new Exception("", ex);
+                return StatusCode(500, $"Error deleting post: {ex.Message}");
             }
         }
 
@@ -193,21 +236,8 @@ namespace posts.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized("No _ASA cookie found");
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    return NotFound(false);
-                }
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
                 if (user.LikePostID.FindIndex(id => id == post_id) >= 0)
                 {
@@ -216,7 +246,7 @@ namespace posts.Controllers
 
                 var newLike = new Like()
                 {
-                    UserId = id,
+                    UserId = user.Id,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -252,21 +282,8 @@ namespace posts.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized(false);
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    return NotFound(false);
-                }
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
                 if (!user.LikePostID.Contains(post_id))
                 {
@@ -306,26 +323,13 @@ namespace posts.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized("No _ASA cookie found");
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    return NotFound(false);
-                }
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
 
                 var newLike = new Like()
                 {
-                    UserId = id,
+                    UserId = user.Id,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -380,21 +384,8 @@ namespace posts.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized("No _ASA cookie found");
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    return NotFound(false);
-                }
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
                 var objectId = ObjectId.Parse(post_id);
                 var ComentobjectId = ObjectId.Parse(coment_id);
@@ -435,7 +426,9 @@ namespace posts.Controllers
         {
             try
             {
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == _data.UserId);
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
+
                 var objectId = ObjectId.Parse(_data.Id);
                 var post = await _customers.Find(post => post.Id == objectId).FirstOrDefaultAsync();
 
@@ -448,7 +441,7 @@ namespace posts.Controllers
                 var newComment = new Comment
                 {
                     Id = ObjectId.GenerateNewId(),
-                    UserId = _data.UserId,
+                    UserId = user.Id,
                     Content = _data.Content,
                     CreatedAt = DateTime.UtcNow
                 };
@@ -496,21 +489,8 @@ namespace posts.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized(false);
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    NotFound(false);
-                }
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
                 user.SavedPost.Add(post_id);
                 await context.SaveChangesAsync();
@@ -528,21 +508,8 @@ namespace posts.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized(false);
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    return NotFound(false);
-                }
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
                 user.SavedPost.Remove(post_id);
                 await context.SaveChangesAsync();
@@ -560,25 +527,12 @@ namespace posts.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized(false);
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    NotFound(false);
-                }
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
                 var newRepost = new Like()
                 {
-                    UserId = id,
+                    UserId = user.Id,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -611,28 +565,15 @@ namespace posts.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized(false);
-                }
-
-                var sessions = await context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-                if (user == null)
-                {
-                    NotFound(false);
-                }
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) return Unauthorized();
 
                 var objectId = ObjectId.Parse(post_id);
                 var post = await _customers.Find(p => p.Id == objectId).FirstOrDefaultAsync();
 
                 if (post != null)
                 {
-                    post.Repost.RemoveAll(p => p.UserId == id);
+                    post.Repost.RemoveAll(p => p.UserId == user.Id);
                     await _customers.ReplaceOneAsync(p => p.Id == objectId, post);
                 }
                 else
@@ -730,22 +671,16 @@ namespace posts.Controllers
                 PostList.Add(postHome);
             }
 
-            if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+            UserModel user = await _session.GetUserDataAsync(Request);
+            if (user != null)
             {
-                var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-
-
                 foreach (var post in PostList)
                 {
                     foreach (var item in posts)
                     {
-                        if (!item.Views.Contains(id))
+                        if (!item.Views.Contains(user.Id))
                         {
-                            item.Views.Add(id);
+                            item.Views.Add(user.Id);
                             await _customers.ReplaceOneAsync(
                                 filter => filter.Id == item.Id,
                                 item
@@ -871,16 +806,13 @@ namespace posts.Controllers
                 postHome.Answer = postHomeAnswer;
             }
 
-            if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+            UserModel user = await _session.GetUserDataAsync(Request);
+            if (user != null)
             {
-                var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
-
-                if (!post.Views.Contains(id))
+                if (!post.Views.Contains(user.Id))
                 {
-                    post.Views.Add(id);
+                    post.Views.Add(user.Id);
                     await _customers.ReplaceOneAsync(
                         filter => filter.Id == post.Id,
                         post
@@ -913,15 +845,8 @@ namespace posts.Controllers
         [HttpGet("GetSavedPosts")]
         public async Task<IActionResult> GetSavedPosts()
         {
-            if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-            {
-                return Unauthorized();
-            }
-            var sessions = await context.Sessions
-                .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-            var id = sessions.UserId;
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            UserModel user = await _session.GetUserDataAsync(Request);
+            if (user == null) return Unauthorized();
 
             List<PostHome> postSavedList = new List<PostHome>();
 
@@ -1011,6 +936,7 @@ namespace posts.Controllers
             if (user_name == null) return NotFound(false);
 
             var CreatorData = context.Users.FirstOrDefault(u => u.UserName == user_name);
+            if(CreatorData == null) return NotFound(false);
             var Creator = new UserFind
             {
                 Id = CreatorData.Id,
@@ -1048,22 +974,17 @@ namespace posts.Controllers
                 PostList.Add(postHome);
             }
 
-            if (Request.Cookies.TryGetValue("_ASA", out string cookieValue))
+            UserModel user = await _session.GetUserDataAsync(Request);
+            if (user != null) 
             {
-                var sessions = await context.Sessions.FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-
-
 
                 foreach (var post in PostList)
                 {
                     foreach (var item in posts)
                     {
-                        if (!item.Views.Contains(id))
+                        if (!item.Views.Contains(user.Id))
                         {
-                            item.Views.Add(id);
+                            item.Views.Add(user.Id);
                             await _customers.ReplaceOneAsync(
                                 filter => filter.Id == item.Id,
                                 item
@@ -1093,15 +1014,9 @@ namespace posts.Controllers
         [HttpGet("GetFollowingPosts")]
         public async Task<IActionResult> GetFollowingPosts()
         {
-            if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-            {
-                return Unauthorized();
-            }
-            var sessions = await context.Sessions
-                .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
+            UserModel user = await _session.GetUserDataAsync(Request);
+            if (user == null) return Unauthorized();
 
-            var id = sessions.UserId;
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
             List<PostHome> FollowingPosts = new List<PostHome>();
 
             foreach (var IdSubscribers in user.Subscribers)
@@ -1193,12 +1108,8 @@ namespace posts.Controllers
         [HttpGet("")]
         public async Task<IActionResult> UserAccounts(string UserID)
         {
-            if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-            {
-                return Unauthorized();
-            }
-            var id = new JWT().GetUserIdFromToken(cookieValue);
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            UserModel user = await _session.GetUserDataAsync(Request);
+            if (user == null) return Unauthorized();
 
 
             var users = await context.Users.FirstOrDefaultAsync(u => u.Id == UserID);

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Hash.Interface;
 using PGAdminDAL.Model;
 using user.Models.MessageChat;
+using SessionService;
 
 namespace user.Controllers
 {
@@ -16,17 +17,17 @@ namespace user.Controllers
     [Route("api/[controller]")]
     public class AccountSettings : Controller
     {
-        private readonly IJwt _jwt;
         private readonly IHASH256 _hash;
         private readonly IArgon2Hasher _hasher;
         private readonly AppDbContext _context;
+        private readonly ISessionService _session;
 
-        public AccountSettings(AppDbContext context, IJwt jwt, IArgon2Hasher hasher,  IHASH256 hash)
+        public AccountSettings(AppDbContext context, IArgon2Hasher hasher,  IHASH256 hash, ISessionService session)
         {
             _context = context;
-            _jwt = jwt;
             _hash = hash;
             _hasher = hasher;
+            _session = session;
         }
 
 
@@ -36,21 +37,9 @@ namespace user.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized("No _ASA cookie found");
-                }
+                bool value = await _session.IsSessionValidAsync(Request);
+                if (!value) return Unauthorized();
 
-                var sessions = await _context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                if (sessions == null || sessions.LoginTime < DateTime.UtcNow)
-                {
-                    _context.Sessions.Remove(sessions);
-                    await _context.SaveChangesAsync();
-                    return Unauthorized("Session expired or not found");
-                }
-                
                 return Ok(new { success = true });
             }
             catch (Exception ex)
@@ -64,23 +53,6 @@ namespace user.Controllers
         {
             try
             {
-                if (Account.Password != null  && _jwt.ValidateToken(Account.Token, _context))
-                {
-                    var id = _jwt.GetUserIdFromToken(Account.Token);
-                    var user = await _context.Users.FindAsync(id);
-                    if (user != null)
-                    {
-                        string HashNewPassword = _hash.Encrypt(Account.NewPassword, user.ConcurrencyStamp);
-                        string HashPassword = _hash.Encrypt(Account.Password, user.ConcurrencyStamp);
-                        if (HashPassword == user.PasswordHash)
-                        {
-                            user.PasswordHash = HashNewPassword;
-                            await _context.SaveChangesAsync();
-                            return Ok();
-                        }
-                        return Unauthorized("Invalid credentials");
-                    }
-                }
                 return NotFound();
             }
             catch (Exception ex)
@@ -94,18 +66,8 @@ namespace user.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized("No _ASA cookie found");
-                }
-
-                var sessions = await _context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                var id = sessions.UserId;
-                var user = await _context.Users.FindAsync(id);
-
-                if (user == null) { return NotFound(new { message = "User not found" }); }
+                UserModel user = await _session.GetUserDataAsync(Request);
+                if (user == null) { return Unauthorized(); }
 
                 if (!string.IsNullOrWhiteSpace(model.FirstName)) user.FirstName = model.FirstName;
                 if (!string.IsNullOrWhiteSpace(model.Email)) user.Email = model.Email;
@@ -151,20 +113,10 @@ namespace user.Controllers
         {
             try
             {
-                if (!Request.Cookies.TryGetValue("_ASA", out string cookieValue))
-                {
-                    return Unauthorized("No _ASA cookie found");
-                }
+                string value = await _session.GetUserIdAsync(Request);
+                if (value == null) return Unauthorized();
 
-                var sessions = await _context.Sessions
-                    .FirstOrDefaultAsync(u => u.KeyHash == cookieValue);
-
-                if (sessions == null || sessions.LoginTime < DateTime.UtcNow)
-                {
-                    return Unauthorized("Session expired or not found");
-                }
-
-                return Ok(new { id = sessions.UserId });
+                return Ok(new { id = value });
 
             }
             catch (Exception ex)
