@@ -1,7 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using user.Models.MessageChat;
-using StackExchange.Redis;
 using System.Xml.Linq;
 
 namespace user.Models.Post

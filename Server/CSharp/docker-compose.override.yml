@@ -78,6 +78,24 @@ services:
     networks:
       - work
 
+  chats:
+    container_name: chats
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8086
+      - ASPNETCORE_HTTPS_PORTS=8087
+    ports:
+      - "8086:8086"
+      - "8087:8087"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    networks:
+      - work
+
+
 networks:
   work:
     external: true

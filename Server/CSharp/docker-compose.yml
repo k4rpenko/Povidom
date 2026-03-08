@@ -18,3 +18,10 @@ services:
       context: .
       dockerfile: post/Dockerfile
 
+
+  chats:
+    image: ${DOCKER_REGISTRY-}chats
+    build:
+      context: .
+      dockerfile: Chats/Dockerfile
+

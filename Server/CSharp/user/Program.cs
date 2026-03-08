@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB;
 using Npgsql;
 using PGAdminDAL;
-using RedisDAL;
-using RedisDAL.User;
 using SessionService;
 using System.Net;
 
@@ -30,8 +28,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IArgon2Hasher, Argon2Hasher>();
 builder.Services.AddSingleton<AppMongoContext>();
-builder.Services.AddSingleton<RedisConfigure>();
-builder.Services.AddSingleton<UsersConnectMessage>();
 builder.Services.AddScoped<ISessionService, SessionServiceImpl>();
 builder.Services.AddScoped<IHASH256, HASH256>();
 builder.Services.AddScoped<IRSAHash, RSAHash>();

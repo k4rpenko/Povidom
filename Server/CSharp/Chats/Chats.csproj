@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>429e17c9-2bb7-464b-93d8-5fefb56005b8</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.23" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hash\Hash.csproj" />
+    <ProjectReference Include="..\MongoDB\MongoDB.csproj" />
+    <ProjectReference Include="..\PGAdminDAL\PGAdminDAL.csproj" />
+    <ProjectReference Include="..\RedisDAL\RedisDAL.csproj" />
+    <ProjectReference Include="..\SessionService\SessionService.csproj" />
+  </ItemGroup>
+
+</Project>

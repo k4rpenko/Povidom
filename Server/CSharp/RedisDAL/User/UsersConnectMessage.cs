@@ -8,7 +8,6 @@ namespace RedisDAL.User
         private readonly IDatabase _db;
         private readonly ISubscriber _subscriber;
         public Action<string> UserRemoved;
-
         public UsersConnectMessage(RedisConfigure redisConfigure)
         {
             _db = redisConfigure.GetDatabase();
@@ -27,6 +26,21 @@ namespace RedisDAL.User
                 }
             });
 
+        }
+
+        public async Task<string> GetUserId(string ConnectionId)
+        {
+            var server = _db.Multiplexer.GetServer(_db.Multiplexer.GetEndPoints()[0]);
+            var keys = server.Keys(pattern: "UsersConnect:*").ToArray();
+            foreach (var key in keys)
+            {
+                var connectionIdValue = _db.HashGet(key, "connectionId");
+                if (connectionIdValue == ConnectionId)
+                {
+                    return key.ToString().Substring("UsersConnect:".Length);
+                }
+            }
+            return null;
         }
 
         public async Task UpdateUserConnection(string userId, string connectionId)
