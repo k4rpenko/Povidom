@@ -26,3 +26,5 @@
 /Server/CSharp/RedisDAL/obj
 /Server/CSharp/Chats/obj
 /Server/CSharp/SessionService/obj
+/Server/CSharp/Chats/bin
+/Server/CSharp/SessionService/bin
