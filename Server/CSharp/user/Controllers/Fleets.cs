@@ -23,27 +23,33 @@ namespace user.Controllers
         private readonly string bootstrapServers; */
         private readonly ISessionService _session;
 
-        public Fleets(AppDbContext _context, AppMongoContext _Mongo,  IConfiguration _configuration, ISessionService session) 
+        public Fleets(AppDbContext _context, AppMongoContext _Mongo, IConfiguration _configuration, ISessionService session)
         {
             //bootstrapServers = _configuration.GetSection("Kafka:bootstrapServers").Value;
-            context = _context; 
+            context = _context;
             _customers = _Mongo.Database?.GetCollection<SpacePostModel>(_configuration.GetSection("MongoDB:MongoDbDatabase").Value);
             _session = session;
         }
 
         [HttpGet("FindPeople")]
-        public async Task<IActionResult> FindPeople([FromQuery]  string query)
+        public async Task<IActionResult> FindPeople([FromQuery] string query)
         {
             try
             {
+                string id = await _session.GetUserIdAsync(Request);
+                if (id == null) { return Unauthorized(); }
+
                 var users = await context.Users
-                    .Where(u => u.UserName.ToLower().Contains(query) ||
-                                u.FirstName.ToLower().Contains(query) ||
-                                u.LastName.ToLower().Contains(query))
+                    .Where(u =>
+                        (u.UserName.ToLower().Contains(query) ||
+                         u.FirstName.ToLower().Contains(query) ||
+                         u.LastName.ToLower().Contains(query)) &&
+                        u.Id != id
+                    )
                     .Take(7)
                     .ToListAsync();
 
-                if(users == null)
+                if (users == null)
                 {
                     return NotFound();
                 }
@@ -57,7 +63,7 @@ namespace user.Controllers
                     Avatar = u.Avatar,
                 }).ToList();
 
-                return Ok(fleetsUsers);
+                return Ok(new { user = fleetsUsers });
             }
             catch (Exception ex)
             {
@@ -66,7 +72,7 @@ namespace user.Controllers
         }
 
         [HttpGet("chat")]
-        public async Task<IActionResult> GetUsers([FromQuery]  string user_name)
+        public async Task<IActionResult> GetUsers([FromQuery] string user_name)
         {
             try
             {
@@ -75,11 +81,11 @@ namespace user.Controllers
 
 
                 var users = await context.Users
-                    .Where(u => (u.UserName.ToLower().Contains(user_name) && u.Followers.Contains(id)  
-                    || u.FirstName.ToLower().Contains(user_name) && u.Followers.Contains(id) 
-                    || u.LastName.ToLower().Contains(user_name) && u.Followers.Contains(id) 
-                    || u.UserName.ToLower().Contains(user_name) 
-                    || u.FirstName.ToLower().Contains(user_name) 
+                    .Where(u => (u.UserName.ToLower().Contains(user_name) && u.Followers.Contains(id)
+                    || u.FirstName.ToLower().Contains(user_name) && u.Followers.Contains(id)
+                    || u.LastName.ToLower().Contains(user_name) && u.Followers.Contains(id)
+                    || u.UserName.ToLower().Contains(user_name)
+                    || u.FirstName.ToLower().Contains(user_name)
                     || u.LastName.ToLower().Contains(user_name)) && u.Id != id)
                     .Take(7)
                     .ToListAsync();
@@ -87,7 +93,7 @@ namespace user.Controllers
                 if (users == null)
                 {
                     return NotFound();
-                } 
+                }
 
                 var fleetsUsers = users.Select(u => new UserFind
                 {
@@ -99,7 +105,7 @@ namespace user.Controllers
                     Title = u.Title,
                 }).ToList();
 
-                return Ok(new { user = fleetsUsers});
+                return Ok(new { user = fleetsUsers });
             }
             catch (Exception ex)
             {
@@ -171,7 +177,7 @@ namespace user.Controllers
                 {
                     userPost = null;
                 }*/
-                    
+
                 UserModel user = await _session.GetUserDataAsync(Request);
                 if (user == null) return NotFound();
 
@@ -270,7 +276,7 @@ namespace user.Controllers
                     {
                         var userF = await context.Users.FirstOrDefaultAsync(u => u.Id == followerId);
 
-                        if (userF != null) 
+                        if (userF != null)
                         {
                             UsersFollowers.Add(new UserAccount
                             {
@@ -310,9 +316,9 @@ namespace user.Controllers
             {
                 UserModel You = await _session.GetUserDataAsync(Request);
                 if (You == null) return Unauthorized();
-                
+
                 var user = await context.Users.FirstOrDefaultAsync(u => u.UserName == user_name);
-                
+
 
                 if (user != null && You != null)
                 {

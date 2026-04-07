@@ -1,0 +1,58 @@
+.found-user {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 3px;
+    max-height: 300px;
+    height: auto;
+    overflow-y: auto;
+    background-color: var(--dark-background);
+    border: 1px solid #dddddd3c;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.found-user a {
+    height: 30%;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.found-user-data {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.found-user-data:hover {
+    .found-user-text{
+        color: black;
+    }
+    background-color: #f0f0f0;
+}
+
+.found-user-text {
+    display: flex;
+    margin-left: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    flex-direction: column;
+    color: white;
+}
+
+.found-user-text samp.-nick-name {
+    color: var(--grey);
+}
+
+.profile-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ccc;
+}

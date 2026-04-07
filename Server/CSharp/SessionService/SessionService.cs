@@ -54,5 +54,14 @@ namespace SessionService
 
             return user;
         }
+
+        public async Task<UserModel> GetUserDataByIdAsync(string userId, HttpRequest req)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null) return null;
+            
+            return user;
+        }
     }
 }

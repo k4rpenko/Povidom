@@ -1,11 +1,11 @@
 import { Component, EventEmitter, inject, Input, Output, Renderer2 } from '@angular/core';
-import { UserProfil } from '../../data/interface/Users/UserProfil.interface';
-import { UserCacheService } from '../../data/cache/user.service';
-import { Post } from '../../data/interface/Post/Post.interface';
+import { UserProfil } from '../../../data/interface/Users/UserProfil.interface';
+import { UserCacheService } from '../../../data/cache/user.service';
+import { Post } from '../../../data/interface/Post/Post.interface';
 import { Router } from '@angular/router';
-import { PostService } from '../../api/REST/post/Post.service';
-import { PostCacheService } from '../../data/cache/post.service';
+import { PostCacheService } from '../../../data/cache/post.service';
 import { CommonModule } from '@angular/common';
+import { PostService } from '../../../api/REST/POST/home/Post.service';
 
 @Component({
   selector: 'app-add-post',

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {HEADERComponent} from '../../components/header/header.component';
+import {HEADERComponent} from '../../components/main/header/header.component';
 import {IndexDBComponent} from "../../api/UserDB/index-db/index-db.component";
 import { Chat } from "../../components/messages/chat/chat";
 import { Users } from "../../components/messages/users/users";

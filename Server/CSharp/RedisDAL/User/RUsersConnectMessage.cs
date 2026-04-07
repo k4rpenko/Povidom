@@ -1,14 +1,15 @@
 ﻿using StackExchange.Redis;
-using System;
+
 
 namespace RedisDAL.User
 {
-    public class UsersConnectMessage
+    public class RUsersConnectMessage
     {
         private readonly IDatabase _db;
         private readonly ISubscriber _subscriber;
         public Action<string> UserRemoved;
-        public UsersConnectMessage(RedisConfigure redisConfigure)
+        
+        public RUsersConnectMessage(RedisConfigure redisConfigure)
         {
             _db = redisConfigure.GetDatabase();
             _subscriber = redisConfigure.GetSubscriber();

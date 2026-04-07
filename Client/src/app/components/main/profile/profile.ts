@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { UserProfil } from '../../data/interface/Users/UserProfil.interface';
+import { UserProfil } from '../../../data/interface/Users/UserProfil.interface';
 import { RouterModule } from '@angular/router';
-import { UserREST } from '../../api/REST/user/UserData.service';
-import { UserCacheService } from '../../data/cache/user.service';
-import { UsersKnow } from "../user/users-know/users-know";
+import { UserREST } from '../../../api/REST/user/UserData.service';
+import { UserCacheService } from '../../../data/cache/user.service';
+import { UsersKnow } from "../../user/users-know/users-know";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 

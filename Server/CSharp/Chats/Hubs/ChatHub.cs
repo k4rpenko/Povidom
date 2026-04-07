@@ -11,8 +11,8 @@ using PGAdminDAL.Model;
 using RedisDAL.User;
 using SessionService;
 using System;
-using ChatModelMongoDB = Chats.Models.ChatModelMongoDB;
-using Message = Chats.Models.Message;
+using Chats.Service;
+using Logger;
 
 namespace Chats.Hubs
 {
@@ -20,16 +20,20 @@ namespace Chats.Hubs
     {
         private readonly IMongoCollection<ChatModelMongoDB> _customers;
         private readonly AppDbContext _context;
-        private UsersConnectMessage _userConnect;
+        private readonly RUsersConnectMessage _rUserConnect;
         private readonly ISessionService _session;
+        private readonly IAppLogger<ChatHub> _logger;
+        private readonly RUserService _rUserService;
 
 
-        public ChatHub(AppMongoContext _Mongo, IConfiguration _configuration, AppDbContext context, UsersConnectMessage UCM, ISessionService session)
+        public ChatHub(IAppLogger<ChatHub> logger, AppMongoContext _Mongo, IConfiguration _configuration, AppDbContext context, RUsersConnectMessage UCM, ISessionService session)
         {
+            _logger = logger;
             _customers = _Mongo.Database?.GetCollection<ChatModelMongoDB>(_configuration.GetSection("MongoDB:MongoDbDatabaseChat").Value);
             _context = context;
-            _userConnect = UCM;
+            _rUserConnect = UCM;
             _session = session;
+            _rUserService = new RUserService(_rUserConnect, Context, _session);
         }
 
 
@@ -38,14 +42,21 @@ namespace Chats.Hubs
         {
             try
             {
-                var httpContext = Context.GetHttpContext();
-                var user = await _session.GetUserDataAsync(httpContext.Request);
-                if (user == null) return false;
-                string id = user.Id;
+                var httpContext = Context.GetHttpContext().Request;
+                var user = await _session.GetUserDataAsync(httpContext);
+                if (user == null)
+                {
+                    _logger.LogWarning($"Unauthenticated connection attempt: {Context.ConnectionId}");
+                    return false;
+                }
 
-                await _userConnect.UpdateUserConnection(id, Context.ConnectionId);
+                string id = user.Id;
+                _logger.LogInformation($"User {id} is connecting with ConnectionId {Context.ConnectionId}");
+
+                await _rUserConnect.UpdateUserConnection(id, Context.ConnectionId);
                 user.IsOnline = true;
                 await _context.SaveChangesAsync();
+
                 foreach (var chat in user.ChatsID)
                 {
                     var objectId = ObjectId.Parse(chat.ToString());
@@ -55,20 +66,22 @@ namespace Chats.Hubs
                     {
                         if (userGET != id)
                         {
-                            var userConnection = await _userConnect.GetUserConnectionId(userGET);
+                            var userConnection = await _rUserConnect.GetUserConnectionId(userGET);
                             if (userConnection != null)
                             {
                                 await Clients.Client(userConnection).SendAsync("StatusUser", chatModel.Id, true);
+                                _logger.LogInformation("Notified user {OtherUserId} that {UserId} is online", userGET, id);
                             }
                         }
                     }
                 }
+
                 return true;
-               
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, $"Error during Connect for ConnectionId {Context.ConnectionId}");
+                throw;
             }
         }
 
@@ -76,11 +89,11 @@ namespace Chats.Hubs
         {
             try
             {
-                string id = await _userConnect.GetUserId(Context.ConnectionId);
+                string id = await _rUserConnect.GetUserId(Context.ConnectionId);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
                 if (user != null)
                 {
-                    await _userConnect.RemoveUser(id);
+                    await _rUserConnect.RemoveUser(id);
                     user.IsOnline = false;
                     await _context.SaveChangesAsync();
                     foreach (var chat in user.ChatsID)
@@ -92,7 +105,7 @@ namespace Chats.Hubs
                         {
                             if (userGET != id)
                             {
-                                var userConnection = await _userConnect.GetUserConnectionId(userGET);
+                                var userConnection = await _rUserConnect.GetUserConnectionId(userGET);
                                 if (userConnection != null)
                                 {
                                     await Clients.Client(userConnection).SendAsync("StatusUser", chatModel.Id, false);
@@ -113,11 +126,11 @@ namespace Chats.Hubs
         {
             try
             {
-                string id = await _userConnect.GetUserId(Context.ConnectionId);
+                string id = await _rUserConnect.GetUserId(Context.ConnectionId);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null) return;
 
-                await _userConnect.UpdateUserConnection(id, Context.ConnectionId);
+                await _rUserConnect.UpdateUserConnection(id, Context.ConnectionId);
                 foreach (var chat in user.ChatsID)
                 {
                     var objectId = ObjectId.Parse(chat.ToString());
@@ -127,7 +140,7 @@ namespace Chats.Hubs
                     {
                         if (userGET != id)
                         {
-                            var userConnection = await _userConnect.GetUserConnectionId(userGET);
+                            var userConnection = await _rUserConnect.GetUserConnectionId(userGET);
                             if (userConnection != null)
                             {
                                 await Clients.Client(userConnection).SendAsync("StatusUser", id, true);
@@ -144,33 +157,32 @@ namespace Chats.Hubs
 
 
 
-        public async Task<ChatsModel> CreateChat(ChatsModel _get)
+        public async Task<ChatsModel> CreateChat(string AddUsersId)
         {
-            if (_get == null || _get.AddUsersIdChat == null || _get.AddUsersIdChat.Count < 2)
+            string userId = await _rUserService.GetUserId();
+            if (userId == null)
             {
                 throw new ArgumentException("Invalid chat model or user IDs.");
             }
 
-            string id = await _userConnect.GetUserId(Context.ConnectionId);
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return null;
             Update();
 
             var filter = Builders<ChatModelMongoDB>.Filter.And(
                 Builders<ChatModelMongoDB>.Filter.Or(
-                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], id),
-                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], _get.AddUsersIdChat[1])
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], userId),
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[0], AddUsersId)
                 ),
                 Builders<ChatModelMongoDB>.Filter.Or(
-                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], id),
-                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], _get.AddUsersIdChat[1])
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], userId),
+                    Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.UsersID[1], AddUsersId)
                 )
             );
 
-            var You = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            var People = await _context.Users.FirstOrDefaultAsync(u => u.ChatsID.Contains(_get.Id));
-
-            if (You == null || People == null)
+            var httpContext = Context.GetHttpContext().Request;
+            var People = await _session.GetUserDataByIdAsync(userId, httpContext);
+            if (user == null || People == null)
             {
                 throw new Exception("One or both users not found.");
             }
@@ -197,10 +209,9 @@ namespace Chats.Hubs
                 return PeopleInfo;
             }
 
-            _get.AddUsersIdChat[0] = id;
             var newChat = new ChatModelMongoDB
             {
-                UsersID = _get.AddUsersIdChat,
+                UsersID = new List<string> { userId, AddUsersId },
                 Timestamp = DateTime.UtcNow
             };
 
@@ -209,7 +220,7 @@ namespace Chats.Hubs
                 Id = newChat.UsersID.ToString(),
                 Message = new Message
                 {
-                    IdUser = You.Id,
+                    IdUser = userId,
                     Text = "",
                 },
                 User = new User
@@ -219,16 +230,10 @@ namespace Chats.Hubs
                 }
             };
 
-            foreach (var userId in newChat.UsersID)
-            {
-                var ConnectId = await _userConnect.GetUserConnectionId(userId);
-                await Clients.Client(ConnectId).SendAsync("CreatChat", YouInfo);
-            }
-
             await _customers.InsertOneAsync(newChat);
             PeopleInfo.Id = newChat.Id.ToString();
 
-            You.ChatsID.Add(newChat.Id.ToString());
+            user.ChatsID.Add(newChat.Id.ToString());
             People.ChatsID.Add(newChat.Id.ToString());
 
             await _context.SaveChangesAsync();
@@ -239,7 +244,7 @@ namespace Chats.Hubs
         {
             try
             {
-                string id = await _userConnect.GetUserId(Context.ConnectionId);
+                string id = await _rUserConnect.GetUserId(Context.ConnectionId);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null) return null;
 
@@ -304,22 +309,22 @@ namespace Chats.Hubs
 
 
 
-        public async Task<int> SendMessage(ChatsModel _get)
+        public async Task<int> SendMessage(GeterChatsModel _get)
         {
             try
             {
-                string id = await _userConnect.GetUserId(Context.ConnectionId);
+                string id = await _rUserConnect.GetUserId(Context.ConnectionId);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null) return -1;
 
-                var objectId = ObjectId.Parse(_get.Id.ToString());
+                var objectId = ObjectId.Parse(_get.ChatId);
                 var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
                 var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
 
 
                 if (!chatModel.UsersID.Contains(id))
                 {
-                    return -1;
+                    CreateChat(_get.peopleId);
                 }
 
                 Update();
@@ -329,7 +334,7 @@ namespace Chats.Hubs
 
                 var newMessage = new ChatsModel
                 {
-                    Id = _get.Id,
+                    Id = _get.ChatId,
                     Message = new Message
                     {
                         Id = lastMessageId + 1,
@@ -359,7 +364,7 @@ namespace Chats.Hubs
                 {
                     if (userId != id)
                     {
-                        var ConnectId = await _userConnect.GetUserConnectionId(userId);
+                        var ConnectId = await _rUserConnect.GetUserConnectionId(userId);
                         Console.WriteLine("\n\nUser: " + userId + "Connect id: " + ConnectId);
                         await Clients.Client(ConnectId).SendAsync("ReceiveMessage", newMessage);
                     }
@@ -373,15 +378,15 @@ namespace Chats.Hubs
             }
         }
 
-        public async Task<List<Models.Message>> GetMessage(ChatsModel _get)
+        public async Task<List<Models.Message>> GetMessage(string chatId)
         {
             try
             {
-                string id = await _userConnect.GetUserId(Context.ConnectionId);
+                string id = await _rUserConnect.GetUserId(Context.ConnectionId);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null) return null;
 
-                var objectId = ObjectId.Parse(_get.Id.ToString());
+                var objectId = ObjectId.Parse(chatId);
                 var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
                 var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
                 List<string> idMessage;
@@ -402,7 +407,6 @@ namespace Chats.Hubs
                 }
                 else
                 {
-                    Console.WriteLine("Chat ID not found in user IDs.");
                     return null;
                 }
             }
@@ -413,27 +417,27 @@ namespace Chats.Hubs
         }
 
 
-        public async Task<bool> ViewMessage(ChatsModel _get)
+        public async Task<bool> ViewMessage(GeterChatsModel _get)
         {
             try
             {
-                string id = await _userConnect.GetUserId(Context.ConnectionId);
+                string id = await _rUserConnect.GetUserId(Context.ConnectionId);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null) return false;
 
-                if (user.ChatsID.Contains(_get.Id) == false) return false;
+                if (user.ChatsID.Contains(_get.ChatId) == false) return false;
 
-                var objectId = ObjectId.Parse(_get.Id.ToString());
+                var objectId = ObjectId.Parse(_get.ChatId.ToString());
                 var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
                 var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
 
-                
+
 
                 if (chatModel != null)
                 {
                     foreach (var message in chatModel.Chat)
                     {
-                        if (message.IdUser == _get.User.Id && message.View == false)
+                        if (message.IdUser == id && message.View == false)
                         {
                             message.View = true;
                         }
@@ -442,10 +446,10 @@ namespace Chats.Hubs
                     await _customers.UpdateOneAsync(filter, update);
                     foreach (var userId in chatModel.UsersID)
                     {
-                        if (userId == _get.User.Id)
+                        if (userId == id)
                         {
-                            var ConnectId = await _userConnect.GetUserConnectionId(userId);
-                            await Clients.Client(ConnectId).SendAsync("ViewMessage", _get.Id);
+                            var ConnectId = await _rUserConnect.GetUserConnectionId(userId);
+                            await Clients.Client(ConnectId).SendAsync("ViewMessage", id);
                         }
                     }
                     return true;

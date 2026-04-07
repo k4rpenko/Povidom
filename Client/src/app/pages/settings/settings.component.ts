@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import {BorderMainComponent} from "../../components/border-main/border-main.component";
-import {HEADERComponent} from "../../components/header/header.component";
+import {BorderMainComponent} from "../../components/main/border-main/border-main.component";
+import {HEADERComponent} from "../../components/main/header/header.component";
 import {CommonModule} from '@angular/common';
 import {IndexDBComponent} from "../../api/UserDB/index-db/index-db.component";
-import { Profile } from "../../components/profile/profile";
+import { Profile } from "../../components/main/profile/profile";
 import { UserProfil } from '../../data/interface/Users/UserProfil.interface';
 import { UserCacheService } from '../../data/cache/user.service';
 import { take } from 'rxjs';

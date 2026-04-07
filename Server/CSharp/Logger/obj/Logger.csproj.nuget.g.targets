@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)system.diagnostics.diagnosticsource\11.0.0-preview.2.26159.112\buildTransitive\netcoreapp2.0\System.Diagnostics.DiagnosticSource.targets" Condition="Exists('$(NuGetPackageRoot)system.diagnostics.diagnosticsource\11.0.0-preview.2.26159.112\buildTransitive\netcoreapp2.0\System.Diagnostics.DiagnosticSource.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.extensions.dependencyinjection.abstractions\11.0.0-preview.2.26159.112\buildTransitive\netcoreapp2.0\Microsoft.Extensions.DependencyInjection.Abstractions.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.extensions.dependencyinjection.abstractions\11.0.0-preview.2.26159.112\buildTransitive\netcoreapp2.0\Microsoft.Extensions.DependencyInjection.Abstractions.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.extensions.logging.abstractions\11.0.0-preview.2.26159.112\buildTransitive\netcoreapp2.0\Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.extensions.logging.abstractions\11.0.0-preview.2.26159.112\buildTransitive\netcoreapp2.0\Microsoft.Extensions.Logging.Abstractions.targets')" />
+  </ImportGroup>
+</Project>

@@ -1,4 +1,5 @@
-﻿using Hash;
+﻿
+using Hash;
 using Hash.Interface;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;

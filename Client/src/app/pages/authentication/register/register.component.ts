@@ -5,8 +5,8 @@ import { jwtDecode } from 'jwt-decode';
 import {NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 import {CookieService} from 'ngx-cookie-service';
-import {RegisterService} from '../../../api/POST/Authentication/Register/Register.service';
 import { JwtPayload } from '../../../data/interface/Post/JwtPayload.interface';
+import { RegisterService } from '../../../api/REST/POST/Authentication/Register/Register.service';
 
 
 @Component({

@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "Muih1C3Mnyc=",
+  "success": true,
+  "projectFilePath": "C:\\D\\work\\GIT\\Povidom\\Server\\CSharp\\Logger\\Logger.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\david\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\11.0.0-preview.2.26159.112\\microsoft.extensions.dependencyinjection.abstractions.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\11.0.0-preview.2.26159.112\\microsoft.extensions.logging.abstractions.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\system.buffers\\4.6.1\\system.buffers.4.6.1.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\system.diagnostics.diagnosticsource\\11.0.0-preview.2.26159.112\\system.diagnostics.diagnosticsource.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\system.memory\\4.6.3\\system.memory.4.6.3.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.1.2\\system.runtime.compilerservices.unsafe.6.1.2.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -14,24 +14,24 @@ public class CharHubBackgroundService : IHostedService
     private readonly IHubContext<ChatHub> _hubContext;
     private readonly IMongoCollection<ChatModelMongoDB> _customers;
     private readonly IServiceProvider _serviceProvider;
-    private UsersConnectMessage _userConnect;
+    private RUsersConnectMessage _rUserConnect;
     private IServiceScope scope;
     private AppDbContext context;
 
     public CharHubBackgroundService(
         IHubContext<ChatHub> hubContext,
         IServiceProvider serviceProvider,
-        UsersConnectMessage userConnect,
+        RUsersConnectMessage rUserConnect,
         AppMongoContext customers,
         IConfiguration configuration)
     {
         _hubContext = hubContext;
         _serviceProvider = serviceProvider;
-        _userConnect = userConnect;
+        _rUserConnect = rUserConnect;
         _customers = customers.Database?.GetCollection<ChatModelMongoDB>(configuration.GetSection("MongoDB:MongoDbDatabaseChat").Value);
         scope = _serviceProvider.CreateScope();
         context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        _userConnect.UserRemoved += async (userId) => await HandleUserRemoval(userId);
+        _rUserConnect.UserRemoved += async (userId) => await HandleUserRemoval(userId);
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -75,7 +75,7 @@ public class CharHubBackgroundService : IHostedService
                 {
                     if (userGET != userId)
                     {
-                        var userConnection = await _userConnect.GetUserConnectionId(userGET);
+                        var userConnection = await _rUserConnect.GetUserConnectionId(userGET);
                         if (userConnection != null)
                         {
                             Console.WriteLine("\n\nuserId: " + userId + "\nStatus: " + false);

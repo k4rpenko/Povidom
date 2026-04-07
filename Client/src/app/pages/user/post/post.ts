@@ -1,17 +1,17 @@
 import { Component, inject, Renderer2 } from '@angular/core';
-import { BorderMainComponent } from "../../../components/border-main/border-main.component";
-import { HEADERComponent } from "../../../components/header/header.component";
+import { BorderMainComponent } from "../../../components/main/border-main/border-main.component";
+import { HEADERComponent } from "../../../components/main/header/header.component";
 import { Post, Comment } from '../../../data/interface/Post/Post.interface';
-import { PostService } from '../../../api/REST/post/Post.service';
 import { PostCacheService } from '../../../data/cache/post.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserCacheService } from '../../../data/cache/user.service';
 import { HomeComponent } from '../../home/home.component';
 import { UserProfil } from '../../../data/interface/Users/UserProfil.interface';
-import { PostComponent } from "../../../components/post/post";
+import { PostComponent } from "../../../components/pages/post/post";
 import { AuthGuard } from '../../../guards/auth.guard';
 import { Observable } from 'rxjs';
+import { PostService } from '../../../api/REST/POST/home/Post.service';
 
 @Component({
   selector: 'app-post',

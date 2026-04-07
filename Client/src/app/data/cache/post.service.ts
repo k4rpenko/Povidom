@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Post } from '../interface/Post/Post.interface';
-import { PostService } from '../../api/REST/post/Post.service';
+import { PostService } from '../../api/REST/POST/home/Post.service';
 
 @Injectable({ providedIn: 'root' })
 export class PostCacheService {
@@ -17,7 +17,7 @@ export class PostCacheService {
   loadPosts(): Promise<void> {
     return new Promise((resolve) => {
       if (this.isLoaded) {
-        this.Rest.GetPost().subscribe(res => {
+        this.Rest.GetPost().subscribe((res: { post: Post[]; }) => {
           this.postsSubject.next(res.post);
           this.isLoaded = false;
           resolve(); 
@@ -31,7 +31,7 @@ export class PostCacheService {
   loadFollowingPosts(): Promise<void>{
     return new Promise((resolve) => {
       if (this.isFollowingLoaded) {
-        this.Rest.GetFollowingPosts().subscribe(res => {
+        this.Rest.GetFollowingPosts().subscribe((res: { post: Post[]; }) => {
           this.followingPostsSubject.next(res.post);
           this.isFollowingLoaded = false;
           resolve();
@@ -43,7 +43,7 @@ export class PostCacheService {
   }
 
   addPosts(): void {
-    this.Rest.GetPost().subscribe(res => {
+    this.Rest.GetPost().subscribe((res: { post: Post[]; }) => {
       const currentPosts = this.postsSubject.value;
       this.postsSubject.next([...currentPosts, ...res.post]);
     });

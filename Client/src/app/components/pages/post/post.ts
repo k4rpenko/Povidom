@@ -1,10 +1,10 @@
 import { Component, HostListener, inject, Input } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { Post } from '../../data/interface/Post/Post.interface';
+import { Post } from '../../../data/interface/Post/Post.interface';
 import { CommonModule } from '@angular/common';
-import { PostService } from '../../api/REST/post/Post.service';
-import { PostCacheService } from '../../data/cache/post.service';
+import { PostCacheService } from '../../../data/cache/post.service';
 import { AddPostComponent } from "../add-post/add-post.component";
+import { PostService } from '../../../api/REST/POST/home/Post.service';
 
 @Component({
   selector: 'app-post-component',

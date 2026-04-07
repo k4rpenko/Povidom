@@ -7,10 +7,10 @@ namespace Chats.Interface
         Task<bool> Connect();
         Task<List<ChatsModel>> disconnection();
         Task Update();
-        Task<ChatsModel> CreateChat(ChatsModel _get);
+        Task<ChatsModel> CreateChat(string AddUsersId);
         Task<List<ChatsModel>> GetChats();
-        Task<int> SendMessage(ChatsModel _get);
-        Task<List<Models.Message>> GetMessage(ChatsModel _get);
-        Task<bool> ViewMessage(ChatsModel _get);
+        Task<int> SendMessage(GeterChatsModel _get);
+        Task<List<Models.Message>> GetMessage(string chatId);
+        Task<bool> ViewMessage(GeterChatsModel _get);
     }
 }

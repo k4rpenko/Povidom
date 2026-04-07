@@ -2,9 +2,9 @@ import {Component, inject, OnInit} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
 import {NgIf} from '@angular/common';
-import { LoginService } from '../../../api/POST/Authentication/Login/Login.service';
 import {Router} from '@angular/router';
 import {CookieService} from 'ngx-cookie-service';
+import { LoginService } from '../../../api/REST/POST/Authentication/Login/Login.service';
 
 
 @Component({

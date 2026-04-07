@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import {HEADERComponent} from '../../components/header/header.component';
-import {BorderMainComponent} from '../../components/border-main/border-main.component';
+import {HEADERComponent} from '../../components/main/header/header.component';
+import {BorderMainComponent} from '../../components/main/border-main/border-main.component';
 import { UserProfil } from '../../data/interface/Users/UserProfil.interface';
 import {CommonModule } from '@angular/common';
 import { UserCacheService } from '../../data/cache/user.service';
@@ -8,8 +8,8 @@ import { Post } from '../../data/interface/Post/Post.interface';
 import { ActivatedRoute, RouterModule  } from '@angular/router';
 import { finalize, firstValueFrom, take } from 'rxjs';
 import { UserREST } from '../../api/REST/user/UserData.service';
-import { PostComponent } from "../../components/post/post";
-import { Profile } from "../../components/profile/profile";
+import { PostComponent } from "../../components/pages/post/post";
+import { Profile } from "../../components/main/profile/profile";
 
 @Component({
   selector: 'app-user',

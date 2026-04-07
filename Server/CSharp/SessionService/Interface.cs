@@ -12,5 +12,6 @@ namespace SessionService
         Task<bool> IsSessionValidAsync(HttpRequest req);
         Task<string> GetUserIdAsync(HttpRequest req);
         Task<UserModel> GetUserDataAsync(HttpRequest req);
+        Task<UserModel> GetUserDataByIdAsync(string userId, HttpRequest req);
     }
 }

@@ -44,6 +44,13 @@ export class UserREST {
       withCredentials: true
     });
   }
+
+  GetUsersDataNick(nick: string) {
+    return this.http.get<{user: UserProfil[]}>(`api/Fleets/FindPeople?query=${nick}`, {
+      headers: { 'Content-Type': 'application/json' },
+      withCredentials: true
+    });
+  }
   
   GetUserPosts(user: string) {
     return this.http.get<{post: Post[]}>(`api/SpacePosts/GetUserPost?user_name=${user}`, {
