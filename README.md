@@ -1,5 +1,5 @@
 # Povidom  
-Spacegram is a social network pet project that combines:  
+Povidom is a social network pet project that combines:  
 - **Security, optimization, and speed** of Telegram, providing data privacy, end-to-end message encryption, and instant feedback from the interface.  
 - Ease of publishing and interacting, similar to Twitter and Instagram: users can easily create posts, edit them, comment, repost, and interact with the community.  
 
