@@ -1,11 +1,9 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { jwtDecode } from 'jwt-decode';
 import {NgIf} from '@angular/common';
 import {Router} from '@angular/router';
 import {CookieService} from 'ngx-cookie-service';
-import { JwtPayload } from '../../../data/interface/Post/JwtPayload.interface';
 import { RegisterService } from '../../../api/REST/POST/Authentication/Register/Register.service';
 
 
@@ -113,7 +111,4 @@ export class RegisterComponent implements OnInit {
     return hasUpperCase && hasLowerCase && hasNumber && isLongEnough; 
   }
 
-  onGoogleLogin(): void {
-    window.location.href = 'api/GoogleAuthentication/GoogleAuth';
-  }
 }

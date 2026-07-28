@@ -17,8 +17,27 @@
 
 .user-profile {
   display: flex;
+  gap: 13px;
   text-decoration: none;
   align-items: center;
+}
+
+.user-profile img{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.profil-info{
+  color: white;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.profil-info-name{
+  display: flex;
+  gap: 3px;
+  color: var(--grey);
 }
 
 .main-chat-messager:hover {
@@ -90,4 +109,13 @@
   background-color: var(--blue);
   position: absolute;
   right: 10px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-45deg);
+
+  svg{
+    display: flex;
+  }
 }

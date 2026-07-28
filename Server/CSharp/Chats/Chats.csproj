@@ -20,7 +20,6 @@
     <ProjectReference Include="..\Logger\Logger.csproj" />
     <ProjectReference Include="..\MongoDB\MongoDB.csproj" />
     <ProjectReference Include="..\PGAdminDAL\PGAdminDAL.csproj" />
-    <ProjectReference Include="..\RedisDAL\RedisDAL.csproj" />
     <ProjectReference Include="..\SessionService\SessionService.csproj" />
   </ItemGroup>
 

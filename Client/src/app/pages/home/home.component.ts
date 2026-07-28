@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HEADERComponent } from '../../components/main/header/header.component';
 import { BorderMainComponent } from '../../components/main/border-main/border-main.component';
 import { Post } from '../../data/interface/Post/Post.interface';

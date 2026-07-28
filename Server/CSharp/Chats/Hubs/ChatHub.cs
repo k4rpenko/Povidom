@@ -122,41 +122,6 @@ namespace Chats.Hubs
             }
         }
 
-        public async Task Update()
-        {
-            try
-            {
-                string id = await _rUserConnect.GetUserId(Context.ConnectionId);
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-                if (user == null) return;
-
-                await _rUserConnect.UpdateUserConnection(id, Context.ConnectionId);
-                foreach (var chat in user.ChatsID)
-                {
-                    var objectId = ObjectId.Parse(chat.ToString());
-                    var filter = Builders<ChatModelMongoDB>.Filter.Eq(chat => chat.Id, objectId);
-                    var chatModel = await _customers.Find(filter).FirstOrDefaultAsync();
-                    foreach (var userGET in chatModel.UsersID)
-                    {
-                        if (userGET != id)
-                        {
-                            var userConnection = await _rUserConnect.GetUserConnectionId(userGET);
-                            if (userConnection != null)
-                            {
-                                await Clients.Client(userConnection).SendAsync("StatusUser", id, true);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-
-
         public async Task<ChatsModel> CreateChat(string AddUsersId)
         {
             string userId = await _rUserService.GetUserId();
@@ -167,7 +132,6 @@ namespace Chats.Hubs
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return null;
-            Update();
 
             var filter = Builders<ChatModelMongoDB>.Filter.And(
                 Builders<ChatModelMongoDB>.Filter.Or(
@@ -327,8 +291,6 @@ namespace Chats.Hubs
                     CreateChat(_get.peopleId);
                 }
 
-                Update();
-
 
                 var lastMessageId = chatModel.Chat?.Count > 0 ? chatModel.Chat.OrderByDescending(m => m.CreatedAt).FirstOrDefault()?.Id ?? 0 : 0;
 
@@ -356,7 +318,7 @@ namespace Chats.Hubs
 
                 if (updateResult.MatchedCount == 0)
                 {
-                    return -1;
+                    return -2;
                 }
 
 

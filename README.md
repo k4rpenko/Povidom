@@ -7,6 +7,76 @@ Spacegram is a social network pet project that combines:
 ## Figma 
 https://www.figma.com/design/9AB2n1nmHDC40VpjOpRnaK/Spacegram?node-id=0-1&t=nyJxmrwRSrmDSIEz-1
 
+---
+
+## Architecture Monitoring (Client + Backend)
+
+The idea is to build Povidom (Spacegram) as a social network with a split architecture: an Angular client, a set of C# services (Auth/User/Post/Chats/Admin), and mixed storage (PostgreSQL + MongoDB + Redis) to balance consistency, speed, and real-time behavior.
+
+### Visual Architecture
+
+```mermaid
+flowchart LR
+    A[Angular Client :4200]
+
+    subgraph B[C# Backend Services]
+      B1[Identification :8081]
+      B2[User :8083]
+      B3[Post :8085]
+      B4[Chats SignalR :8087]
+      B5[Admin]
+    end
+
+    subgraph C[Storage/Infra]
+      C1[(PostgreSQL)]
+      C2[(MongoDB)]
+      C3[(Redis)]
+    end
+
+    A -->|REST /api/Auth/*| B1
+    A -->|REST /api/GoogleAuthentication/*| B1
+    A -->|REST /api/Fleets/*| B2
+    A -->|REST /api/AccountSettings/*| B2
+    A -->|REST /api/SpacePosts/*| B3
+    A -->|WebSocket /message| B4
+
+    B1 --> C1
+    B1 --> C3
+    B2 --> C1
+    B2 --> C2
+    B3 --> C1
+    B3 --> C2
+    B3 --> C3
+    B4 --> C1
+    B4 --> C2
+    B4 --> C3
+    B5 --> C1
+```
+
+### Architecture Monitoring: connected now
+
+- Auth flow: `Client -> api/Auth/registration|login -> Identification(Auth controller)`.
+- Google OAuth: `Client -> api/GoogleAuthentication/GoogleAuth -> Identification(GoogleAuthentication controller)`.
+- Session check: `Client -> api/AccountSettings/SessionsUpdate -> User(AccountSettings controller)`.
+- User profile/search/following: `Client -> api/Fleets/* -> User(Fleets controller)`.
+- Posts feed/actions: `Client -> api/SpacePosts/* -> Post(SpacePosts controller)`.
+- Realtime chat: `Client SignalR -> https://localhost:8087/message -> Chats(ChatHub)`.
+
+### Architecture Monitoring: not connected or partially connected
+
+- **Google endpoint contract mismatch**: frontend expects JSON `{ url }`, while backend returns `Redirect(...)`; integration works as browser redirect, not as a clean API response contract.
+- **`GetMessage` flow incomplete on client**: in `MessagesComponent`, the call is made without guaranteed chat creation/selection first (`this.chat.id` can be empty before initialization).
+- **SignalR origin inconsistency**: chat service allows CORS for `https://localhost:4200`, while other services are configured for `http://localhost:4200`; this can cause unstable local integration.
+- **Response shape mismatches**: client often expects lower-case keys (`id`), while several controllers return other shapes (`ID`, `User`, `Users`, `Post`), which can lead to mapping/runtime issues.
+- **Part of backend API is not consumed by client**: several routes (`ChangePassword`, and other service endpoints) currently have no corresponding client calls in `Client/src/app/api`.
+
+### Current connection map (short)
+
+- `Client REST services` use the `api/...` prefix (requires reverse proxy or gateway routing in local/dev setup).
+- `SignalR` is connected directly to `https://localhost:8087/message`.
+- `Session` relies on cookie credentials (`withCredentials: true`) in REST and server-side session resolution.
+- Profile/session/relationship data is primarily in PostgreSQL; posts/chats are in MongoDB; online connection mapping is handled by Redis.
+
 ## Launching the project  
 
 ### Frontend: Angular  
@@ -213,3 +283,4 @@ https://www.figma.com/design/9AB2n1nmHDC40VpjOpRnaK/Spacegram?node-id=0-1&t=nyJx
 8.  Create a PFX file (PKCS#12)
     ```bash
     openssl pkcs12 -export -out keystore.pfx -inkey private.key -in certificate.crt -certfile certificate.crt -passout pass:yourpassword
+

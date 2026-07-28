@@ -40,7 +40,7 @@ namespace Identification.Controllers
             try
             {
                 
-                var user = _context.Users.FirstOrDefault(u => u.Email == _user.Email);
+                var user = _context.Users.(u => u.Email == _user.Email);
                 if (user == null)
                 {
 
@@ -177,6 +177,7 @@ namespace Identification.Controllers
                 Salt = key,
                 LoginTime = DateTime.UtcNow.AddDays(1)
             };
+
 
             user.Sessions.Add(SessionsData);
 

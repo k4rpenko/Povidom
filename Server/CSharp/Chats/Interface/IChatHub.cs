@@ -6,7 +6,6 @@ namespace Chats.Interface
     {
         Task<bool> Connect();
         Task<List<ChatsModel>> disconnection();
-        Task Update();
         Task<ChatsModel> CreateChat(string AddUsersId);
         Task<List<ChatsModel>> GetChats();
         Task<int> SendMessage(GeterChatsModel _get);

@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { debounceTime, distinctUntilChanged, filter, Observable, of, Subject, Subscription, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, interval, Observable, of, Subject, Subscription, switchMap } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { AddPostComponent } from '../../pages/add-post/add-post.component';
 import { UserREST } from '../../../api/REST/user/UserData.service';
@@ -8,11 +8,12 @@ import { UserProfil } from '../../../data/interface/Users/UserProfil.interface';
 import { UserCacheService } from '../../../data/cache/user.service';
 import { AuthGuard } from '../../../guards/auth.guard';
 import { SignalRService } from '../../../api/WebSocket/SignalR.service';
+import { FindUser } from "../../pages/find-user/find-user";
 
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, AddPostComponent, RouterModule],
+  imports: [CommonModule, AddPostComponent, RouterModule, FindUser],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -22,7 +23,7 @@ export class HEADERComponent implements OnInit, OnDestroy {
   users: UserProfil[] = [];
   Rest = inject(UserREST);
 
-
+  private timerSub!: Subscription;
   private searchSubject = new Subject<string>();
   private subscription!: Subscription;
   user$!: Observable<UserProfil | null>;
@@ -31,7 +32,8 @@ export class HEADERComponent implements OnInit, OnDestroy {
   constructor(
     private userCache: UserCacheService,
     private guards: AuthGuard,
-    private signalR: SignalRService
+    private signalRService: SignalRService,
+
   ) {}
 
   ngOnInit() {
@@ -57,16 +59,16 @@ export class HEADERComponent implements OnInit, OnDestroy {
       }
     });
     
-    this.signalR.startConnection();
-    
+    this.signalRService.startConnection();
   }
+
+
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
   public onSearchInput(name: string){
-    console.log(this.find_user, this.users);
     this.searchSubject.next(name);
   }
 

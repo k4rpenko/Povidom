@@ -30,6 +30,8 @@ namespace Chats.Models
 
         [BsonElement("UpdatedAt")]
         public DateTime? UpdatedAt { get; set; }
+
+        public bool? YourMessage { get; set; }
     }
 
     public class ChatModelMongoDB

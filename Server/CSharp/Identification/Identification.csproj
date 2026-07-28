@@ -24,7 +24,6 @@
     <ProjectReference Include="..\Hash\Hash.csproj" />
     <ProjectReference Include="..\MongoDB\MongoDB.csproj" />
     <ProjectReference Include="..\PGAdminDAL\PGAdminDAL.csproj" />
-    <ProjectReference Include="..\RedisDAL\RedisDAL.csproj" />
   </ItemGroup>
 
 </Project>

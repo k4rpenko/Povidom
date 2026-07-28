@@ -52,19 +52,15 @@ export class SignalRService {
     }
   }
 
-  sendMessage(method: string, payload: any) {
+  sendMessage(method: string, payload?: any) {
     if (this.hubConnection.state === signalR.HubConnectionState.Connected) {
-      this.hubConnection.invoke(method, payload)
-        .catch(err => console.error(err));
+      return this.hubConnection.invoke(method, payload);
     } else {
       console.error("HubConnection не підключено!");
+      return Promise.reject("No connection");
     }
   }
 
-
-  public getChatMessages(chatId: string): Promise<Message[]> {
-    return this.hubConnection.invoke("GetMessage", { id: chatId });
-  }
 
   public get connection(): signalR.HubConnection {
     return this.hubConnection;

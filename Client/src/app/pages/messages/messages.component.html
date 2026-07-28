@@ -6,8 +6,8 @@
     <app-header class="app-header" [url]="'message'"/>
 
     <div class="user-chat-box">
-      <app-users class="users-contacts"/>
-      <app-chat class="chat-messages-container"/>
+      <app-users (userSelected)="onUserSelected($event)" class="users-contacts"/>
+      <app-chat [chat]="chat!" class="chat-messages-container"/>
     </div>
 
   </div>

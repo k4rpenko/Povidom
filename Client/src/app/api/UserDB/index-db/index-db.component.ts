@@ -1,7 +1,7 @@
 import {Component, inject} from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
-import {CheckCoockieService} from '../../PUT/verification/checkCoockie/CheckCoockie.service';
+import {CheckCoockieService} from '../../REST/PUT/verification/checkCoockie/CheckCoockie.service';
 
 @Component({
   selector: 'app-index-db',
